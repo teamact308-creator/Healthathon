@@ -7,6 +7,7 @@ Interactive diabetes care coordination prototype using fictional patient data.
 - `/` is the main WholeCare app, connected to Supabase with four separate sign-ins.
 - `/database.html` is the minimal database verification workspace.
 - `npm test` checks occurrence mapping and the reference workflow engine.
+- [MVP and full application inventory](docs/mvp-and-product-review.md)
 - [Database setup and verification](database/README.md)
 - [Demo walkthrough and build scope](BUILD.md)
 
