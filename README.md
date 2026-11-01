@@ -11,4 +11,4 @@ Interactive diabetes care coordination prototype using fictional patient data.
 - [Database setup and verification](database/README.md)
 - [Demo walkthrough and build scope](BUILD.md)
 
-WhatsApp, voice and AI integration are not connected yet. This is a development prototype, not a clinical system.
+The server-side OpenAI key connection has been verified; see `supabase/functions/openai-connection-check/README.md`. Document extraction, voice and WhatsApp workflows are not implemented yet. This is a development prototype, not a clinical system.
