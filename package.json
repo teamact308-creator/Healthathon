@@ -1,1 +1,10 @@
-{"name":"wholecare-diabetes-demo","private":true,"type":"module","scripts":{"start":"node server.mjs","test":"node --test"}}
+{
+  "name": "wholecare-diabetes-demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test",
+    "build": "node build.mjs"
+  }
+}
