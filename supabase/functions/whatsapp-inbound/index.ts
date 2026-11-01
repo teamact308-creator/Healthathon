@@ -2,10 +2,9 @@ import twilio from 'npm:twilio@5.10.4';
 
 // Exact external URL configured in Twilio; do not trust proxy/Host headers for signatures.
 const WEBHOOK_URL = 'https://gylnitduoasmybadblcp.supabase.co/functions/v1/whatsapp-inbound';
-const xml = (message = '') => new Response(
-  `<?xml version="1.0" encoding="UTF-8"?><Response>${message ? `<Message>${message}</Message>` : ''}</Response>`,
-  { headers: { 'Content-Type': 'text/xml; charset=utf-8', 'Cache-Control': 'no-store' } },
-);
+// The new Twilio trial ignores direct TwiML responses. Outbound trial messages
+// must be sent separately through the REST API with an approved ContentSid.
+const acknowledge = () => new Response(null, {status: 204, headers: {'Cache-Control': 'no-store'}});
 const fail = (status: number) => new Response('Request rejected', {status});
 
 Deno.serve(async (req: Request) => {
@@ -54,10 +53,8 @@ Deno.serve(async (req: Request) => {
     });
     if (!saved.ok) return fail(503);
     const inserted = await saved.json();
-    if (!Array.isArray(inserted) || inserted.length === 0) return xml();
-    return xml(hello
-      ? 'WholeCare demo connected. Your WhatsApp message reached our backend. No care tasks were changed. Please use fictional demo information only.'
-      : 'WholeCare connection test only. Send HELLO WHOLECARE to test the connection. Care updates and clinical advice are not enabled.');
+    if (!Array.isArray(inserted)) return fail(503);
+    return acknowledge();
   } catch {
     // Never log request bodies, phone numbers, provider responses or credentials.
     return fail(503);
