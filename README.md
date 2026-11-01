@@ -12,3 +12,7 @@ Interactive diabetes care coordination prototype using fictional patient data.
 - [Demo walkthrough and build scope](BUILD.md)
 
 The server-side OpenAI key connection has been verified; see `supabase/functions/openai-connection-check/README.md`. Document extraction, voice and WhatsApp workflows are not implemented yet. This is a development prototype, not a clinical system.
+
+Vercel hosting: https://healthathon.vercel.app/ . `npm run build` publishes only allowlisted browser assets in `dist/`. Backend keys and database scripts are excluded.
+
+Twilio API credentials have passed the server-side connection check. The inbound WhatsApp handshake endpoint is deployed; see `supabase/functions/whatsapp-inbound/README.md`. Twilio webhook configuration and a real incoming-message test are pending. Care reminders and conversation workflows remain pending.
