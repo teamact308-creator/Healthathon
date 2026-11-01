@@ -21,7 +21,7 @@ Requires Node.js. No packages, API keys, or external services are required.
 
 ## Implemented boundaries
 
-The original `/` route is an interactive local prototype. All records and evidence are synthetic. Its role switching demonstrates views, not authorization; its local storage and activity trail are editable by the browser user. A separate `/database.html` workspace now uses real Supabase sign-in, durable shared records, server-enforced roles and audited transitions. See `database/README.md`. Neither surface has real file uploads, live WhatsApp, voice transcription, or AI extraction. Do not load real patient information. The external font is optional; system fonts remain usable offline.
+The main `/` app now uses real Supabase sign-in, durable shared records, server-enforced roles and audited transitions. The separate `/database.html` page remains a minimal verification workspace. All records and evidence are synthetic. Neither surface has real file uploads, live WhatsApp, voice transcription, or AI extraction. Do not load real patient information. The external font is optional; system fonts remain usable offline. See `database/README.md` for credentials, workflow details and current limits.
 
 No diagnosis, prescribing, glucose interpretation, or test-result interpretation is implemented. Missing medication confirmation remains UNCONFIRMED rather than being inferred as missed. Test evidence always requires explicit human review before closure.
 

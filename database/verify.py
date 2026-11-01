@@ -88,5 +88,5 @@ check(len(audit)>=len(prior_audit)+9 and all(a['actor_id'] for a in audit),'Serv
 for l in today.values():
     status,_=action(l['id'],'reopen','clinician','Reopen synthetic fixture after verification.')
     check(status==200,'Reopen fixture with recorded reason')
-for role in tokens:request('/auth/v1/logout',role,data={})
+for role in tokens:request('/auth/v1/logout?scope=local',role,data={})
 print('All live checks passed. Test sessions signed out; synthetic loops reopened.')
