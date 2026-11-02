@@ -34,3 +34,7 @@ Start with [README.md](README.md), then [architecture](docs/ARCHITECTURE.md), [A
 ## Operations increment walkthrough
 
 Sign in as Clinician/Coordinator and open Review summary. Assemble a UTC period, inspect cohort definitions and open a task's original evidence. Open Intake & issues to inspect unassigned sources and processing issues. As Patient, submit a fictional note or report without a task; the team proposes an association with a reason; Patient confirms a file match; the existing verified submission requires clinician review. Acknowledging a note never completes care. See docs/bucket-1-delivery.md for testing, definitions and limits.
+
+## Messaging rehearsal increment — 3 November 2026
+
+Patient Messages now rehearses task-linked replies, explicit confirmation, private report upload and unmatched notes using existing authenticated web APIs. Simulation transcript/permission/receipts are session-only; confirmed care records persist. Provider suspension blocks live testing. Server worker/callback contracts are fixture-tested but not deployed or wired to a durable service repository. Verified live enrollment, channel consent and inbound conversation/media remain pending. See [complete scope and recovery checklist](docs/MESSAGING_REHEARSAL.md).

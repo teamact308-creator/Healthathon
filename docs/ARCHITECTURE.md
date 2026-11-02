@@ -69,3 +69,7 @@ Before real use, finish enrollment and multi-patient controls, agreed recurrence
 ## Bucket 1 completion update — 3 November 2026
 
 Current database reconstruction status: The connected baseline is adopted in remote history; all nine local/remote versions match. Clean application-schema replay, parity against live metadata, and a synthetic pg_dump/restore into a second PostgreSQL 17.11 cluster passed. The reproducible runner is scripts/verify-rebuild.py, with minimal local Auth/Storage SQL contracts and real pg_cron. It is not a full Supabase service/object-file/provider-secret recovery test. See docs/bucket-1-delivery.md (or bucket-1-delivery.md from within docs) and docs/database-rebuild-evidence.json for scope/evidence. History loading now uses incremental timestamp/id cursors, and operational_health adds team-only backend scheduler/outbox status. Twilio transport code is implemented but disconnected from live sending.
+
+## Messaging rehearsal increment — 3 November 2026
+
+Patient Messages now rehearses task-linked replies, explicit confirmation, private report upload and unmatched notes using existing authenticated web APIs. Simulation transcript/permission/receipts are session-only; confirmed care records persist. Provider suspension blocks live testing. Server worker/callback contracts are fixture-tested but not deployed or wired to a durable service repository. Verified live enrollment, channel consent and inbound conversation/media remain pending. See [complete scope and recovery checklist](MESSAGING_REHEARSAL.md).

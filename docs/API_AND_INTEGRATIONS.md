@@ -97,3 +97,7 @@ Private service-only `prepare_delivery`, `claim_delivery` and `delivery_result` 
 ## Completed bucket 1 additions
 
 `operational_health(p_patient)` is assigned-clinician/coordinator only, returning sanitized scheduler execution status, channel gates, outbox/failure counts and uncertain reservations. It exposes no message content, destinations or raw SQL/provider errors. `twilio-adapter.mjs` is server-only, uses fixed Twilio endpoints, approved configured content and an injected verified-recipient resolver; it is not part of the browser build and has no scheduled sender. History reads now use stable time/id cursor paging.
+
+## Messaging rehearsal increment — 3 November 2026
+
+Patient Messages now rehearses task-linked replies, explicit confirmation, private report upload and unmatched notes using existing authenticated web APIs. Simulation transcript/permission/receipts are session-only; confirmed care records persist. Provider suspension blocks live testing. Server worker/callback contracts are fixture-tested but not deployed or wired to a durable service repository. Verified live enrollment, channel consent and inbound conversation/media remain pending. See [complete scope and recovery checklist](MESSAGING_REHEARSAL.md).

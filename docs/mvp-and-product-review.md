@@ -165,3 +165,7 @@ The reviewed presentation's numbered sections 1–8 establish the references abo
 ## Bucket 1 closure — 3 November 2026
 
 Independent engineering acceptance is complete; see [delivery evidence](bucket-1-delivery.md). Nine migrations are reconciled and replay/restore tested. Twenty-seven local tests, scoped REST checks and browser verification cover this increment. History paging and server-only Twilio transport are implemented; both external-care channel gates remain disabled. Backend health shows scheduler/outbox/uncertain delivery status. Policy-dependent metrics, approved messaging activation, longitudinal context and real-user/pilot acceptance remain in buckets 2–4. This closure does not assert full MVP or production readiness.
+
+## Messaging rehearsal increment — 3 November 2026
+
+Patient Messages now rehearses task-linked replies, explicit confirmation, private report upload and unmatched notes using existing authenticated web APIs. Simulation transcript/permission/receipts are session-only; confirmed care records persist. Provider suspension blocks live testing. Server worker/callback contracts are fixture-tested but not deployed or wired to a durable service repository. Verified live enrollment, channel consent and inbound conversation/media remain pending. See [complete scope and recovery checklist](MESSAGING_REHEARSAL.md).

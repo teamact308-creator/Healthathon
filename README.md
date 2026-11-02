@@ -4,7 +4,7 @@
 
 **Status: connected, hosted development demo; the full documented MVP and production application are not complete. All patient data is fictional.** A working screen, a provider connection test, an implemented workflow and a production-ready capability are different claims. This documentation distinguishes them.
 
-Documentation snapshot: **2 November 2026, Asia/Kolkata**. Application implementation baseline: [`8b18bcb`](https://github.com/teamact308-creator/Healthathon/commit/8b18bcbc3bae9f825cfdef24e31bd5e17249d420). Inspect the current branch and deployment before assuming the running service still matches this snapshot. Later documentation-only commits may have different SHAs.
+Documentation snapshot: **3 November 2026, Asia/Kolkata**. Latest increment: [messaging rehearsal and provider recovery](docs/MESSAGING_REHEARSAL.md). Historical implementation baseline: [`8b18bcb`](https://github.com/teamact308-creator/Healthathon/commit/8b18bcbc3bae9f825cfdef24e31bd5e17249d420). Inspect the current branch and deployment before assuming the running service still matches this snapshot. Current main includes subsequent implementation increments; the historical SHA is not the current release.
 
 ## 1. Essential links and ownership
 
@@ -135,3 +135,7 @@ The [prioritized backlog](docs/mvp-and-product-review.md) now maps the submitted
 ## Independent engineering increment
 
 The [bucket 1 delivery record](docs/bucket-1-delivery.md) describes the new care-team Review summary and Intake & issues screens, operational measures, atomic human evidence association, client processing diagnostics, disabled-channel delivery foundations, pagination/session/chart fixes and verification. There are now 27 local tests and 13 static browser assets. External care dispatch remains disabled. Historical migration adoption and the isolated application-database rebuild/restore drill are now complete; see the delivery record for platform scope.
+
+## Messaging while Twilio access is suspended
+
+Messages now offers an explicitly simulated patient conversation with confirmation before real demo activity, private report upload or unmatched-note persistence. Session-only STOP/permission and delivery receipts do not enable live messaging. Server worker/callback contracts are fixture-tested and remain undeployed. See [rehearsal, draft templates and remaining activation work](docs/MESSAGING_REHEARSAL.md).

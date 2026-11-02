@@ -32,3 +32,13 @@ Follow-up: hosted check found and corrected a schedule sort key (`item_id`, not 
 ## Bucket 1 completion verification — 3 November 2026
 
 All nine migrations replayed on an empty application database with real PostgreSQL 17.11/pg_cron; capture/operations/role tests passed. Expanded schema metadata matched live, including grants, indexes and triggers. pg_dump restored to a second clean cluster; schema, data counts and workflow/permission tests matched. Historical baseline adoption succeeded without replaying DDL/data on the hosted project. Read the delivery record for the Auth/Storage contract-fixture limitation and full-platform recovery exclusions. Twenty-seven local tests passed, including keyset observation paging and server transport fixtures. Backend health and role-denial checks passed.
+
+## Messaging rehearsal — 3 November 2026
+
+- Local browser patient session: simulated permission, task selection, reminder and unknown receipt; late accepted receipt retained unknown. STOP withdrew permission and disabled reminder. No provider request occurred.
+- Confirmed NOTE wrote one unmatched intake record (`b46aa6ec-a96e-4952-94ac-bf1944b4761f`) through existing patient RPC, without task closure.
+- Added one dedicated fictional test occurrence (`c3de727b-919b-4b58-9be4-124c37b7299e`) under the existing active fictional investigation item; did not reset existing care occurrences or the consumed setup-send reservation. This is retained synthetic test data, not a production care schedule change.
+- REPORT preview opened the existing private upload form. Previously submitted fixture content was rejected; distinct existing fictional-source.png was accepted, producing REVIEW_PENDING with clinician ownership. This fixture contains software-only instructions, no lab findings; it verifies file transport/review mechanics, not clinical report interpretation.
+- Assigned clinician session prepared the private original link, then recorded an explicit software review. SQL readback confirmed CLOSED, next owner none, exactly one verified evidence and one review for the dedicated occurrence. Simulated delivery alone never closed the task.
+- 37 automated tests passed, including worker/callback boundary fixtures and deterministic reply safeguards. Static build contains 16 reviewed browser assets; server transport/orchestration and test/credential files remain excluded.
+- No schema migration or live WhatsApp/SMS enrollment/gate changes. Simulation permission/transcript is memory-only; real care records are database-backed. Server worker and status-handler contracts are not deployed or wired to a durable repository. Live provider acceptance remains blocked by suspension and the activation work in MESSAGING_REHEARSAL.md.
