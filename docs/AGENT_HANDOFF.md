@@ -50,3 +50,7 @@ Incoming WhatsApp receipts are technical records without task conversation mappi
 ## Completion and reporting discipline
 
 For each change, document the trigger, resulting behavior, relevant authorization checks, persistence and verification. State remaining limitations plainly. Update the current backlog and release evidence; publish source to the intended team repository and verify the resulting commit. Do not claim a local build is deployed. Keep Drive's handoff in sync, reusing the existing handoff file rather than accumulating copies. A new human should be able to identify the next action without needing this chat.
+
+## Latest independent engineering increment
+
+Read bucket-1-delivery.md before continuing. Review summary and human intake are implemented; do not duplicate them. Delivery foundations remain disabled, with no external worker or live adapters. Policy-dependent metrics and multi-action conversation still need discussion. Migration files are reconstructed and operations changes recorded, but historical baseline adoption and clean restore remain incomplete. Keep these limits visible in status reports.

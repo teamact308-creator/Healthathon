@@ -116,7 +116,7 @@ The app stores the current session in tab-scoped session storage and refreshes e
 
 ## 8. Verification and change discipline
 
-Observed checks include live PDF-only and image/text extraction, English/Hindi transcription, clinician-only activation, independent recurring tasks, automatic job runs, reminder/occurrence retry protection, medication states, synthetic data import/deduplication, real private PDF/image review and role denial. Build and six local regression tests passed. See [the verification record](docs/release-verification.md) for what was and was not tested.
+Observed checks include live PDF-only and image/text extraction, English/Hindi transcription, clinician-only activation, independent recurring tasks, automatic job runs, reminder/occurrence retry protection, medication states, synthetic data import/deduplication, real private PDF/image review and role denial. Build and local regression tests passed (21 after the independent engineering increment). See [the verification record](docs/release-verification.md) for what was and was not tested.
 
 `database/verify.py` is a **mutating legacy integration test**, not a harmless health check. `database/verify-capture.sql` creates isolated rollback fixtures and still needs a privileged test connection. `database/check-whatsapp-send.py send` can cause a real external message; it is not a routine regression command. The singleton setup send has already been consumed. Read the operations runbook before running any of these.
 
@@ -131,3 +131,7 @@ A [self-contained handoff bundle](https://drive.google.com/file/d/1J12cyyTjLL2C7
 ## Final judges’ presentation alignment
 
 The [prioritized backlog](docs/mvp-and-product-review.md) now maps the submitted Team ACT deck to explicit J01–J08 work items and the five slide-7 release gates. The main unmet gate is app/WhatsApp shared execution state. Next priorities include exception intake, pre-consult summaries, KPI instrumentation, multi-action confirmation and longitudinal context. These are pending work, not newly implemented features.
+
+## Independent engineering increment
+
+The [bucket 1 delivery record](docs/bucket-1-delivery.md) describes the new care-team Review summary and Intake & issues screens, operational measures, atomic human evidence association, client processing diagnostics, disabled-channel delivery foundations, pagination/session/chart fixes and verification. There are now 21 local tests and 13 static browser assets. External care dispatch remains disabled. Historical migration adoption and an isolated clean restore remain pending.

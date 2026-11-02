@@ -1,0 +1,3 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {chart} from './capture-ui.js';
+test('chart spaces irregular observations by time and labels units',()=>{const html=chart([{observed_at:'2026-11-01T00:00:00Z',value:100},{observed_at:'2026-11-01T01:00:00Z',value:110},{observed_at:'2026-11-01T10:00:00Z',value:120}]);assert.match(html,/points="40,145 94,90 580,35"/);assert.match(html,/Observation time/);assert.match(html,/mg\/dL/);});
+test('single and empty observations render without invalid numeric geometry',()=>{assert.match(chart([]),/No readings/);const html=chart([{observed_at:'2026-11-01T00:00:00Z',value:100}]);assert.ok(!/NaN|Infinity/.test(html));assert.match(html,/<circle/);});

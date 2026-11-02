@@ -69,3 +69,7 @@ For database regressions, preserve history and inspect transaction boundaries be
 ## Maintaining documentation
 
 Update README status, the backlog and release evidence whenever scope changes. Keep endpoint details in API_AND_INTEGRATIONS.md, data invariants in database/README.md and architecture in ARCHITECTURE.md. Record what was observed separately from what is planned. Republish the Drive handoff derivative after material changes; preserve its file ID rather than uploading dated duplicates. See DRIVE_PUBLISHING.md for locations.
+
+## Operations release additions
+
+Run `node scripts/check-build.mjs` after build. `database/check-operations.py` performs role/read checks by default; `--write-fixture` adds and acknowledges a labelled synthetic note. `database/verify-operations.sql` tests operations/integrity in a rolled-back admin transaction. New operations migrations are applied; do not rerun standalone SQL. The reconstructed connected-baseline migration is already present in live schema but not yet adopted into remote migration history; confirmation expired. An isolated environment is required to prove the complete rebuild/restore chain. Do not blindly run migration push against existing development.

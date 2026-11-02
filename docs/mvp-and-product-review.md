@@ -2,6 +2,12 @@
 
 Updated 2 November 2026 after reviewing the final Team ACT presentation submitted to the judges (PDF and PPTX). Documentation update only: the newly listed gaps have not been implemented. This replaces the earlier fixture-only inventory. Capabilities below distinguish implemented web workflows from transport tests and production readiness. Reuse the existing Supabase identity, tables, RPC workflow, private storage, outbox, GitHub repo and Vercel frontend.
 
+## Independent engineering delivery update
+
+See [bucket 1 delivery and verification](bucket-1-delivery.md) for this increment and its limits. Implemented: source-linked date-bounded clinician/coordinator review summary, descriptive operational measures, human unmatched-intake queue with audited decisions and atomic confirmed evidence association, sanitized processing issue tracking, disabled-channel delivery reservation/callback foundations, task/audit pagination, session and chart fixes, expanded tests and build checks. Channel setup and clean rebuild are not claimed complete.
+
+J01 remains blocked at live channel integration despite new delivery foundations. J02's manual web association/exception foundation is implemented; automated messaging interpretation/correction remains pending. J03 has expanded isolated/REST/browser evidence but the cross-channel release gate remains NOT MET. J04's deterministic operational digest is implemented; longitudinal physiology will extend it under J07. J05 has descriptive counts/closure timing and event foundations, while policy-defined on-time/participation metrics and pilot outcomes remain pending. J06/J07 are unchanged pending discussion. Historical migration adoption and clean restore still require follow-up.
+
 ## Working now
 
 - Hosted app: https://healthathon.vercel.app/ . Team repo: https://github.com/teamact308-creator/Healthathon . Four development roles, patient scoping, caregiver consent, audit history and shared persistence remain in use.
@@ -44,7 +50,7 @@ Build verified phone-to-patient enrollment, channel consent/opt-out, an appropri
 
 ### J02 — P0 — Confirmation, ambiguity and unmatched intake
 
-**Status:** partial web foundations; general inbox/matching missing. **Sources:** slides 4–6. **Maps to:** work areas 3/7/8, M05/M09/M10/M12.
+**Status:** manual web intake/association, history and atomic evidence linkage implemented; messaging ambiguity proposals and general automatic matching remain pending. **Sources:** slides 4–6. **Maps to:** work areas 3/7/8, M05/M09/M10/M12.
 
 Keep unmatched documents and ambiguous messages in a private review queue. Show source, possible task associations and a human correction/assignment action. Clarify medication completion: taken can satisfy completion; missed/delayed/skipped are recorded outcomes requiring their configured operational resolution, not successful adherence. Make dependencies and next-owner handoffs explicit for the investigation path; a general dependency editor can follow later.
 
@@ -58,13 +64,13 @@ Keep unmatched documents and ambiguous messages in a private review queue. Show 
 
 ### J04 — P1 — Pre-consult review summary
 
-**Status:** shared histories/queue exist; assembled digest missing. **Sources:** slides 2–3, 5, 8. **Maps to:** work area 8, M11.
+**Status:** source-linked date-bounded operational digest implemented in bucket 1; longitudinal context and further clinician usability validation remain. **Sources:** slides 2–3, 5, 8. **Maps to:** work area 8, M11.
 
 **Done when:** a date-bounded patient summary assembles completed/unresolved actions, pending evidence, stale monitoring availability and next owner; each statement links to its underlying source/event and indicates missing data. Clinician can move directly to review/correction. Start with deterministic aggregation; an AI-written summary is not required. No clinical interpretation or unsupported assertion that physician time was saved.
 
 ### J05 — P1 — KPI definitions and instrumentation
 
-**Status:** operational counts exist; defined KPI reporting missing. **Sources:** slides 7–8. **Maps to:** work area 8, M11/M12.
+**Status:** descriptive cohort closure, closure timing and intervention/failure counts implemented; policy-defined KPI calculations and pilot measurements remain pending. **Sources:** slides 7–8. **Maps to:** work area 8, M11/M12.
 
 Define cohort, expected window, numerator/denominator, timezone and cancellation/supersession/reopening treatment for closure rate. Capture median time-to-close, stale loops, evidence completeness, response/participation, AI rejection/override and unresolved processing failures. Define manual touches and review-readiness measures with an explicit event source.
 
@@ -115,7 +121,7 @@ Define cohort, expected window, numerator/denominator, timezone and cancellation
 - M08 / AC-05: synthetic import, time series and recent-data gate work; broader continuity automation pending.
 - M09 / AC-06: web file/evidence/human-review loop works; matching and WhatsApp files pending.
 - M10 / AC-09: review/reopen, consented routing, snooze/cancel work; richer reassignment/overrides pending.
-- M11 / AC-01/10: shared four-domain views, event history, source/model provenance and operational counts improved. Multi-patient panel and richer clinician digest pending.
+- M11 / AC-01/10: shared four-domain views, event history, source/model provenance and operational counts improved. Multi-patient panel and longitudinal enrichment of the implemented operational digest remain pending.
 - M12 / AC-12: hosted demo, regression tests and targeted unsafe extraction test verified. Full acceptance/safety gate remains incomplete.
 
 ## Full application beyond this MVP

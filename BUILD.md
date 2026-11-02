@@ -30,3 +30,7 @@ See `database/upgrade-mvp.sql` for the consolidated one-time upgrade from the ex
 ## Further handoff documentation
 
 Start with [README.md](README.md), then [architecture](docs/ARCHITECTURE.md), [API contracts](docs/API_AND_INTEGRATIONS.md), [operations](docs/SETUP_AND_OPERATIONS.md) and [takeover brief](docs/AGENT_HANDOFF.md). The [database guide](database/README.md) explains schema and reconstruction limits. Requirements status and observed verification remain separate in the linked backlog and release notes.
+
+## Operations increment walkthrough
+
+Sign in as Clinician/Coordinator and open Review summary. Assemble a UTC period, inspect cohort definitions and open a task's original evidence. Open Intake & issues to inspect unassigned sources and processing issues. As Patient, submit a fictional note or report without a task; the team proposes an association with a reason; Patient confirms a file match; the existing verified submission requires clinician review. Acknowledging a note never completes care. See docs/bucket-1-delivery.md for testing, definitions and limits.

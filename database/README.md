@@ -63,3 +63,9 @@ The seed expects four fictional development identities/profiles and refuses dupl
 See ../docs/API_AND_INTEGRATIONS.md for RPC arguments, Edge Function payloads and secret names. See ../docs/release-verification.md for observed results. `verify-capture.sql` uses a rolled-back fixture transaction and needs an administrative context. `verify.py` is a legacy mutating shared-fixture test and is not safe as a routine smoke test of the current prepared demo. Provider diagnostic scripts differ from live sends; inspect their action flags first.
 
 Before changing schema: inspect current live objects, preserve data/history, record a migration, verify unauthorized roles as well as the happy path, and update these docs. Before real data: complete enrollment/privacy policy, operational monitoring, retention, backups/restore and security review. Current source and successful synthetic checks do not establish production readiness.
+
+## Operations schema increment
+
+`operations.sql` and `intake-integrity.sql` are applied and recorded migrations. Four new RLS tables hold intake items/history, sanitized processing events and delivery jobs. Three private transport tables hold disabled channel gates, future enrollment references and receipt deduplication. Browser writes remain checked RPCs. Evidence association is checked atomically against the current reviewed intake match. No caregiver clinical intake access or external sends were enabled.
+
+`supabase/migrations/` now contains the five original recorded migrations, a consolidated connected baseline and the two applied operations migrations. The connected baseline was previously applied outside managed history; adoption confirmation expired and remains pending. Do not push/replay it onto development. Original baseline copies here remain historical references. Clean-room rebuild is not yet verified. See ../docs/bucket-1-delivery.md.

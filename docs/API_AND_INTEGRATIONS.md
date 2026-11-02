@@ -83,3 +83,13 @@ Supabase supplies runtime project variables such as SUPABASE_URL and SUPABASE_SE
 WhatsApp needs approved care templates, supported sender setup, consent and patient/task mapping, delivery callbacks, retries and operational error handling. Incoming messages/media must be connected to explicit confirmed workflow actions. SMS still needs provider/routing/registration decisions. No SMS fallback currently runs. Vendor CGM and clinical systems are not connected; CSV/sample observations are the current data path.
 
 A clone must update CORS origins and the inbound function's fixed external webhook URL as well as project configuration. Test a newly deployed endpoint with its real public URL before accepting signature checks. Do not loosen authorization to accommodate a different preview domain.
+
+## Operations increment RPCs
+
+- `operational_snapshot(p_patient,p_from,p_to)` — assigned clinician/coordinator only; period at most 91 elapsed days (UI offers 90 dates), JSON arrays/source records for deterministic reporting. No browser write and no clinical inference.
+- `submit_intake(p_patient,p_label,p_text,p_path,p_event)` — assigned patient; note and/or patient-scoped care-evidence path; stable event key; returns intake id.
+- `resolve_intake(p_intake,p_action,p_loop,p_reason)` — team match/dismiss/acknowledge; patient finish acknowledgment after verified evidence. Reason required. Matching does not change care state. Evidence trigger validates current association and resolves intake atomically.
+- `record_processing_failure(p_patient,p_operation,p_code,p_event)` — scoped user, bounded allowlisted operation/code and daily volume; no raw body/exception data.
+- `resolve_processing_failure(p_id)` — assigned team investigation marker, with actor/time.
+
+Private service-only `prepare_delivery`, `claim_delivery` and `delivery_result` implement outbox-linked durable reservations and receipt handling. They are internal database functions, not public browser endpoints. Both channel gates remain disabled; no live provider worker or enrollment is provisioned. See the bucket 1 delivery record before interpreting these foundations as a connected messaging workflow.
