@@ -1,5 +1,7 @@
-# WholeCare authenticated demo endpoint
+# voice-transcribe
 
-Deployed in wholecare-diabetes-dev with gateway JWT verification on. The handler additionally verifies Supabase Auth and assigned-patient membership. Browser origins are restricted to healthathon.vercel.app and localhost:4173. Server credentials stay in runtime secrets; requests do not log document/audio bodies or credentials.
+Updated 2 November 2026.
 
-See BUILD.md and docs/release-verification.md for behavior, tests and limitations. The app uses fictional data only. plan-extract makes structured proposals for clinician review with model/source provenance. report-submit validates file bytes and binds a private file to its due test task; only the service role can invoke the registration helper. voice-transcribe supports uploaded English/Hindi recordings and returns text for explicit human confirmation without task mutation.
+Assigned patient/clinician audio transcription. Accepts patient_id, source_path and language en/hi. Supported private audio is limited to 8 MB. Returns editable text with requires_confirmation=true. The user chooses task/status and confirms separately; transcription alone never changes the task.
+
+See [API contracts](../../../docs/API_AND_INTEGRATIONS.md) for payloads, authentication and secret names; [operations](../../../docs/SETUP_AND_OPERATIONS.md) for deployment and test effects; and [release verification](../../../docs/release-verification.md) for observed checks and limitations. Source in this directory is authoritative for exact validation. Provider secrets belong in Supabase, never in this file or browser code. Use fictional project data only.

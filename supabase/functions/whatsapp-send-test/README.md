@@ -1,7 +1,7 @@
-# One-shot outgoing WhatsApp template test
+# whatsapp-send-test
 
-POST whatsapp-send-test with authenticated clinician session and JSON {"action":"send"} or {"action":"status"}. Values come only from TWILIO_ACCOUNT_SID, TWILIO_API_KEY_SID, TWILIO_API_KEY_SECRET, TWILIO_WHATSAPP_FROM, TWILIO_WHATSAPP_TO and TWILIO_WHATSAPP_CONTENT_SID. No arbitrary recipient, content or clinical data is accepted. The configured trial template is the package-delivery example, not a care reminder.
+Updated 2 November 2026.
 
-A backend-only twilio_test_sends row reserves the singleton whatsapp_trial_v1 test before any sending attempt. Repeated calls suppress another submission, including on ambiguous outcomes. Rejected or unknown attempts need deliberate operator reconciliation; do not delete the reservation blindly. Status reads query Twilio without sending another message. Client roles have no table access. The function verifies Auth and my_context membership before privileged operations.
+Clinician-only fixed-recipient/template setup test. POST action=status inspects the existing reservation; action=send can initiate the singleton guarded attempt. The setup send has already been used and was delivered. Do not reset its reservation or blindly retry an uncertain provider result. The trial package-delivery template is a connectivity test, not a WholeCare care reminder. This endpoint accepts no arbitrary destination or message.
 
-Current verification: anonymous 401 and patient 403 passed. Configuration checks report invalid TWILIO_WHATSAPP_CONTENT_SID; sending is blocked before reservation and no message has been sent. Run python3 database/check-whatsapp-send.py send only for the authorized single test, then status to inspect delivery. Queued or accepted does not mean delivered.
+See [API contracts](../../../docs/API_AND_INTEGRATIONS.md) for payloads, authentication and secret names; [operations](../../../docs/SETUP_AND_OPERATIONS.md) for deployment and test effects; and [release verification](../../../docs/release-verification.md) for observed checks and limitations. Source in this directory is authoritative for exact validation. Provider secrets belong in Supabase, never in this file or browser code. Use fictional project data only.

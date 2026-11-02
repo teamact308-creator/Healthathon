@@ -26,3 +26,7 @@ The synthetic demo was exercised through this path. Completed examples remain in
 ## Reproduction
 
 See `database/upgrade-mvp.sql` for the consolidated one-time upgrade from the existing foundation/context schema; it is already applied on development. Deploy the source functions under `supabase/functions/` with their included deno.json. Secrets stay in Supabase, never browser code. See `docs/release-verification.md` for observed checks and limitations.
+
+## Further handoff documentation
+
+Start with [README.md](README.md), then [architecture](docs/ARCHITECTURE.md), [API contracts](docs/API_AND_INTEGRATIONS.md), [operations](docs/SETUP_AND_OPERATIONS.md) and [takeover brief](docs/AGENT_HANDOFF.md). The [database guide](database/README.md) explains schema and reconstruction limits. Requirements status and observed verification remain separate in the linked backlog and release notes.
