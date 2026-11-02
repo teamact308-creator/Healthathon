@@ -1,6 +1,6 @@
 # Bucket 1 delivery — independent engineering increment
 
-Updated 2 November 2026, Asia/Kolkata. This increment implements work that did not require new channel approvals or clinical/product policy. It does not complete the full MVP or enable real patient use. The submitted presentation remains an acceptance source; no requirement was waived.
+**Bucket 1 acceptance: complete. Updated 3 November 2026, Asia/Kolkata.** This increment implements work that did not require new channel approvals or clinical/product policy. It does not complete the full MVP or enable real patient use. The submitted presentation remains an acceptance source; no requirement was waived.
 
 ## Delivered
 
@@ -20,29 +20,35 @@ All association decisions have source/history. Evidence registration checks and 
 
 `messaging-core.mjs` provides provider-neutral dispatch control and fixture adapter tests: durable reservation before provider calls, concurrent claim suppression, explicit accepted vs delivered, duplicate/out-of-order callbacks, bounded safe-failure backoff and no automatic retry of uncertain sends.
 
-Database delivery jobs link to the existing outbox with patient identity constraints. Private service-only preparation/claim/result functions enforce disabled gates, verified consented enrollment, due/open task state and durable reservations. Receipt keys deduplicate callbacks; delivery cannot close a care task. Both channel gates are false; no enrollment or phone destination was added; no dispatch worker is scheduled. Real provider adapters, signed callback HTTP integration and live channel acceptance remain bucket 2. This foundation is tested with fixtures, not proof of live care-message delivery.
+Database delivery jobs link to the existing outbox with patient identity constraints. Private service-only preparation/claim/result functions enforce disabled gates, verified consented enrollment, due/open task state and durable reservations. Receipt keys deduplicate callbacks; delivery cannot close a care task. Both channel gates are false; no enrollment or phone destination was added; no dispatch worker is scheduled. The server-only Twilio WhatsApp/SMS transport adapter is implemented and tested with injected fixture HTTP responses. Enabling the worker, approved sender/template enrollment, signed callback HTTP activation and live channel acceptance remain bucket 2. This foundation is tested with fixtures, not proof of live care-message delivery.
 
 ### Processing visibility and application resilience
 
-Sanitized processing failures can be recorded without document text, credentials or provider response bodies. Assigned team sees issues and can mark investigation, retaining actor/time. This is client-observed telemetry, not comprehensive infrastructure monitoring.
+Sanitized processing failures can be recorded without document text, credentials or provider response bodies. Assigned team sees issues and can mark investigation, retaining actor/time. A separate assigned-team backend health RPC reports actual scheduler status/last run, outbox backlog and uncertain delivery reservations. Client failure records remain distinct from backend health; no claim of comprehensive production monitoring is made.
 
-Task lists and audit feed have pagination. Large loop/item/plan/evidence/outbox reads use deterministic server paging rather than silently accepting the first API page. The loader fails explicitly beyond 50,000 records. Existing recent activity (200), audit/plan/extraction (100) and observation (requested 2,000; provider row limits may reduce it) feeds remain bounded. Full historical paging/realtime and load testing remain unfinished.
+Task lists and audit feed have pagination. Large loop/item/plan/evidence/outbox reads use deterministic server paging rather than silently accepting the first API page. The loader fails explicitly beyond 50,000 records. Activity, audit, plan history, processing issues and observations can load older records in explicit increments, using deterministic timestamp/id cursors. Observations traverse provider row limits instead of silently truncating at the first page. Initial windows remain 200 activities, 100 audit/plan/extraction entries and 2,000 observations; a 50,000-record client safety cap is explicit. Realtime and large-scale pilot load validation remain full-product work.
 
 Keyboard focus and narrow-screen control wrapping were improved. Glucose charts position readings by actual timestamp and label units/time; a single reading remains visible. No clinical threshold or interpretation was added. Sign-in failure clears the prior local identity; concurrent refresh requests share one refresh; logout clears local state despite a network failure. Summary state is cleared on sign-out and stale async results cannot restore the previous identity's report.
 
 ### Test/build and migration maintenance
 
-- 23 local tests passed, covering workflow, reporting, chart geometry, session handling and messaging control.
+- 27 local tests passed, covering workflow, reporting, chart geometry, session handling and messaging control.
 - `database/verify-operations.sql` passed as an administrative rolled-back transaction. Includes RLS/role denial, intake idempotency, stale association rejection, atomic evidence linkage, disabled/unverified dispatch, duplicate claims and callback ordering. No provider calls.
 - `database/check-operations.py` passed authenticated REST checks: clinician/coordinator summary, patient/caregiver/anonymous/wrong-patient denial, invalid period/session, caregiver intake RLS and persisted synthetic note history. `--write-fixture` deliberately retains a labelled note; default mode is non-mutating beyond sign-in/session creation.
 - Browser verified clinician summary, source-record dialog, patient note intake and team acknowledgment/reload persistence. Synthetic test notes remain clearly labelled in history.
 - Static build passes with 13 allowlisted browser assets. A build-output check rejects backend/private artifacts. CI definition runs tests/build/output checks on pushes and pull requests; hosted execution status must be checked after publication.
 
-Five original migration files were recovered verbatim from recorded database history. A consolidated connected-baseline migration captures previously applied SQL without seed/Auth data. New operations and integrity migrations are recorded on the remote project and mirrored locally. Historical connected-baseline adoption is still pending: its metadata update required a connector confirmation that expired; it was not retried by resetting or replaying schema. There is no isolated Docker/Postgres/Supabase rebuild environment available here, so a clean restore was not claimed. Do not blindly push the migration chain onto the current project.
+Five original migration files were recovered verbatim from recorded history. The consolidated connected baseline was adopted into remote migration history after proving live/replayed application schema equality; no live schema or patient data was replayed. All nine local and remote migration versions now match.
+
+A PostgreSQL 17.11 installation and real pg_cron extension were used in two disposable Unix-socket-only clusters. All nine migrations applied from empty application schemas, synthetic fixture workflow/role tests passed, a custom-format pg_dump restored into the second fresh cluster, and the same tests passed after restore. Schema comparison covered columns/defaults, constraints, function source/security/grants, RLS policies/flags, indexes, triggers, table/schema grants and bucket configuration. Synthetic data counts matched after restore. Both temporary clusters were stopped and removed.
+
+**Scope of restore proof:** application SQL and synthetic records on real PostgreSQL/pg_cron, with minimal Auth/Storage SQL contracts. It does not restore or validate GoTrue identities/sessions, object-file bytes, Edge Function deployments, provider secrets or external channel services. Those service-level pilot recovery requirements remain in the full-build backlog, not an outstanding bucket 1 database drill.
+
+Reproducible runner: `python3 scripts/verify-rebuild.py --pg-bin <PostgreSQL-17-bin>`. Add `--live-snapshot <file>` to compare against an authorized metadata-only export using scripts/schema-snapshot.sql. See database-rebuild-evidence.json for hashes and observed checks. CI now includes the isolated rebuild/restore job as well as local tests/build.
 
 ## Remaining outside this increment
 
-Live WhatsApp/SMS setup, real provider adapters/callback activation and phone testing; policy definitions and broader multi-action conversation UX; structured longitudinal physiology; production enrollment, governance, vendor integrations and staffed response commitments. These remain in buckets 2–4. Backend observability beyond recorded client failures, large-scale performance, full accessibility audit and comprehensive failure/safety coverage also remain ongoing hardening work.
+Live WhatsApp/SMS setup, live provider/callback activation and phone testing; policy definitions and broader multi-action conversation UX; structured longitudinal physiology; production enrollment, governance, vendor integrations and staffed response commitments. These remain in buckets 2–4. Backend observability beyond recorded client failures, large-scale performance, full accessibility audit and comprehensive failure/safety coverage also remain ongoing hardening work.
 
 ## Reproduce and inspect
 
@@ -50,4 +56,17 @@ Run `npm test`, `npm run build`, `node scripts/check-build.mjs`. Read operations
 
 ## Release verification follow-up
 
-The hosted verification caught a schedule paging query using `id` instead of the table's `item_id` primary key. Corrected the query and added a workspace-loading contract regression test, bringing the local suite to 23 passing tests. A real private PDF completed unmatched intake → team association → patient verified submission → atomic intake resolution → clinician review → CLOSED; replay returned the same result. This deliberately reopened and re-closed a fictional current investigation and retained labelled source/evidence history. No AI or messaging provider was called.
+The hosted verification caught a schedule paging query using `id` instead of the table's `item_id` primary key. Corrected the query and added a workspace-loading contract regression test, bringing the local suite to 27 passing tests. A real private PDF completed unmatched intake → team association → patient verified submission → atomic intake resolution → clinician review → CLOSED; replay returned the same result. This deliberately reopened and re-closed a fictional current investigation and retained labelled source/evidence history. No AI or messaging provider was called.
+
+## Final completion checklist
+
+- Pre-consult summary and evidence/source drill-down: implemented and verified.
+- Descriptive operational measures and event foundations: implemented; policy-defined metrics remain bucket 3.
+- Messaging infrastructure and server transport adapter: implemented, disabled, fixture-tested; live activation remains bucket 2.
+- Unmatched intake, confirmation/rejection/correction safeguards and investigation handoffs: implemented and verified.
+- Failure handling, client diagnostics and actual backend health: implemented and verified.
+- Expanded regression/role/integration tests, historical pagination, mobile/focus/session/chart fixes: implemented and verified.
+- Migration history reconciliation, clean application-schema replay and synthetic dump/restore: passed.
+- Documentation and GitHub/Drive handoff: refreshed for this completed bucket.
+
+No bucket 1 acceptance item remains blocked. Full application readiness, broader clinical/product decisions and real-channel testing remain in buckets 2–4.

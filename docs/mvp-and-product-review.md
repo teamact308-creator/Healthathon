@@ -4,9 +4,9 @@ Updated 2 November 2026 after reviewing the final Team ACT presentation submitte
 
 ## Independent engineering delivery update
 
-See [bucket 1 delivery and verification](bucket-1-delivery.md) for this increment and its limits. Implemented: source-linked date-bounded clinician/coordinator review summary, descriptive operational measures, human unmatched-intake queue with audited decisions and atomic confirmed evidence association, sanitized processing issue tracking, disabled-channel delivery reservation/callback foundations, task/audit pagination, session and chart fixes, expanded tests and build checks. Channel setup and clean rebuild are not claimed complete.
+See [bucket 1 delivery and verification](bucket-1-delivery.md) for this increment and its limits. Implemented: source-linked date-bounded clinician/coordinator review summary, descriptive operational measures, human unmatched-intake queue with audited decisions and atomic confirmed evidence association, sanitized processing issue tracking, disabled-channel delivery reservation/callback foundations, task/audit pagination, session and chart fixes, expanded tests and build checks. Bucket 1 acceptance is complete, including migration reconciliation and isolated application-database rebuild/restore. Live channel setup remains pending.
 
-J01 remains blocked at live channel integration despite new delivery foundations. J02's manual web association/exception foundation is implemented; automated messaging interpretation/correction remains pending. J03 has expanded isolated/REST/browser evidence but the cross-channel release gate remains NOT MET. J04's deterministic operational digest is implemented; longitudinal physiology will extend it under J07. J05 has descriptive counts/closure timing and event foundations, while policy-defined on-time/participation metrics and pilot outcomes remain pending. J06/J07 are unchanged pending discussion. Historical migration adoption and clean restore still require follow-up.
+J01 remains blocked at live channel integration despite new delivery foundations. J02's manual web association/exception foundation is implemented; automated messaging interpretation/correction remains pending. J03 has expanded isolated/REST/browser evidence but the cross-channel release gate remains NOT MET. J04's deterministic operational digest is implemented; longitudinal physiology will extend it under J07. J05 has descriptive counts/closure timing and event foundations, while policy-defined on-time/participation metrics and pilot outcomes remain pending. J06/J07 are unchanged pending discussion. Historical baseline adoption and isolated application-database rebuild/restore passed. Full Supabase-service disaster recovery remains a pilot requirement.
 
 ## Working now
 
@@ -161,3 +161,7 @@ The stricter PRD remains the scope baseline where the older build plan deferred 
 - [Team copy: final PPTX](https://docs.google.com/presentation/d/1284lVJpcM60tKgHHjgRt_RBgfRh1VKkn/edit).
 
 The reviewed presentation's numbered sections 1–8 establish the references above. This update records gaps and proposed delivery order, not new implementation or a waiver of the PRD.
+
+## Bucket 1 closure — 3 November 2026
+
+Independent engineering acceptance is complete; see [delivery evidence](bucket-1-delivery.md). Nine migrations are reconciled and replay/restore tested. Twenty-seven local tests, scoped REST checks and browser verification cover this increment. History paging and server-only Twilio transport are implemented; both external-care channel gates remain disabled. Backend health shows scheduler/outbox/uncertain delivery status. Policy-dependent metrics, approved messaging activation, longitudinal context and real-user/pilot acceptance remain in buckets 2–4. This closure does not assert full MVP or production readiness.

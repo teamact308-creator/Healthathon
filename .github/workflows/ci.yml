@@ -16,3 +16,13 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: node scripts/check-build.mjs
+  database-rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install PostgreSQL and scheduler extension
+        run: |
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y postgresql-17 postgresql-17-cron
+      - name: Rebuild, exercise workflows and restore a fresh cluster
+        run: python3 scripts/verify-rebuild.py --pg-bin /usr/lib/postgresql/17/bin

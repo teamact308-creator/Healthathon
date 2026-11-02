@@ -15,7 +15,7 @@ Do not run seed or upgrade SQL as an application startup step. They are already 
 
 ## New environment: controlled reconstruction
 
-The repository records foundation SQL and a consolidated one-time upgrade, but the later live changes have not yet been reconciled into a complete managed migration history or proved by a clean restore. A fresh build is therefore a pending verification task, not a one-command guarantee.
+Nine ordered application migrations now match remote history. Replay from empty application schemas and synthetic pg_dump/restore passed on PostgreSQL 17.11 with real pg_cron and minimal local Auth/Storage SQL contracts. This verifies application database reconstruction, not provisioning or recovery of every Supabase service.
 
 Provision a separate Supabase project. Create development identities using supported Auth administration tools. Review the foundation/context/index/support SQL dependencies and seed expectations with database/README.md. The seed is for an empty fictional environment with the required four identities/profiles; it refuses duplicates. Apply the consolidated upgrade only after its foundation is present. Capture each step in managed migrations and test in a disposable project before declaring the new environment equivalent.
 
@@ -64,7 +64,7 @@ Rotate exposed provider credentials in their provider console, then update corre
 
 For failed/uncertain messaging, inspect the durable reservation and provider record before retrying. Never remove the singleton reservation to bypass the one-send setup guard. A real message or billing action needs an explicitly intended recipient/action.
 
-For database regressions, preserve history and inspect transaction boundaries before attempting a repair. Never replay the entire baseline or reset demo data merely to clear an error. Automated backup/restore drills, production monitoring, retention and migration reconciliation remain pending. Document the exact repair and verification rather than marking the whole system production-ready.
+For database regressions, preserve history and inspect transaction boundaries before attempting a repair. Never replay the entire baseline or reset demo data merely to clear an error. The isolated application database replay/restore drill passed. Full platform-service recovery drills, production monitoring and retention remain pilot work. Document the exact repair and verification rather than marking the whole system production-ready.
 
 ## Maintaining documentation
 
@@ -72,4 +72,8 @@ Update README status, the backlog and release evidence whenever scope changes. K
 
 ## Operations release additions
 
-Run `node scripts/check-build.mjs` after build. `database/check-operations.py` performs role/read checks by default; `--write-fixture` adds and acknowledges a labelled synthetic note. `database/verify-operations.sql` tests operations/integrity in a rolled-back admin transaction. New operations migrations are applied; do not rerun standalone SQL. The reconstructed connected-baseline migration is already present in live schema but not yet adopted into remote migration history; confirmation expired. An isolated environment is required to prove the complete rebuild/restore chain. Do not blindly run migration push against existing development.
+Run `node scripts/check-build.mjs` after build. `database/check-operations.py` performs role/read checks by default; `--write-fixture` adds and acknowledges a labelled synthetic note. `database/verify-operations.sql` tests operations/integrity in a rolled-back admin transaction. New operations migrations are applied; do not rerun standalone SQL. The connected baseline is adopted into remote history, and the isolated application database rebuild/restore runner passed. Do not blindly run migration push against existing development.
+
+## Bucket 1 completion update — 3 November 2026
+
+Current database reconstruction status: The connected baseline is adopted in remote history; all nine local/remote versions match. Clean application-schema replay, parity against live metadata, and a synthetic pg_dump/restore into a second PostgreSQL 17.11 cluster passed. The reproducible runner is scripts/verify-rebuild.py, with minimal local Auth/Storage SQL contracts and real pg_cron. It is not a full Supabase service/object-file/provider-secret recovery test. See docs/bucket-1-delivery.md (or bucket-1-delivery.md from within docs) and docs/database-rebuild-evidence.json for scope/evidence. History loading now uses incremental timestamp/id cursors, and operational_health adds team-only backend scheduler/outbox status. Twilio transport code is implemented but disconnected from live sending.

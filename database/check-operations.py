@@ -30,6 +30,8 @@ for role in ['patient','caregiver']:
 code,_=call('/rest/v1/rpc/operational_snapshot',{**params,'p_patient':str(uuid.uuid4())},c);assert code==403;print('PASS wrong-patient summary denied')
 code,_=call('/rest/v1/rpc/operational_snapshot',{**params,'p_from':params['p_to'],'p_to':params['p_from']},c);assert code>=400;print('PASS invalid report period denied')
 code,_=call('/rest/v1/rpc/operational_snapshot',params,'expired-invalid-token');assert code==401;print('PASS invalid session denied')
+code,health=call('/rest/v1/rpc/operational_health',{'p_patient':patient},c);assert code==200 and health['scheduler']['active'];print('PASS scoped backend scheduler health')
+code,_=call('/rest/v1/rpc/operational_health',{'p_patient':patient},sessions['patient']);assert code==403;print('PASS patient backend health denied')
 code,_=call('/rest/v1/rpc/operational_snapshot',params);assert code in (401,403);print('PASS anonymous summary denied')
 code,rows=call('/rest/v1/intake_items?select=id',None,sessions['caregiver']);assert code==200 and rows==[];print('PASS caregiver intake RLS')
 if args.write_fixture:

@@ -60,8 +60,12 @@ Storage MIME checks are not antivirus scanning. Abandoned uploads can remain pri
 
 Manual care-plan entry remains useful if extraction fails. A voice failure must leave the task unchanged. Failed report validation must not close a task. An uncertain provider send must not be blindly retried: the setup sender reserves its one permitted attempt before contacting Twilio. Database transactions and idempotency are the primary protection against double actions; browser disabling alone is insufficient.
 
-Before real use, finish enrollment and multi-patient controls, agreed recurrence/escalation policies, reliable task-linked delivery, privacy/retention operations, monitoring and restore drills. Reconcile migration history and prove a clean environment rebuild. See SETUP_AND_OPERATIONS.md before running database scripts.
+Before real use, finish enrollment and multi-patient controls, agreed recurrence/escalation policies, reliable task-linked delivery, privacy/retention operations, monitoring and restore drills. Application migration history is reconciled and an isolated application database rebuild/restore passed; full platform-service recovery remains to validate. See SETUP_AND_OPERATIONS.md before running database scripts.
 
 ## Operations increment
 
 `operations-model.mjs` calculates transparent current-state measures; `operations-ui.js` renders source-linked review and human intake. `operational_snapshot` scopes full-period data to the assigned care team rather than deriving metrics from recent feed limits. Intake registration is separate from care state, and an evidence trigger prevents stale association from binding to the wrong task. `messaging-core.mjs` and private transport tables/functions are disabled delivery foundations, not a running channel worker. See bucket-1-delivery.md for exact limitations.
+
+## Bucket 1 completion update — 3 November 2026
+
+Current database reconstruction status: The connected baseline is adopted in remote history; all nine local/remote versions match. Clean application-schema replay, parity against live metadata, and a synthetic pg_dump/restore into a second PostgreSQL 17.11 cluster passed. The reproducible runner is scripts/verify-rebuild.py, with minimal local Auth/Storage SQL contracts and real pg_cron. It is not a full Supabase service/object-file/provider-secret recovery test. See docs/bucket-1-delivery.md (or bucket-1-delivery.md from within docs) and docs/database-rebuild-evidence.json for scope/evidence. History loading now uses incremental timestamp/id cursors, and operational_health adds team-only backend scheduler/outbox status. Twilio transport code is implemented but disconnected from live sending.

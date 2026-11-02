@@ -43,7 +43,7 @@ Inspect a test's side effects before running it. Some legacy scripts mutate the 
 
 ## Known engineering limitations
 
-The app selects one assigned patient and has bounded history reads. No continuous data stream or full pagination exists. Recurrence is once/daily with explicit times; complex recurrence, broader timezone/DST handling and configurable policy remain pending. Upload cleanup/retention, antivirus coverage, managed migration reconciliation and restore drills are unfinished. Current tests include synthetic and manual/provider evidence; they are not a full automated end-to-end/concurrency/security certification.
+The app selects one assigned patient. History can be incrementally paged to an explicit client safety cap; there is no continuous data stream. Recurrence is once/daily with explicit times; complex recurrence, broader timezone/DST handling and configurable policy remain pending. Upload cleanup/retention, antivirus coverage and full platform recovery remain unfinished; application migration reconciliation and synthetic database restore are verified. Current tests include synthetic and manual/provider evidence; they are not a full automated end-to-end/concurrency/security certification.
 
 Incoming WhatsApp receipts are technical records without task conversation mapping. No care-message delivery worker or SMS fallback runs. The single trial package-delivery setup message must not be presented as a clinical reminder. PDF/image validation and clinician review do not imply AI report interpretation.
 
@@ -53,4 +53,8 @@ For each change, document the trigger, resulting behavior, relevant authorizatio
 
 ## Latest independent engineering increment
 
-Read bucket-1-delivery.md before continuing. Review summary and human intake are implemented; do not duplicate them. Delivery foundations remain disabled, with no external worker or live adapters. Policy-dependent metrics and multi-action conversation still need discussion. Migration files are reconstructed and operations changes recorded, but historical baseline adoption and clean restore remain incomplete. Keep these limits visible in status reports.
+Read bucket-1-delivery.md before continuing. Review summary and human intake are implemented; do not duplicate them. Delivery foundations remain disabled, with no external worker or live adapters. Policy-dependent metrics and multi-action conversation still need discussion. All nine migration versions match remote history; historical baseline adoption and isolated application database replay/restore passed. Keep these limits visible in status reports.
+
+## Bucket 1 completion update — 3 November 2026
+
+Current database reconstruction status: The connected baseline is adopted in remote history; all nine local/remote versions match. Clean application-schema replay, parity against live metadata, and a synthetic pg_dump/restore into a second PostgreSQL 17.11 cluster passed. The reproducible runner is scripts/verify-rebuild.py, with minimal local Auth/Storage SQL contracts and real pg_cron. It is not a full Supabase service/object-file/provider-secret recovery test. See docs/bucket-1-delivery.md (or bucket-1-delivery.md from within docs) and docs/database-rebuild-evidence.json for scope/evidence. History loading now uses incremental timestamp/id cursors, and operational_health adds team-only backend scheduler/outbox status. Twilio transport code is implemented but disconnected from live sending.

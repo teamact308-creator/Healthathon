@@ -22,3 +22,12 @@ test('workspace fetch pages schedules by their item primary key and includes ope
  };
  await signIn('fixture','fixture');const w=await loadWorkspace();assert.equal(w.role,'Clinician');assert.equal(w.state.patient.id,'fixture-patient');assert.deepEqual(w.state.intake,[]);assert.ok(paths.some(p=>p.includes('/processing_events')));
 });
+test('observation reads traverse provider row limits using stable time/id cursors',async()=>{
+ let observations=0;globalThis.fetch=async(url)=>{
+  if(url.includes('/auth/'))return response({access_token:'fixture',refresh_token:'fixture',expires_at:Date.now()/1000+3600});
+  if(url.includes('my_context'))return response({memberships:[{patient_id:'fixture-patient',role:'patient'}]});
+  if(url.includes('/glucose_observations')){observations++;if(observations===1)return response(Array.from({length:500},(_,i)=>({id:String(i).padStart(36,'0'),observed_at:'2026-11-02T10:00:00Z',value:110})));assert.ok(decodeURIComponent(url).includes('and(observed_at.eq.2026-11-02T10:00:00Z,id.lt.'));return response([{id:'last',observed_at:'2026-11-01T10:00:00Z',value:100}]);}
+  return response([]);
+ };
+ await signIn('fixture','fixture');const w=await loadWorkspace();assert.equal(observations,2);assert.equal(w.state.observations.length,501);
+});

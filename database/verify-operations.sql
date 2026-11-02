@@ -6,6 +6,7 @@ do $$declare patient uuid;patient_user uuid;clinician uuid;caregiver uuid;i uuid
  select user_id into caregiver from private.memberships where patient_id=patient and role='caregiver' and active limit 1;
  if patient is null or clinician is null then raise exception 'Synthetic identity fixtures required';end if;
  perform set_config('request.jwt.claim.sub',patient_user::text,true);
+ begin perform public.operational_health(patient);raise exception 'Patient read backend health';exception when insufficient_privilege then null;end;
  i:=public.submit_intake(patient,'Rollback fixture','Unmatched note',null,'6bd6724a-4226-4108-b09a-a064062e3a52');
  j:=public.submit_intake(patient,'Rollback fixture','Unmatched note',null,'6bd6724a-4226-4108-b09a-a064062e3a52');
  if i<>j then raise exception 'Duplicate intake';end if;
@@ -14,6 +15,7 @@ do $$declare patient uuid;patient_user uuid;clinician uuid;caregiver uuid;i uuid
  begin perform public.resolve_intake(i,'acknowledge',null,'Patient cannot resolve');raise exception 'Patient resolved team note';exception when insufficient_privilege then null;end;
  perform public.record_processing_failure(patient,'report','timeout',gen_random_uuid());
  perform set_config('request.jwt.claim.sub',clinician::text,true);
+ result:=public.operational_health(patient);if result#>>'{scheduler,active}' is distinct from 'true' then raise exception 'Scheduler configuration missing from health snapshot';end if;
  result:=public.operational_snapshot(patient,now()-interval '7 days',now());
  if jsonb_array_length(result->'intake')<1 then raise exception 'Summary lost intake';end if;
  result:=public.resolve_intake(i,'acknowledge',null,'Read the source; no care task changed');

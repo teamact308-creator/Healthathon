@@ -93,3 +93,7 @@ A clone must update CORS origins and the inbound function's fixed external webho
 - `resolve_processing_failure(p_id)` — assigned team investigation marker, with actor/time.
 
 Private service-only `prepare_delivery`, `claim_delivery` and `delivery_result` implement outbox-linked durable reservations and receipt handling. They are internal database functions, not public browser endpoints. Both channel gates remain disabled; no live provider worker or enrollment is provisioned. See the bucket 1 delivery record before interpreting these foundations as a connected messaging workflow.
+
+## Completed bucket 1 additions
+
+`operational_health(p_patient)` is assigned-clinician/coordinator only, returning sanitized scheduler execution status, channel gates, outbox/failure counts and uncertain reservations. It exposes no message content, destinations or raw SQL/provider errors. `twilio-adapter.mjs` is server-only, uses fixed Twilio endpoints, approved configured content and an injected verified-recipient resolver; it is not part of the browser build and has no scheduled sender. History reads now use stable time/id cursor paging.

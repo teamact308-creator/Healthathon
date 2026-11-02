@@ -77,7 +77,7 @@ WhatsApp currently records minimal technical inbound receipts. It does **not** p
 
 The main gaps to the full MVP are task-linked WhatsApp care messaging and appropriate approved templates, channel consent/opt-out and verified patient mapping, WhatsApp file/voice intake, fuller multilingual interaction, richer monitoring-continuity automation, and broader end-to-end failure/safety coverage.
 
-The full application additionally needs real onboarding and staff/clinic administration, patient selection, configurable workflows and policies, reliable delivery workers/retries/dead letters, provider callbacks, operational monitoring, pagination/realtime behavior, retention/deletion/export, orphan-file cleanup, migration/restore verification, selected real device/lab/EHR integrations and a reviewed real-patient governance model. The database deliberately enforces synthetic patient/observation data; this is not ready to accept real patient records.
+The full application additionally needs real onboarding and staff/clinic administration, patient selection, configurable workflows and policies, reliable delivery workers/retries/dead letters, provider callbacks, operational monitoring, large-scale data access/realtime behavior, retention/deletion/export, orphan-file cleanup, full platform backup/recovery verification, selected real device/lab/EHR integrations and a reviewed real-patient governance model. The database deliberately enforces synthetic patient/observation data; this is not ready to accept real patient records.
 
 The detailed work packages and acceptance mapping are in [the canonical backlog](docs/mvp-and-product-review.md). Do not equate “web feature implemented” with “all channels implemented” or “production ready.” No readiness percentage is asserted.
 
@@ -120,7 +120,7 @@ Observed checks include live PDF-only and image/text extraction, English/Hindi t
 
 `database/verify.py` is a **mutating legacy integration test**, not a harmless health check. `database/verify-capture.sql` creates isolated rollback fixtures and still needs a privileged test connection. `database/check-whatsapp-send.py send` can cause a real external message; it is not a routine regression command. The singleton setup send has already been consumed. Read the operations runbook before running any of these.
 
-Before changing the schema, inspect the live schema and migration history. `database/upgrade-mvp.sql` is an already-applied, one-time upgrade, not an idempotent startup command. Managed migration history still needs reconciliation and clean rebuild/restore testing before a real pilot. Never re-run it blindly on development.
+Before changing the schema, inspect the live schema and migration history. `database/upgrade-mvp.sql` is an already-applied, one-time upgrade, not an idempotent startup command. All nine application migrations are reconciled and clean replay/synthetic dump-restore testing passed. Full platform-service recovery remains a pilot requirement. Never re-run it blindly on development.
 
 When changing behavior, update this README's summary, the relevant reference/runbook, the backlog and verification evidence in the same change. Refresh the Drive handoff after the GitHub change is verified. Document unknowns rather than filling them with assumptions.
 
@@ -134,4 +134,4 @@ The [prioritized backlog](docs/mvp-and-product-review.md) now maps the submitted
 
 ## Independent engineering increment
 
-The [bucket 1 delivery record](docs/bucket-1-delivery.md) describes the new care-team Review summary and Intake & issues screens, operational measures, atomic human evidence association, client processing diagnostics, disabled-channel delivery foundations, pagination/session/chart fixes and verification. There are now 23 local tests and 13 static browser assets. External care dispatch remains disabled. Historical migration adoption and an isolated clean restore remain pending.
+The [bucket 1 delivery record](docs/bucket-1-delivery.md) describes the new care-team Review summary and Intake & issues screens, operational measures, atomic human evidence association, client processing diagnostics, disabled-channel delivery foundations, pagination/session/chart fixes and verification. There are now 27 local tests and 13 static browser assets. External care dispatch remains disabled. Historical migration adoption and the isolated application-database rebuild/restore drill are now complete; see the delivery record for platform scope.
