@@ -134,4 +134,4 @@ The [prioritized backlog](docs/mvp-and-product-review.md) now maps the submitted
 
 ## Independent engineering increment
 
-The [bucket 1 delivery record](docs/bucket-1-delivery.md) describes the new care-team Review summary and Intake & issues screens, operational measures, atomic human evidence association, client processing diagnostics, disabled-channel delivery foundations, pagination/session/chart fixes and verification. There are now 21 local tests and 13 static browser assets. External care dispatch remains disabled. Historical migration adoption and an isolated clean restore remain pending.
+The [bucket 1 delivery record](docs/bucket-1-delivery.md) describes the new care-team Review summary and Intake & issues screens, operational measures, atomic human evidence association, client processing diagnostics, disabled-channel delivery foundations, pagination/session/chart fixes and verification. There are now 22 local tests and 13 static browser assets. External care dispatch remains disabled. Historical migration adoption and an isolated clean restore remain pending.

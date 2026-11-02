@@ -32,7 +32,7 @@ Keyboard focus and narrow-screen control wrapping were improved. Glucose charts 
 
 ### Test/build and migration maintenance
 
-- 21 local tests passed, covering workflow, reporting, chart geometry, session handling and messaging control.
+- 22 local tests passed, covering workflow, reporting, chart geometry, session handling and messaging control.
 - `database/verify-operations.sql` passed as an administrative rolled-back transaction. Includes RLS/role denial, intake idempotency, stale association rejection, atomic evidence linkage, disabled/unverified dispatch, duplicate claims and callback ordering. No provider calls.
 - `database/check-operations.py` passed authenticated REST checks: clinician/coordinator summary, patient/caregiver/anonymous/wrong-patient denial, invalid period/session, caregiver intake RLS and persisted synthetic note history. `--write-fixture` deliberately retains a labelled note; default mode is non-mutating beyond sign-in/session creation.
 - Browser verified clinician summary, source-record dialog, patient note intake and team acknowledgment/reload persistence. Synthetic test notes remain clearly labelled in history.
@@ -47,3 +47,7 @@ Live WhatsApp/SMS setup, real provider adapters/callback activation and phone te
 ## Reproduce and inspect
 
 Run `npm test`, `npm run build`, `node scripts/check-build.mjs`. Read operations/API/database documentation before live scripts. The operations SQL test needs administrative access and rolls back. `python3 database/check-operations.py` needs locally authorized demo credentials; append `--write-fixture` only when deliberately retaining a synthetic note. Do not run the legacy mutating verifier or reset the consumed Twilio setup-send reservation.
+
+## Release verification follow-up
+
+The hosted verification caught a schedule paging query using `id` instead of the table's `item_id` primary key. Corrected the query and added a workspace-loading contract regression test, bringing the local suite to 22 passing tests. A real private PDF completed unmatched intake → team association → patient verified submission → atomic intake resolution → clinician review → CLOSED; replay returned the same result. This deliberately reopened and re-closed a fictional current investigation and retained labelled source/evidence history. No AI or messaging provider was called.
