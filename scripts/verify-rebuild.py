@@ -4,6 +4,7 @@ Platform Auth/Storage table/function contracts are minimal local fixtures, not r
 """
 import argparse,json,os,pathlib,shutil,subprocess,tempfile,time
 root=pathlib.Path(__file__).resolve().parent.parent
+(root/'.local').mkdir(exist_ok=True)
 parser=argparse.ArgumentParser();parser.add_argument('--pg-bin',default='/opt/homebrew/opt/postgresql@17/bin');parser.add_argument('--live-snapshot');args=parser.parse_args()
 pg=pathlib.Path(args.pg_bin);report={'postgres_version':None,'migrations':[],'checks':[],'platform_scope':'Minimal Auth/Storage SQL contracts; real PostgreSQL and pg_cron. No GoTrue, object bytes, Edge Functions or external services restored.'}
 for binary in ['initdb','pg_ctl','psql','pg_dump','pg_restore']:
@@ -53,7 +54,7 @@ try:
  after=sql(second,"select (select count(*) from public.care_loops),(select count(*) from public.patients),(select count(*) from public.glucose_observations);")
  if before!=after:raise RuntimeError('Restored synthetic data counts differ')
  report['checks'].append('dump/restore preserves schema, grants and synthetic fixture counts')
- report['status']='passed';print(json.dumps(report,indent=2));(root/'.local/rebuild-verification.json').write_text(json.dumps(report,indent=2))
+ report['status']='passed';(root/'.local/rebuild-verification.json').write_text(json.dumps(report,indent=2));print(json.dumps(report,indent=2))
 finally:
  for d in reversed(clusters):
   try:run('pg_ctl',['-D',d,'-m','fast','-w','stop'])
