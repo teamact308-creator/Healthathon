@@ -16,9 +16,9 @@ Updated 2 November 2026 after the connected demo increment. This replaces the ea
 
 ## The eight requested work areas
 
-1. **Plan creation/confirmation - implemented for the web demo.** Broader PDF fixture coverage, richer extraction evaluation, version diffs and concurrent-editor protections remain. Live extraction tested typed text and PNG source plus typed instructions; PDF is implemented but not part of the live positive fixture.
+1. **Plan creation/confirmation - implemented for the web demo.** Broader malformed-file coverage, richer extraction evaluation, version diffs and concurrent-editor protections remain. Live extraction tested typed text, PNG plus typed instructions, and a PDF-only source.
 2. **Scheduling - implemented for once/daily web demo.** Cron execution, generation, reminder enqueue/deduplication and reschedule identity were tested. Weekly/complex recurrence, configurable policy editor, end-date extension UI and DST ambiguity prompts are later work. In-app queued reminders do not send WhatsApp/SMS.
-3. **Report uploads - implemented for web demo.** Real image upload, private preview, retry handling, human review and role denial tested. PDF branch exists; broader PDF/malformed-file testing, automatic report/task matching with ambiguity correction and WhatsApp attachments remain.
+3. **Report uploads - implemented for web demo.** Real image upload, private preview, retry handling, human review and role denial tested. PDF upload/review also passed; broader malformed-file testing, automatic report/task matching with ambiguity correction and WhatsApp attachments remain.
 4. **WhatsApp care workflow - partial.** Transport works. Still needs verified phone-to-patient mapping, channel consent/opt-out, appropriate approved care templates/sender, persisted task-linked conversations, reply commands, delivery callbacks and reliable delivery/retry reconciliation. No care task closes on message delivery. SMS needs provider/routing selection and applicable registration; reuse the same outbox.
 5. **Meal/medication logging - implemented for web demo.** Description/photo and explicit medication statuses persist with source/time. Voice-confirmed activity retains the recording path. More flexible edits/corrections, structured meal fields and WhatsApp capture remain.
 6. **Glucose data - synthetic import/chart implemented.** No real CGM vendor connector or clinical interpretation. More detailed expected monitoring windows, automatic continuity closure/stale-data policies, import-batch records and pagination remain.
@@ -55,7 +55,7 @@ Updated 2 November 2026 after the connected demo increment. This replaces the ea
 
 1. Finish task-linked WhatsApp messaging when appropriate templates/sender access are available; keep the existing outbox and RPCs.
 2. Add WhatsApp attachment/voice intake on the private upload/transcription/evidence foundations now built.
-3. Complete broader failure, privacy, multilingual and model evaluations; exercise PDF uploads and DST cases explicitly.
+3. Complete broader failure, privacy, multilingual and model evaluations; expand malformed-file coverage and exercise DST cases explicitly.
 4. Reconcile migration history and verify clean rebuild/restore before a real pilot; add operational delivery monitoring.
 5. Decide the real clinic workflow and SMS route when the team is available. No new authentication system, graph database or parallel frontend is needed.
 

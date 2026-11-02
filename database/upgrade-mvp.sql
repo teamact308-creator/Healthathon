@@ -154,7 +154,7 @@ create policy meal_read on storage.objects for select to authenticated using(buc
 begin;
 grant usage on schema private to service_role;
 create function private.log_activity(p_loop uuid,p_status text,p_details jsonb,p_event uuid) returns jsonb language plpgsql security definer set search_path='' as $$
-declare l public.care_loops;i public.care_plan_items;v_result jsonb;old private.request_keys;done boolean;prev text;
+declare l public.care_loops;i public.care_plan_items;v_result jsonb;old private.request_keys;done boolean;prev text;actual_time timestamptz;
 begin
  if auth.uid() is null or p_event is null then raise exception 'Authentication required' using errcode='42501';end if;
  insert into private.request_keys(actor_id,event_key,loop_id,action) values(auth.uid(),p_event,p_loop,'log:'||p_status) on conflict do nothing;
@@ -168,9 +168,11 @@ begin
  if i.domain='glucose' and not exists(select 1 from public.glucose_observations where patient_id=l.patient_id and observed_at between l.due_at-interval '24 hours' and now()) then raise exception 'Import recent monitoring data first';end if;
  if nullif(p_details->>'photo_path','') is not null and (i.domain<>'meals' or split_part(p_details->>'photo_path','/',1)<>l.patient_id::text or not exists(select 1 from storage.objects where bucket_id='meal-photos' and name=p_details->>'photo_path')) then raise exception 'Meal photo source mismatch';end if;
  if nullif(p_details->>'audio_path','') is not null and (split_part(p_details->>'audio_path','/',1)<>l.patient_id::text or not exists(select 1 from storage.objects where bucket_id='voice-notes' and name=p_details->>'audio_path')) then raise exception 'Voice source mismatch';end if;
+ actual_time:=coalesce(nullif(p_details->>'activity_at','')::timestamptz,now());
+ if actual_time>now()+interval '5 minutes' or actual_time<now()-interval '30 days' then raise exception 'Activity time must be within the past 30 days, not in the future';end if;
  done:=p_status in ('taken','meal_logged','availability_confirmed');prev:=l.state;
  update public.care_loops set state=case when done then 'CLOSED' else 'UNCONFIRMED' end,next_owner=case when done then 'none' else 'patient' end,closed_at=case when done then now() else null end where id=p_loop;
- insert into public.care_events(patient_id,loop_id,actor_id,domain,status,details) values(l.patient_id,p_loop,auth.uid(),i.domain,p_status,jsonb_build_object('note',trim(p_details->>'note'),'source',case when p_details->>'source'='voice' then 'voice_confirmed' else 'web' end,'synthetic',true,'recorded_at',now(),'photo_path',p_details->>'photo_path','audio_path',p_details->>'audio_path'));
+ insert into public.care_events(patient_id,loop_id,actor_id,domain,status,details,occurred_at) values(l.patient_id,p_loop,auth.uid(),i.domain,p_status,jsonb_build_object('note',trim(p_details->>'note'),'source',case when p_details->>'source'='voice' then 'voice_confirmed' else 'web' end,'synthetic',true,'recorded_at',now(),'photo_path',p_details->>'photo_path','audio_path',p_details->>'audio_path','activity_at',actual_time),actual_time);
  if done then update public.support_tasks set status='done' where loop_id=p_loop;end if;
  select to_jsonb(c) into v_result from public.care_loops c where id=p_loop;
  insert into public.audit_events(patient_id,loop_id,actor_id,actor_role,action,previous_state,next_state,note,event_key) values(l.patient_id,p_loop,auth.uid(),'patient',p_status,prev,v_result->>'state',trim(p_details->>'note'),p_event);
