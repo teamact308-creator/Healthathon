@@ -13,8 +13,8 @@ export function deliveryTransition(job,event,now=Date.now()){
  return next;
 }
 export async function dispatch(job,adapter,{enabled=false,consented=false,now=Date.now(),reserve}={}){
- if(!enabled||!consented)return {...job,state:'blocked'};
  if(job.state!=='pending'||job.providerId||job.attempts>=3||job.notBefore>now)return job;
+ if(!enabled||!consented)return {...job,state:'blocked'};
  if(typeof reserve!=='function')throw Error('Durable reservation required before provider call');
  const reserved=await reserve(job.id,job.version);if(!reserved)return job;
  try{const result=await adapter.send({...job,idempotencyKey:job.id});return {...job,state:'accepted',providerId:result.id,attempts:job.attempts+1};}
