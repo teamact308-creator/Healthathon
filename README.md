@@ -127,3 +127,7 @@ When changing behavior, update this README's summary, the relevant reference/run
 ## Shared Drive handoff
 
 A [self-contained handoff bundle](https://drive.google.com/file/d/1J12cyyTjLL2C7TawyuHRTAA2pLqDWUz0/view?usp=drivesdk) is available in the team Drive for readers starting outside GitHub. See [publication details](docs/DRIVE_PUBLISHING.md) for how to update it without creating duplicates.
+
+## Final judges’ presentation alignment
+
+The [prioritized backlog](docs/mvp-and-product-review.md) now maps the submitted Team ACT deck to explicit J01–J08 work items and the five slide-7 release gates. The main unmet gate is app/WhatsApp shared execution state. Next priorities include exception intake, pre-consult summaries, KPI instrumentation, multi-action confirmation and longitudinal context. These are pending work, not newly implemented features.

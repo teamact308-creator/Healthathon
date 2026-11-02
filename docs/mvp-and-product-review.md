@@ -1,6 +1,6 @@
 # WholeCare Diabetes - current MVP and product backlog
 
-Updated 2 November 2026 after the connected demo increment. This replaces the earlier fixture-only inventory. Capabilities below distinguish implemented web workflows from transport tests and production readiness. Reuse the existing Supabase identity, tables, RPC workflow, private storage, outbox, GitHub repo and Vercel frontend.
+Updated 2 November 2026 after reviewing the final Team ACT presentation submitted to the judges (PDF and PPTX). Documentation update only: the newly listed gaps have not been implemented. This replaces the earlier fixture-only inventory. Capabilities below distinguish implemented web workflows from transport tests and production readiness. Reuse the existing Supabase identity, tables, RPC workflow, private storage, outbox, GitHub repo and Vercel frontend.
 
 ## Working now
 
@@ -13,6 +13,84 @@ Updated 2 November 2026 after the connected demo increment. This replaces the ea
 - Synthetic CSV import (timestamp/value/unit/source), duplicate suppression, 14-day sample, neutral chart and recent-data availability gate.
 - Real private report upload, signature/type/size checks, duplicate-content hash, explicit patient/task binding, original-file link, review queue and clinician-only closure.
 - Twilio credential verification, signature-validated inbound receipt and delivered approved outbound trial template. The package-delivery template was only a transport test.
+
+## Final presentation alignment and release gate
+
+The final submitted deck adds an explicit acceptance lens to the PRD; it does not silently remove stricter PRD requirements. Its five-week illustration is historical planning, not a newly agreed delivery date. Preserve asymmetric MVP depth: a full investigations loop, thin meal/medication capture-confirmation loops, and glucose import/availability continuity. The Care Graph is a shared operational model; a separate graph database is not required.
+
+Slide 7 defines five demonstrations:
+
+1. **One synthetic patient across all four dimensions — implemented in the web demo.** Re-run the unified walkthrough for each release.
+2. **Investigation loop through human review — web path implemented, channel-connected path incomplete.** Include due prompt, evidence and review in the final acceptance scenario.
+3. **App and WhatsApp update the same execution state — NOT MET.** Transport tests and a delivered trial template do not satisfy this gate.
+4. **Ownership moves across patient, caregiver and team — partial.** Consented support routing and clinician review exist; richer reassignment and cross-channel handoff remain.
+5. **AI-assisted actions are reviewable/overridable and auditable — implemented for current web paths, incomplete for unbuilt messaging paths.** New intake paths must preserve the same safeguards.
+
+The full MVP remains incomplete. A release gate must be evidenced, not inferred from a provider connection or a working screen.
+
+## Prioritized delivery backlog from the judges' deck
+
+Priority here means implementation order: **P0** blocks the promised end-to-end demonstration; **P1** completes explicit product-proof gaps next; **P2** is pilot/expanded scope or needs an owner decision. These labels do not reclassify or waive existing PRD acceptance requirements. Reuse existing services, storage, outbox and checked actions.
+
+### J01 — P0 — Task-linked WhatsApp investigation loop
+
+**Status:** missing above working transport foundations. **Sources:** slides 3, 5, 7. **Maps to:** work areas 3/4/8, M04/M09/M10.
+
+Build verified phone-to-patient enrollment, channel consent/opt-out, an appropriate supported care template/sender, persisted conversation/task association and an outbound dispatcher over the existing outbox. Capture provider delivery callbacks and reconcile failures/uncertain sends without duplicate messages. Delivery alone must never close a care task.
+
+**Done when:** one fictional patient's due investigation receives an authorized prompt; a WhatsApp reply/attachment is bound to the correct patient/occurrence; validated private evidence becomes review pending; an authorized clinician reviews the original and closes it; app and messaging reflect the same persisted state after reload. Duplicate events, wrong-patient attempts, revoked consent and provider failure have verified outcomes. A real phone test requires an explicitly intended enrolled recipient.
+
+**Dependencies:** existing verified evidence workflow; supported care sender/template and recipient enrollment. Business/provider approval is an external dependency, not completed engineering.
+
+### J02 — P0 — Confirmation, ambiguity and unmatched intake
+
+**Status:** partial web foundations; general inbox/matching missing. **Sources:** slides 4–6. **Maps to:** work areas 3/7/8, M05/M09/M10/M12.
+
+Keep unmatched documents and ambiguous messages in a private review queue. Show source, possible task associations and a human correction/assignment action. Clarify medication completion: taken can satisfy completion; missed/delayed/skipped are recorded outcomes requiring their configured operational resolution, not successful adherence. Make dependencies and next-owner handoffs explicit for the investigation path; a general dependency editor can follow later.
+
+**Done when:** ambiguous/unmatched input changes no task until resolved; incorrect associations can be corrected with reason/history; duplicate replay produces no extra event/evidence; receipt and clinician review remain distinct; any assigned next owner is authorized. Reuse server-side controls rather than implementing alternate message-only state rules.
+
+### J03 — P0 — Release proof and failure checks
+
+**Status:** current web golden path verified; final cross-channel gate pending. **Sources:** slides 6–7. **Maps to:** work area 8, M12.
+
+**Done when:** a repeatable synthetic walkthrough demonstrates all five slide-7 criteria, including caregiver consent/ownership, explicit AI confirmation, source evidence and audit. Exercise duplicate webhook, expired session, wrong role/patient, failed provider call, invalid file, rejected proposal and missing data. Publish observed evidence and remaining limits. Do not reset the reserved setup sender or shared demo merely to repeat old fixtures.
+
+### J04 — P1 — Pre-consult review summary
+
+**Status:** shared histories/queue exist; assembled digest missing. **Sources:** slides 2–3, 5, 8. **Maps to:** work area 8, M11.
+
+**Done when:** a date-bounded patient summary assembles completed/unresolved actions, pending evidence, stale monitoring availability and next owner; each statement links to its underlying source/event and indicates missing data. Clinician can move directly to review/correction. Start with deterministic aggregation; an AI-written summary is not required. No clinical interpretation or unsupported assertion that physician time was saved.
+
+### J05 — P1 — KPI definitions and instrumentation
+
+**Status:** operational counts exist; defined KPI reporting missing. **Sources:** slides 7–8. **Maps to:** work area 8, M11/M12.
+
+Define cohort, expected window, numerator/denominator, timezone and cancellation/supersession/reopening treatment for closure rate. Capture median time-to-close, stale loops, evidence completeness, response/participation, AI rejection/override and unresolved processing failures. Define manual touches and review-readiness measures with an explicit event source.
+
+**Done when:** a selected synthetic period produces reproducible values traceable to events, handles empty cohorts explicitly and distinguishes on-time closure from eventual closure. Label synthetic demonstration metrics. D30 retention, actual preparation/evidence-retrieval time and effort reduction require observed pilot data/baselines; do not fabricate outcome claims.
+
+### J06 — P1 — Multiple action proposals from one message/voice note
+
+**Status:** uploaded English/Hindi transcription exists; action decomposition/matching missing. **Sources:** slides 4–5. **Maps to:** work areas 4/5/7, M05/M06/M07.
+
+**Done when:** a synthetic message covering medication, breakfast and a future test yields separate source-linked proposals; user can edit/reject each, choose the correct occurrence and confirm before persistence. A planned future test does not become completed. Ambiguous times/statuses go to clarification/review. WhatsApp media retrieval reuses private upload/transcription foundations. Support the selected demo languages without implying fully bilingual UX is complete.
+
+### J07 — P1 — Longitudinal patient context
+
+**Status:** historical glucose/evidence partially available; structured HbA1c/weight/BP/prior-investigation context missing. **Sources:** slides 1–2. **Maps to:** work area 6 plus patient record/context extension under M11.
+
+**Done when:** dated fictional values for HbA1c, weight, BP and historical glucose plus prior investigation references appear in a longitudinal view and pre-consult summary, with units, source/provenance and correction history. Preserve structured values separately from uploaded originals. Show absence explicitly. No automatic diagnosis, risk scoring, lab interpretation or medication recommendation. Reuse the patient/event/evidence model; confirm a schema design before adding parallel stores.
+
+### J08 — P2 — Pilot governance, interoperability and scope decisions
+
+**Status:** partially planned; not validated readiness. **Sources:** slides 5–6, 8.
+
+- Privacy/retention, minimum-necessary provider payloads, consent lifecycle, deletion/export, security review, monitoring and restore/migration verification remain pilot prerequisites. Treat DPDP alignment and ABDM readiness as unverified intentions, not certifications or deployed capabilities.
+- Keep document/CSV ingestion first. Real CGM/lab/EHR adapters and FHIR/ABDM interfaces require selected use cases, access and validation; they are not prerequisites to demonstrating the synthetic import path.
+- SMS still needs routing/registration/consent decisions and explicit channel capabilities. The deck's BP/symptom/ECG/nurse-callback example is expanded scope: do not promise a staffed callback or clinical triage without an agreed workflow, staffing and review policy.
+- Existing frontend/Supabase/Twilio implementation differs from the illustrative Lovable/Make/WhatsApp Cloud stack. Document that substitution; do not rebuild functioning components just to match tool names.
+- Preserve submitted deck originals. Before reusing the presentation, remove drafting remnants from the PPTX and distinguish implemented features, demo simulations and roadmap claims.
 
 ## The eight requested work areas
 
@@ -53,11 +131,11 @@ Updated 2 November 2026 after the connected demo increment. This replaces the ea
 
 ## Next steps without duplicated work
 
-1. Finish task-linked WhatsApp messaging when appropriate templates/sender access are available; keep the existing outbox and RPCs.
-2. Add WhatsApp attachment/voice intake on the private upload/transcription/evidence foundations now built.
-3. Complete broader failure, privacy, multilingual and model evaluations; expand malformed-file coverage and exercise DST cases explicitly.
-4. Reconcile migration history and verify clean rebuild/restore before a real pilot; add operational delivery monitoring.
-5. Decide the real clinic workflow and SMS route when the team is available. No new authentication system, graph database or parallel frontend is needed.
+1. J01–J03: finish and prove the task-linked WhatsApp investigation loop, confirmation/exception handling and shared state. Start unblocked engineering while sender/template/business dependencies are resolved.
+2. J04–J05: assemble the pre-consult summary and instrument defined workflow KPIs.
+3. J06–J07: add confirmed multi-action intake and longitudinal context, retaining the four-domain MVP depth above.
+4. Complete outstanding PRD language, capture, reliability and acceptance requirements; reconcile migrations and verify restore before a real pilot.
+5. Resolve J08 owner/provider/governance decisions before expanding real channels/data or promising clinical follow-up. No new authentication system, graph database or parallel frontend is needed.
 
 ## Requirements sources
 
@@ -68,3 +146,12 @@ Development plan: https://drive.google.com/file/d/1yFlXoXDYmKAMpdLjB7r6Za-caJFF7
 Data model: https://drive.google.com/file/d/1Ua2gjfPzzS8GrXJTa7VjNOt-qUN11y0N/view
 
 The stricter PRD remains the scope baseline where the older build plan deferred photos/extraction/multilingual work. See BUILD.md and docs/release-verification.md for the current walkthrough and observed evidence. This is not a clinical-safety or production-readiness certification.
+
+## Final submitted presentation sources
+
+- [Team ACT final PDF — personal Drive source](https://drive.google.com/file/d/1Sc5pcCmJ78sIuZH3qGyeWp5-_Jnx6Qo0/view).
+- [Team ACT final PPTX — personal Drive source](https://docs.google.com/presentation/d/1FKf4MIRrBrcx-tpLtIZYlkjsYnm2ID-d/edit).
+- [Team copy: final PDF](https://drive.google.com/file/d/1kllp77NW8W1qnyUsXywAS4zSCvJCWP2v/view).
+- [Team copy: final PPTX](https://docs.google.com/presentation/d/1284lVJpcM60tKgHHjgRt_RBgfRh1VKkn/edit).
+
+The reviewed presentation's numbered sections 1–8 establish the references above. This update records gaps and proposed delivery order, not new implementation or a waiver of the PRD.
