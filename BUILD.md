@@ -1,32 +1,28 @@
-# WholeCare Diabetes — first demo
+# WholeCare Diabetes - connected demo
 
-Source: team Drive PRD v1.1, MVP Development Plan v1.0, Data Model v1.0. Deadline: ASAP; one human builder with Codex.
+Use fictional data only. Live app: https://healthathon.vercel.app/ . Local: `npm start`; build: `npm run build`; local tests: `npm test`.
 
-## Run
+## Demo walkthrough
 
-Requires Node.js. No packages, API keys, or external services are required.
+1. Sign in as the development Clinician. Open Care plans. Upload a fictional PDF/PNG/JPEG or type consultation instructions. Extract proposals with AI, or enter actions manually.
+2. Check source excerpts, instructions, timezone, cadence, dates and times. Missing schedule values are not invented. Save a proposed plan. It creates no tasks.
+3. Enter a review note, check the confirmation box and confirm. The reviewed form is saved and activated atomically. A confirmed revision retires outstanding tasks from the prior plan while preserving history and pending evidence review.
+4. Sign in as Patient. In Today, record meal details/photo or medication taken/missed/delayed/skipped-by-instruction. Only completion statuses close tasks. Voice-file transcription supports English/Hindi; edit the transcript and select the status before confirming.
+5. In Activity & data, import a CSV with `observed_at,value,unit,source_id` (ISO timestamp with timezone, mg/dL), or import the fictional 14-day sample. Inspect the neutral chart. Monitoring availability confirmation requires recent data.
+6. Upload a fictional test PDF/image against its task. The backend validates file signature and patient/task binding, hashes content to detect duplicates and moves it to REVIEW_PENDING.
+7. Clinician opens the private original, records a review note and closes the task. Patient cannot perform this step. Clinician/coordinator can reschedule outstanding occurrences; clinician can cancel. Reasons are audited.
+8. Inspect the activity trail, plan/automation history and in-app reminder outbox. The worker runs every five minutes, extends schedules 14 days ahead, queues one overdue reminder per occurrence outside quiet hours and respects the patient's reminder preference. A reschedule retains the occurrence's original identity so regeneration does not recreate it.
 
-`npm start` → http://localhost:4173
+The synthetic demo was exercised through this path. Completed examples remain in history. Clinician can reopen a completed current-plan task with a reason to demonstrate capture again. Old fixture history is retained.
 
-`npm test` verifies state transitions, human review, idempotency, and consent routing.
+## Boundaries
 
-## Golden demo (about two minutes)
+- Schedules support once/daily, up to four daily times, up to a year, explicit timezone, and a rolling 14-day horizon. Quiet hours default to 20:00-09:00; reminders are queued 30 minutes after due time. The clock is database-controlled.
+- Care reminders currently stay in the in-app outbox. WhatsApp incoming verification and one approved outbound template were tested, but the trial package-delivery template is not used as a care reminder. Phone-to-patient conversations, WhatsApp voice/media, appropriate care templates and SMS remain pending.
+- Web voice input is uploaded audio, not a microphone recorder or conversational assistant. Transcription can mishear words; confirmation is mandatory. Hindi was selected provisionally and tested.
+- No diagnosis, prescribing, dosing recommendation, glucose/lab interpretation or emergency monitoring. AI extracts explicit instructions into proposals only. A targeted unsafe/embedded-instruction extraction test produced no tasks; this is not a comprehensive safety certification.
+- The app still selects the first assigned patient. Production onboarding, real patient data, vendor CGM feeds, robust delivery workers, retention/cleanup and full production operations remain out of scope for this release.
 
-1. Patient: confirm the prescribed routine, record the sample breakfast activity, and confirm the seeded monitoring-data activity. This does not import new glucose data.
-2. Coordinator: open Attention queue, simulate a reminder for the renal-function investigation, then request caregiver help.
-3. Caregiver: see only the assigned support task.
-4. Patient: attach the built-in synthetic report. The loop becomes REVIEW_PENDING, assigned to Clinician.
-5. Clinician: review the sample evidence, enter an operational review note, and close the loop.
-6. Activity trail: inspect the state changes and actors. Reload to demonstrate the restored session and shared records. A clinician can reopen completed loops with a reason; there is no database reset button.
+## Reproduction
 
-## Implemented boundaries
-
-The main `/` app now uses real Supabase sign-in, durable shared records, server-enforced roles and audited transitions. The separate `/database.html` page remains a minimal verification workspace. All records and evidence are synthetic. Neither surface has real file uploads, live WhatsApp, voice transcription, or AI extraction. Do not load real patient information. The external font is optional; system fonts remain usable offline. See `database/README.md` for credentials, workflow details and current limits.
-
-No diagnosis, prescribing, glucose interpretation, or test-result interpretation is implemented. Missing medication confirmation remains UNCONFIRMED rather than being inferred as missed. Test evidence always requires explicit human review before closure.
-
-## Current build backlog
-
-Use [MVP and full application inventory](docs/mvp-and-product-review.md) as the current scope baseline. Authentication, the initial schema, server role policies and connected web screens already exist and must not be reopened as new setup work. The inventory separates partial features from missing integrations and later product scope.
-
-The PRD's full MVP requires real WhatsApp and voice. This first prototype does not satisfy that gate yet. The earlier Lovable/Make plan is a reference architecture; direct implementation here accelerates the immediate demo without requiring those accounts first.
+See `database/upgrade-mvp.sql` for the consolidated one-time upgrade from the existing foundation/context schema; it is already applied on development. Deploy the source functions under `supabase/functions/` with their included deno.json. Secrets stay in Supabase, never browser code. See `docs/release-verification.md` for observed checks and limitations.

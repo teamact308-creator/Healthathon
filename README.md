@@ -1,18 +1,20 @@
-# Healthathon
-Team Act — WholeCare Diabetes
+# WholeCare Diabetes - Team Act
 
-Interactive diabetes care coordination prototype using fictional patient data.
+A connected care-coordination development demo using fictional patient data.
 
-- `npm start` starts the local preview at http://localhost:4173.
-- `/` is the main WholeCare app, connected to Supabase with four separate sign-ins.
-- `/database.html` is the minimal database verification workspace.
-- `npm test` checks occurrence mapping and the reference workflow engine.
-- [MVP and full application inventory](docs/mvp-and-product-review.md)
-- [Database setup and verification](database/README.md)
-- [Demo walkthrough and build scope](BUILD.md)
+Live app: https://healthathon.vercel.app/
 
-The server-side OpenAI key connection has been verified; see `supabase/functions/openai-connection-check/README.md`. Document extraction, voice and WhatsApp workflows are not implemented yet. This is a development prototype, not a clinical system.
+- `npm start`: local preview on http://localhost:4173
+- `npm run build`: allowlisted browser assets in dist for Vercel; backend code and credentials are excluded
+- `npm test`: local occurrence/workflow regression checks
+- Care plans: private document upload, AI proposals, manual editing, clinician confirmation and version history
+- Scheduling: timezone-aware once/daily occurrences, background generation, in-app reminders, rescheduling and cancellation
+- Capture: meals/photos, medication statuses, English/Hindi voice-file transcription, synthetic glucose CSV/chart and private report upload/review
 
-Vercel hosting: https://healthathon.vercel.app/ . `npm run build` publishes only allowlisted browser assets in `dist/`. Backend keys and database scripts are excluded.
+Supabase enforces roles, patient scoping, caregiver consent and workflow actions. OpenAI credentials are server-side. Twilio transport has passed inbound and outbound tests; care conversations and SMS are not implemented. Real patient records are not enabled.
 
-Twilio API credentials have passed the server-side connection check. The inbound WhatsApp handshake endpoint is deployed; see `supabase/functions/whatsapp-inbound/README.md`. Twilio webhook configuration and a real incoming-message test are pending. Care reminders and conversation workflows remain pending.
+- [Demo walkthrough](BUILD.md)
+- [Current MVP/product backlog](docs/mvp-and-product-review.md)
+- [Release verification](docs/release-verification.md)
+- [Database foundation](database/README.md)
+- [One-time MVP schema upgrade](database/upgrade-mvp.sql)
