@@ -101,3 +101,7 @@ Private service-only `prepare_delivery`, `claim_delivery` and `delivery_result` 
 ## Messaging rehearsal increment — 3 November 2026
 
 Patient Messages now rehearses task-linked replies, explicit confirmation, private report upload and unmatched notes using existing authenticated web APIs. Simulation transcript/permission/receipts are session-only; confirmed care records persist. Provider suspension blocks live testing. Server worker/callback contracts are fixture-tested but not deployed or wired to a durable service repository. Verified live enrollment, channel consent and inbound conversation/media remain pending. See [complete scope and recovery checklist](MESSAGING_REHEARSAL.md).
+
+## Bucket 3 update - 3 November 2026
+
+The agreed product increment adds separately confirmed multi-action suggestions, manual patient history/corrections, weekly schedules, activity correction history and clinician-configured operational windows. See [implementation, contracts, permissions and limits](BUCKET_3_DELIVERY.md). Earlier pending descriptions above are historical where this delivery supersedes them. Live messaging/bucket 2 is on hold; clinical thresholds and broad language/intent extraction remain outside this increment.

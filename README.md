@@ -139,3 +139,7 @@ The [bucket 1 delivery record](docs/bucket-1-delivery.md) describes the new care
 ## Messaging while Twilio access is suspended
 
 Messages now offers an explicitly simulated patient conversation with confirmation before real demo activity, private report upload or unmatched-note persistence. Session-only STOP/permission and delivery receipts do not enable live messaging. Server worker/callback contracts are fixture-tested and remain undeployed. See [rehearsal, draft templates and remaining activation work](docs/MESSAGING_REHEARSAL.md).
+
+## Bucket 3 product increment
+
+[Agreed four-item delivery and scope](docs/BUCKET_3_DELIVERY.md): individually confirmed text/transcribed-voice suggestions, manual dated patient context with retained corrections, weekly schedules/audited activity correction, and configurable operational reporting windows. General LLM intent extraction and clinical interpretation are not enabled. Bucket 2 live messaging is on hold.

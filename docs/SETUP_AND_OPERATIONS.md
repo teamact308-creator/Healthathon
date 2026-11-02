@@ -77,3 +77,7 @@ Run `node scripts/check-build.mjs` after build. `database/check-operations.py` p
 ## Bucket 1 completion update — 3 November 2026
 
 Current database reconstruction status: The connected baseline is adopted in remote history; all nine local/remote versions match. Clean application-schema replay, parity against live metadata, and a synthetic pg_dump/restore into a second PostgreSQL 17.11 cluster passed. The reproducible runner is scripts/verify-rebuild.py, with minimal local Auth/Storage SQL contracts and real pg_cron. It is not a full Supabase service/object-file/provider-secret recovery test. See docs/bucket-1-delivery.md (or bucket-1-delivery.md from within docs) and docs/database-rebuild-evidence.json for scope/evidence. History loading now uses incremental timestamp/id cursors, and operational_health adds team-only backend scheduler/outbox status. Twilio transport code is implemented but disconnected from live sending.
+
+## Bucket 3 update - 3 November 2026
+
+The agreed product increment adds separately confirmed multi-action suggestions, manual patient history/corrections, weekly schedules, activity correction history and clinician-configured operational windows. See [implementation, contracts, permissions and limits](BUCKET_3_DELIVERY.md). Earlier pending descriptions above are historical where this delivery supersedes them. Live messaging/bucket 2 is on hold; clinical thresholds and broad language/intent extraction remain outside this increment.

@@ -1,0 +1,63 @@
+{
+  "postgres_version": "17.11 (Homebrew)",
+  "migrations": [
+    {
+      "file": "20261101202622_wholecare_foundation.sql",
+      "sha256": "3a4047b09252491023e8f324510d44da2b3d6f42427548ed8d6dae548a5ebc4b"
+    },
+    {
+      "file": "20261101202843_wholecare_identity_context.sql",
+      "sha256": "bc7e6d9873b92fad00774d541d59977b8389a9186d7510bbf654dbc494ac71c5"
+    },
+    {
+      "file": "20261101202908_wholecare_due_guard_and_demo_consent.sql",
+      "sha256": "2fcf92f885fd06cf2000f4cfe68dcff10fdcb51fe79c54024e6fe1159f4ca2b5"
+    },
+    {
+      "file": "20261101203025_wholecare_access_indexes.sql",
+      "sha256": "99353ea4863610ea365db099b2addb9d064eba1a82888e231df7408ee36e57c3"
+    },
+    {
+      "file": "20261101212229_wholecare_support_context.sql",
+      "sha256": "1b383f7cf2197909e7308c2b687dcae02fca0710ceff415b86994ed3bd111610"
+    },
+    {
+      "file": "20261102151618_wholecare_connected_baseline.sql",
+      "sha256": "79b9cee5f0d6c0d2ba886aaf4703297d307441db7ad56f2e7f355d86ba17469c"
+    },
+    {
+      "file": "20261102151834_wholecare_operations.sql",
+      "sha256": "8e6a52d0d066b14c3bb062fc0f08cb6ad3d45e8cb8ffd40082bd7f7eac98c0b7"
+    },
+    {
+      "file": "20261102153127_wholecare_intake_integrity.sql",
+      "sha256": "a3e06c7931e32b54ba3b954a4773bb0844abaf95b561c2ad01168c19f0defe83"
+    },
+    {
+      "file": "20261102194344_wholecare_operational_health.sql",
+      "sha256": "1cbc887a11fe0c06f9db517ee8e38cd2695223ab44577b28311866be7504dc25"
+    },
+    {
+      "file": "20261102211827_wholecare_bucket_three.sql",
+      "sha256": "5f005998bbfeb5b2b92562d5e796e471a8671e68bcf3f70c35c7fdf07530b0f8"
+    },
+    {
+      "file": "20261102212139_wholecare_summary_cutoffs.sql",
+      "sha256": "c8ad24bd51814e46bb24383ffb5b5a32d07912cc20c583746416eb119c21d90f"
+    }
+  ],
+  "checks": [
+    "clean rebuild: verify-capture.sql",
+    "clean rebuild: verify-operations.sql",
+    "clean rebuild: verify-bucket-three.sql",
+    "live application schema equals replayed application schema",
+    "restored database: verify-capture.sql",
+    "restored database: verify-operations.sql",
+    "restored database: verify-bucket-three.sql",
+    "dump/restore preserves schema, grants and synthetic fixture counts"
+  ],
+  "platform_scope": "Minimal Auth/Storage SQL contracts; real PostgreSQL and pg_cron. No GoTrue, object bytes, Edge Functions or external services restored.",
+  "status": "passed",
+  "date": "2026-11-03",
+  "node_tests": 42
+}
