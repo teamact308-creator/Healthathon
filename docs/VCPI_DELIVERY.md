@@ -27,9 +27,9 @@ Migration `20261103145418_wholecare_vcpi.sql` adds these two JSON columns and an
 
 ## Observed verification
 
-- Root automated suite: 99 tests pass (existing workflows plus validator, extraction-handler and privacy-prototype cases).
+- Local workspace suite: 99 tests pass; the scoped PR suite has 90 tests (nine separate local patient-UI tests are not part of this change). Both suites pass (existing workflows plus validator, extraction-handler and privacy-prototype cases).
 - Extractor tests use mocked Auth, REST, provider and persistence boundaries. They cover clinician/other-role access, synthetic acknowledgement/patient guard, provider/allowance/provenance failure, malformed output, weekly payload and no care-plan/task writes. They are not a measurement of live model extraction accuracy.
-- The browser build passes an exact 24-file public allowlist and server-credential reference check. Only the shared validator/schema/contract is bundled; the Edge handler and database files are excluded.
+- The browser build passes an exact public allowlist (24 local files; 22 in the scoped PR) and server-credential reference check. Only the shared validator/schema/contract is bundled; the Edge handler and database files are excluded.
 - All migrations replayed on real disposable PostgreSQL 17.11 with pg_cron; capture, operations, bucket-three and VCPI rollback suites pass on both clean and dump/restored databases. Local Auth/Storage are minimal SQL fixtures, not running GoTrue/object services.
 - The VCPI rollback suite also passed on the connected dev database after migration. It covers patient denial, drafts producing no tasks, old review-RPC bypass denial, missing contract, tampered original, dropped source item, PRN rejection, weekly generation, retry idempotency and audit snapshots. It rolls back its records and plan supersession.
 - Post-migration security advisors show the same pre-existing five INFO entries for deny-by-default RLS tables and the leaked-password-protection warning. No new advisor finding was introduced. [Password protection guidance](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection).
@@ -47,3 +47,7 @@ See `integrations/vcpi-prototypes/README.md`. Increment 3 is an isolated explici
 ## Rollback
 
 Keep the current hosted frontend and legacy endpoint while reviewing this branch. Disable VCPI client entry/use of the new endpoint to stop new proposals; retain provenance and audit history. Do not delete confirmed plans, history or the additive columns as an ad-hoc rollback. Existing manual/legacy confirmed plans continue through the original engine. Any further schema rollback requires review of already-created VCPI plans and their history.
+
+## Repository/local workspace distinction
+
+The local directory also contains separate unpublished patient-UI work. Its two extra browser modules and nine tests are preserved locally and excluded from this PR. The remote branch retains the existing patient app and builds its 20 prior assets plus the two VCPI modules. The first hosted build exposed this local/remote difference; the scoped publication removes unrelated patient-module entries from its build/server allowlists. No unrelated patient redesign is included.
