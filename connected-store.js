@@ -89,3 +89,5 @@ export async function changeOwnPassword(current,password,confirmation){
 export async function checkPersonalTwilioConnection() {
   return request('/functions/v1/twilio-personal-connection-check', 'POST', {});
 }
+
+export const sendPersonalWhatsAppTest=(action,confirmed=false)=>request('/functions/v1/twilio-personal-freeform-test','POST',action==='send'?{action,confirmed}:{action});
