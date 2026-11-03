@@ -27,7 +27,7 @@ Migration `20261103145418_wholecare_vcpi.sql` adds these two JSON columns and an
 
 ## Observed verification
 
-- Local workspace suite: 99 tests pass; the scoped PR suite has 90 tests (nine separate local patient-UI tests are not part of this change). Both suites pass (existing workflows plus validator, extraction-handler and privacy-prototype cases).
+- Local workspace suite: 100 tests pass; the scoped PR suite has 91 tests (nine separate local patient-UI tests are not part of this change). Both suites pass (existing workflows plus validator, extraction-handler and privacy-prototype cases).
 - Extractor tests use mocked Auth, REST, provider and persistence boundaries. They cover clinician/other-role access, synthetic acknowledgement/patient guard, provider/allowance/provenance failure, malformed output, weekly payload and no care-plan/task writes. They are not a measurement of live model extraction accuracy.
 - The browser build passes an exact public allowlist (24 local files; 22 in the scoped PR) and server-credential reference check. Only the shared validator/schema/contract is bundled; the Edge handler and database files are excluded.
 - All migrations replayed on real disposable PostgreSQL 17.11 with pg_cron; capture, operations, bucket-three and VCPI rollback suites pass on both clean and dump/restored databases. Local Auth/Storage are minimal SQL fixtures, not running GoTrue/object services.
@@ -36,7 +36,11 @@ Migration `20261103145418_wholecare_vcpi.sql` adds these two JSON columns and an
 
 ## Remaining verification and rollout
 
-The new clinician screen has not completed interactive browser verification. Starting an isolated local fixture server was blocked when automatic approval review could not complete because of a usage-limit error; this was not an unsafe-action determination. The already-open localhost app reached sign-in, but no credentials or care records were changed. Complete browser checks for compare/source-link expiry, field-change invalidation, correction/exclusion save/reopen, all-excluded draft, final preview and confirmation before merging/deploying the frontend.
+Interactive browser rehearsal completed after the user approved the local fixture server. The actual editor ran against an isolated in-memory synthetic store on localhost:4175, with external AI, uploads and database operations disabled. Observed checks: changing an instruction clears previous field checks; source comparison renders the fictional original and full-size link; hold instructions can be excluded with a reason; correction/exclusion values survive save/reopen; reopening clears attestations; missing field checks block confirmation; the final dialog contains the included weekly schedule and excluded-item count; only explicit fixture confirmation reaches the mocked confirmation operation. An all-excluded draft saves without activation.
+
+The rehearsal found that all-excluded drafts still displayed an enabled activation button despite server-side rejection. The editor now disables that button, explains why, and guards the click path. Busy-state cleanup now restores each original button state instead of enabling every button. Browser verification confirmed that the disabled state survives saving. A unit regression covers preservation of disabled controls after a failed private-source operation.
+
+These are browser behavior checks, not a signed-in backend integration test. The fixture source URL has no actual expiry: authenticated storage access, two-minute expiry enforcement, real PDF rendering and live provider accuracy remain unverified. No real care records or provider calls were used. Screenshot evidence is retained locally at `.local/vcpi-browser-verified.png`.
 
 Live provider extraction on the new schema, upload/PDF page navigation behavior and full signed-in source-to-confirmation UX remain unverified. No clinical validation or completeness guarantee is claimed. Private iframe rendering depends on browser/file headers; full-size expiring source links remain available. Original binary files are retained by existing storage policies; the fingerprint does not itself implement retention, malware scanning or content de-identification. Real patient use remains prohibited.
 
