@@ -19,11 +19,14 @@ export function bindMessaging(root,state,{run,render,toast}){
  const c=workspace(state);
  root.querySelector('#twilio-personal-check')?.addEventListener('click',async e=>{
   const button=e.currentTarget,output=root.querySelector('#twilio-personal-result');
-  button.disabled=true;output.textContent='Checking credentials…';
+  button.disabled=true;output.textContent='Checking credentials… Personal account: NOT VERIFIED. Personal API key: NOT VERIFIED.';
   try{
    const result=await checkPersonalTwilioConnection();
-   output.textContent=result.connected===true?'Connected: API key and Auth Token verified. No messages sent.':Array.isArray(result.missing)?'Missing secrets: '+result.missing.join(', '):'Not connected: '+(result.error||'Verify credentials.');
-  }catch(err){output.textContent='Connection check unavailable: '+(err?.message||'Unexpected error');}
+   const verified=result.connected===true;
+   const match=value=>!verified?'NOT VERIFIED':value===true?'MATCH':value===false?'MISMATCH':'NOT VERIFIED';
+   const connection=verified?'Connected: API key and Auth Token verified.':Array.isArray(result.missing)?'Connection not verified: required configuration is missing.':'Connection not verified.';
+   output.textContent=connection+' Personal account: '+match(result.identity?.account_matches_personal_console)+'. Personal API key: '+match(result.identity?.api_key_matches_personal_console)+'. No messages sent.';
+  }catch{output.textContent='Connection check unavailable. Personal account: NOT VERIFIED. Personal API key: NOT VERIFIED. No messages sent.';}
   finally{if(button.isConnected)button.disabled=false;}
  });
  const testStatusButton=root.querySelector('#twilio-test-status');
