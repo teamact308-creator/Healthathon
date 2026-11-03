@@ -102,3 +102,6 @@ Recommendation: execute the existing first milestone next. A new screen inventor
 ## Patient UI implementation — 3 November 2026
 
 Patient navigation, Today cohorts, confirmed-plan presentation, occurrence detail and direct capture are implemented. See [delivered scope, code map, actual verification and remaining release gates](PATIENT_UI_DELIVERY.md). Earlier planning-only language is historical for those portions. Do not infer that all P0 investigation rehearsals or the full accessibility/failure matrix have passed. Existing CARE integration and backend authorization are retained.
+
+
+Patient secondary screens (Log, Messages, Health history and preferences) are polished as of 3 November. See PATIENT_UI_DELIVERY.md for exact behavior and verification. Investigation rehearsal, difficult cases, full accessibility checks and judge-demo preparation are deferred to the evening session; do not mark those release gates complete.
