@@ -26,7 +26,7 @@ export function patientPlan(state){
    const schedule=state.schedules.find(s=>s.item_id===i.id);
    const occurrences=all.filter(l=>l.itemId===i.id&&l.state!=='CANCELLED').sort((a,b)=>Date.parse(a.dueAt)-Date.parse(b.dueAt));
    const next=occurrences.find(l=>l.state!=='CLOSED');
-   return `<article class="card"><h3>${esc(i.label)}</h3>${i.source_excerpt?`<details><summary>Instruction source</summary><p class="source">${esc(i.source_excerpt)}</p></details>`:''}<p>${scheduleText(schedule,i,p.timezone)}</p>${next?`<p class="mini">Next occurrence: ${when(next.dueAt,next.timezone)}</p>`+detailButton(next):'<p class="mini">No generated occurrence available yet.</p>'}</article>`;
+   return `<article class="card"><h3>${esc(i.label)}</h3>${i.source_excerpt?`<details><summary>Instruction source</summary><p class="source">${esc(i.source_excerpt)}</p></details>`:''}<p>${scheduleText(schedule,i,p.timezone)}</p>${next?`<p class="mini">Next occurrence: ${when(next.dueAt,next.timezone)}</p>`+detailButton(next):'<p class="mini">No open scheduled occurrence remains. Completed occurrences are available in Journey.</p>'}</article>`;
   }).join('');
   return `<section class="patient-section"><h2>${title}</h2>${cards}</section>`;
  }).join('');

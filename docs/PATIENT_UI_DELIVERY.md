@@ -33,3 +33,7 @@ The broader UI plan remains the backlog authority: `UI_NEXT_STEPS.md`. Do not ma
 History is bounded by the existing loaded record contract. Journey is newest scheduled first, so Today remains the entry point for immediate work. Assistance requests require a coordinated backend workflow and are not introduced here. Live WhatsApp/SMS remains unavailable; Messages is explicitly a simulation. No clinical interpretation, full CARE migration, Filly or Medispeak adoption is implied.
 
 Publishing and live-deployment evidence must be checked against the actual commit; a local build alone is not deployment proof.
+
+## Publication evidence
+
+The initial release hit ENOENT because concurrently edited local build files referenced unpublished VCPI modules. The follow-up commit `8504c0a8f5ca8b44b7bdb4a3cba70ff2d742201e` restored the published asset contract plus the two patient modules; Vercel reported success. Hosted patient login, Today and confirmed plan were observed at https://healthathon.vercel.app/. Local combined-workspace tests include concurrent unpublished work; the published patient release uses 22 browser assets, while the current combined local workspace uses 24. Do not overwrite the other chat’s local build additions when continuing VCPI work.
