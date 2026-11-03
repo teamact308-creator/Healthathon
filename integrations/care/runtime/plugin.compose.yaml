@@ -1,0 +1,32 @@
+services:
+  backend:
+    build:
+      args:
+        ADDITIONAL_PLUGS: ""
+    environment: &wholecare_env
+      ADDITIONAL_PLUGS: '[{"name":"care_wholecare","package_name":"/plugins/care_wholecare","version":"","configs":{}}]'
+      DJANGO_SETTINGS_MODULE: care_wholecare.dev_settings
+      DJANGO_ALLOWED_HOSTS: '["localhost","127.0.0.1","backend"]'
+      WHOLECARE_BROWSER_ORIGINS: '["http://localhost:47417", "http://localhost:47418"]'
+      WHOLECARE_LINKS_FILE: /run/wholecare/links.json
+    volumes:
+      - &plugin_mount
+        type: bind
+        source: ${PLUGIN_BE:?Set PLUGIN_BE}
+        target: /plugins/care_wholecare
+        bind:
+          create_host_path: false
+      - &links_mount
+        type: bind
+        source: ${WHOLECARE_LINKS_HOST_FILE:?Set WHOLECARE_LINKS_HOST_FILE}
+        target: /run/wholecare/links.json
+        read_only: true
+        bind:
+          create_host_path: false
+    entrypoint: ["bash", "-c", "python -m pip install -e /plugins/care_wholecare && exec bash scripts/start-dev.sh"]
+  celery:
+    environment: *wholecare_env
+    volumes:
+      - *plugin_mount
+      - *links_mount
+    entrypoint: ["bash", "-c", "python -m pip install -e /plugins/care_wholecare && exec bash scripts/celery-dev.sh"]

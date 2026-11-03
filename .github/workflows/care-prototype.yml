@@ -1,4 +1,4 @@
-name: CARE prototype checks
+name: CARE integration checks
 on:
   push:
     paths: ['integrations/care/**', '.github/workflows/care-prototype.yml']
@@ -22,3 +22,15 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm test
       - run: npm run build
+
+  bridge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: python -m pip install 'requests>=2.32,<3'
+      - run: python -m unittest discover -s integrations/care/backend/care_wholecare/tests -p 'test_*.py' -v
+        env:
+          PYTHONPATH: integrations/care/backend

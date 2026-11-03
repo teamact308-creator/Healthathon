@@ -1,5 +1,5 @@
-export type LoopState = 'UNCONFIRMED' | 'REVIEW_PENDING' | 'CLOSED';
-export type Owner = 'Patient' | 'Clinician' | 'None';
+export type LoopState = 'DUE' | 'UNCONFIRMED' | 'REVIEW_PENDING' | 'CLOSED';
+export type Owner = 'Patient' | 'Clinician' | 'Coordinator' | 'Caregiver' | 'None';
 export interface FollowUp {
   id: string;
   domain: 'Medication' | 'Meals' | 'Monitoring' | 'Investigation';
@@ -9,6 +9,7 @@ export interface FollowUp {
   summary: string;
   source: string;
   recordedAt: string;
+  canReview?: boolean;
 }
 export interface TrailEntry {
   id: string; actor: string; action: 'report_reviewed' | 'follow_up_note';
@@ -17,12 +18,13 @@ export interface TrailEntry {
 export interface Workspace {
   carePatientId: string;
   patient: {displayName: string; reference: string; facility: string};
-  mode: 'fixture'; version: number; snapshotAt: string;
+  mode: 'fixture' | 'connected'; version: number | string; snapshotAt: string;
+  actor?: {displayName: string};
   planSource: string; items: FollowUp[]; trail: TrailEntry[];
 }
 export interface Command {
   carePatientId: string; taskId: string; eventKey: string;
-  expectedVersion: number; note: string;
+  expectedVersion: number | string; note: string;
 }
 export interface WholeCareAdapter {
   getWorkspace(carePatientId: string): Promise<Workspace>;
@@ -30,14 +32,14 @@ export interface WholeCareAdapter {
   recordFollowUp(command: Command): Promise<Workspace>;
 }
 export const stateLabel: Record<LoopState, string> = {
-  UNCONFIRMED: 'Awaiting patient', REVIEW_PENDING: 'Review needed', CLOSED: 'Completed',
+  DUE: 'Due', UNCONFIRMED: 'Awaiting patient', REVIEW_PENDING: 'Review needed', CLOSED: 'Completed',
 };
 export function summarize(items: FollowUp[]) {
   return {
     total: items.length,
     closed: items.filter(i => i.state === 'CLOSED').length,
     review: items.filter(i => i.state === 'REVIEW_PENDING').length,
-    patient: items.filter(i => i.state === 'UNCONFIRMED').length,
+    patient: items.filter(i => i.state === 'UNCONFIRMED' || i.state === 'DUE').length,
   };
 }
 export function validateNote(note: string) {

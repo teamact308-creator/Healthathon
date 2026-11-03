@@ -39,7 +39,7 @@ export function createFixtureAdapter(now = () => new Date().toISOString()): Whol
     if (action === 'follow_up_note' && item.state !== 'UNCONFIRMED') throw new Error('This task is not awaiting a patient update.');
     const recordedAt = now();
     state = {
-      ...state, version: state.version + 1,
+      ...state, version: Number(state.version) + 1,
       items: state.items.map(i => i.id === item.id && action === 'report_reviewed' ? {...i, state: 'CLOSED', nextOwner: 'None', summary: 'The fictional investigation review is recorded. No clinical interpretation was performed.'} : i),
       trail: [{id: command.eventKey, actor: 'Demo clinician', action, taskId: item.id, note: command.note.trim(), recordedAt}, ...state.trail],
     };

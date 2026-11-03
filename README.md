@@ -1,6 +1,6 @@
 # WholeCare Diabetes — Team Act / Healthathon
 
-An isolated [CARE clinician plugin starter](integrations/care/README.md) is available for synthetic rehearsal. It is separate from the hosted app: no CARE authentication, backend bridge or migration is enabled. See its [connection contract](integrations/care/CONNECTION_CONTRACT.md) and [verification record](integrations/care/VERIFICATION.md).
+An isolated [CARE clinician integration](integrations/care/README.md) now runs locally with actual CARE staff authentication and a user-delegated connection to the existing synthetic WholeCare database. One fixture review was verified in CARE and the hosted WholeCare activity trail. The standalone preview remains page-local; this is a thin integration, not a full migration. See its [connection contract](integrations/care/CONNECTION_CONTRACT.md), [runtime/renewal instructions](integrations/care/runtime/README.md) and [verification record](integrations/care/VERIFICATION.md).
 
 **Start here even if you have no prior project context.** WholeCare is an assistive diabetes-care coordination prototype: it turns clinician-confirmed instructions into scheduled patient actions, captures participation and supporting files, coordinates help, and leaves a traceable review/history trail.
 

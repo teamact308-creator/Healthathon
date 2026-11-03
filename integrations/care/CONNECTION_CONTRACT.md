@@ -1,60 +1,67 @@
-# Draft CARE → WholeCare backend contract
+# CARE → WholeCare connection contract
 
-Version 0.1, 3 November 2026. **Design contract only. No endpoint described here is deployed.** The running prototype uses the fixture adapter exclusively. Current data types and UI are limited to its synthetic clinician workflow; a connected adapter must undergo a separate implementation/review.
+Status: 3 November 2026. **Implemented and verified for one local synthetic clinician/patient/facility scope.** This replaces the earlier design-only contract. The fixture preview is retained separately and never substitutes for a failed connected request.
 
-## Proposed request boundary
+## Trust and identity boundaries
 
-CARE frontend → CARE backend plugin → authorized WholeCare operations in the existing Supabase project. OpenAI functions remain behind the existing trusted server boundary. The frontend must not receive service keys, provider keys or a shared privileged session. Do not reuse a browser account as a universal clinician service identity.
+The CARE browser sends its current staff access JWT only to the explicit local CARE backend on port 47416. The connected adapter rereads `care_access_token` for every call, does not consult a patient OTP token, disables redirects and uses no shared Supabase/browser service credential. An unconfigured origin fails before transmission.
 
-The draft CARE backend base path is `/api/care_wholecare/v1`. It uses the target CARE version's staff authentication, rather than accepting a client-supplied role or actor. Patient OTP and caregiver sessions are outside this first staff integration and must be denied until separately implemented.
+The CARE plugin resource routes accept `CustomJWTAuthentication` and an active CARE User with token type `access`. They require CARE's existing patient-view and clinical-data permissions. A matching non-deleted encounter must exist at the server-mapped facility. Browser route IDs never establish authorization or a mapping.
 
-## Required identity and authorization sequence
+The backend loads a mode-0600, read-only mounted local file with this structure:
 
-1. Validate the CARE staff access token with CARE's configured authentication. Verify expiry/revocation according to that deployment. Do not merely decode unsigned JWT claims.
-2. Resolve an active server-owned CARE-user → WholeCare-actor mapping and CARE-patient → WholeCare-patient mapping. IDs are foreign identifiers, not proof of access. Map the facility context and ensure it matches the patient's authorized context.
-3. Check CARE permissions plus the mapped WholeCare assignment and allowed operation. Coordinator read/follow-up scope must not authorize clinician evidence review. Recheck on every mutation; navigation visibility is not authorization.
-4. Choose one explicit Supabase delegation design before implementing:
-   - **User-delegated access:** link and verify an actual WholeCare/Supabase user session, keeping tokens server-side with revocation/expiry. Call existing checked RPCs under the assigned user. Do not automatically link by an unverified email string.
-   - **Purpose-built service bridge:** add service-only checked functions which accept a trusted, verified actor/mapping and enforce the same assignment, consent, state, idempotency and audit requirements. This requires a reviewed migration and role-denial tests. Existing service-role access bypasses RLS and cannot be treated as equivalent to a user session. Current RPCs rely on `auth.uid()`; passing a random actor argument does not retrofit them safely.
-5. Return a purpose-limited workspace. Never return raw tokens, global membership lists, provider responses or unrelated patient rows. A missing/unauthorized mapping must not fall back to another patient.
+```json
+{"version":1,"links":[{
+  "care_user_id":"CARE staff external UUID",
+  "care_patient_id":"CARE patient external UUID",
+  "care_facility_id":"CARE facility external UUID",
+  "supabase_user_id":"verified WholeCare clinician UUID",
+  "supabase_patient_id":"assigned synthetic WholeCare patient UUID",
+  "project_url":"https://gylnitduoasmybadblcp.supabase.co",
+  "publishable_key":"public project key",
+  "access_token":"short-lived normal user access token; never commit",
+  "expires_at":0,
+  "role":"clinician",
+  "synthetic_only":true
+}]}
+```
 
-## Proposed API shape
+This is a descriptive example, not an operational credential file; zero expiry is intentionally invalid. The implementation requires valid UUIDs and rejects unsafe permissions, duplicate/ambiguous scopes, duplicate delegated actors, wrong project/role, non-synthetic scope and expired links. One CARE scope per WholeCare actor is deliberate for this experiment.
 
-### GET `/patients/{care_patient_id}/workspace`
+Before reads and writes, the delegated `/auth/v1/user` identity and `my_context()` user must match the mapped WholeCare actor; the exact patient must have an active clinician membership and a synthetic=true patient record. All subsequent table reads and `care_action` use that same **normal user bearer**, preserving existing RLS and RPC authorization. No new role, grant, service-role bypass, JWT signing key, schema or privileged impersonation is introduced. The resource server has no account password or refresh token.
 
-Read a mapped patient's follow-ups and permitted source summaries. Response fields mirror `Workspace` in `src/model.ts`: mapped CARE patient ID, minimal patient label/reference/facility, data mode, version, snapshot timestamp, agreed plan source, items and scoped audit trail. Connected mode and concrete cursor/version semantics must be added and tested when the bridge is implemented. The current model explicitly uses `mode: 'fixture'` and cannot silently accept a live response.
+The interactive renewal helper obtains an ordinary user session after operator sign-in, validates the above scope and writes its expiring access token. It refuses to retarget an existing mapping. Durable enrollment, delegated rotation and administrative revocation UI remain future work. Removing the link disables the integration; existing credentials/roles remain under their original services.
 
-Each item includes the real WholeCare occurrence ID, domain, display label, state, next owner, source summary and record timestamp. This prototype intentionally has only one synthetic patient and a bounded list; real pagination is not specified by this stub.
+## API
 
-### POST `/patients/{care_patient_id}/loops/{loop_id}/review`
+`GET /api/care_wholecare/v1/patients/{carePatientId}/workspace`
 
-Body: `{ eventKey, expectedVersion, note }`. Caller must be an assigned clinician in both systems. Validate mapped occurrence/patient binding, current review-pending state, an explicit review note and the expected version in one transaction. Preserve the original evidence and source linkage. Do not turn OCR extraction or document availability into a clinical review automatically.
+Returns `mode: connected`, the exact CARE patient ID, a synthetic patient display label, actual CARE actor display name, snapshot timestamp, workspace hash version, confirmed-plan source, items and a persisted review trail. Items have the WholeCare loop ID, domain, label, DUE/UNCONFIRMED/REVIEW_PENDING/CLOSED state, next owner, source excerpt/evidence labels, due time and `canReview` flag. No signed private-file URL, access token, password, provider configuration or raw provider error is returned.
 
-### POST `/patients/{care_patient_id}/loops/{loop_id}/follow-up-notes`
+The bounded read includes at most 40 recently due non-cancelled loops across confirmed plans, 1,000 plan items/evidence rows, 100 confirmed plans and 20 newest review audit entries. It excludes future tasks. It does not promise a complete clinical or longitudinal record. Reaching the evidence cap makes fixture-only provenance incomplete and disables review. Larger/multi-patient datasets need scoped pagination and explicit completeness semantics before expansion.
 
-Body: `{ eventKey, expectedVersion, note }`. Persist an authorized operational note with the verified actor and reason. It must not complete the patient's task, send a provider message or change consent. The existing backend does not have this exact route/operation; decide whether to extend an existing audit/intake operation or add a checked function. The fixture's in-memory method is not proof of persistent support.
+`POST /api/care_wholecare/v1/patients/{carePatientId}/loops/{loopId}/review`
 
-### Replay, concurrency and errors
+Accepts exactly:
 
-Use stable UUID request keys for retries of the same action. Same key + same actor/mapping/body returns the original receipt; same key with changed payload returns conflict. Preserve expected state/version checks and transactional locks. Return server-generated canonical state and timestamps, rather than applying optimistic completion in the UI.
+```json
+{"eventKey":"new UUID for this intent","expectedVersion":"hash from GET","note":"explicit operational review note, 5–1000 characters"}
+```
 
-Use 401 for missing/expired authentication, 403 for an authenticated operation denial, 404 for an unavailable mapped resource where existence should not be disclosed, 409 for stale state/key conflict, 422 for invalid input and 503 for an unavailable integration. Return bounded stable error codes/messages without secrets or raw database exceptions. Identity changes or an ambiguous mutation response must not cause a blind retry with a new key.
+The initial write requires the current workspace hash, a pending report requiring human review and evidence entries that are all synthetic fixture placeholders. The note is trimmed. Original uploaded-file review, other task changes and follow-up notes are unavailable through this bridge. They remain in the existing WholeCare app.
 
-## Private files
+The bridge invokes the existing authorized `care_action(review)` RPC and rereads its persisted audit receipt. It requires the receipt to match actor, loop, action and exact note. The response is canonical current workspace state. A matching replay returns state without another RPC write. Changed-payload receipt reuse yields 409. RPC failures or uncertain outcomes return a safe error and require canonical refresh/same-intent retry, not a claim of success.
 
-Evidence URLs require a fresh access check and short expiry. They must remain scoped to the patient, report and clinician purpose. Do not proxy global storage credentials, publish permanent object URLs, or place real records into static fixture files. Accessed source and audit provenance must survive the bridge. Current prototype source panels are synthetic text only and do not exercise storage access.
+The browser preserves the request key and payload after an uncertain submission, locks note editing and offers the same action again or a current-state refresh. It also prevents overlapping submits immediately. The original RPC still owns durable state checks and request deduplication. The workspace hash is a **preflight stale-view check**; the bridge does not introduce an atomic transaction spanning CARE and Supabase, nor an evidence-version lock across concurrent uploads. Broader concurrent document review needs an atomic database contract and separate acceptance tests before production use.
 
-## Acceptance tests before enabling connected mode
+## Denials and errors
 
-- A mapped, assigned CARE clinician reads only the intended synthetic patient's workspace and reviews a pending report; the same persisted result is visible in the existing WholeCare app.
-- An unassigned staff user, unrelated facility, coordinator review attempt, patient OTP token, revoked mapping and missing/expired token are denied.
-- Swapped patient/loop IDs, another user's request key and stale versions cannot mutate data.
-- One repeated confirmation creates one audit/event result; ambiguous transport failures are reconciled safely.
-- A follow-up note leaves patient completion unresolved and causes no provider send.
-- Review keeps evidence immutable and traceable; private-file access is denied outside the authorized assignment.
-- Sign-out/patient changes discard pending proposals and stale responses; a missing mapping never shows fixture or another patient's data.
-- No secret enters the browser bundle; rollback removes only the integration and preserves existing care history.
+Unauthenticated or wrong-token-type requests are denied by CARE (403 in the checked runtime). Unmapped users/patients or failed CARE permission/facility context return 404. Failed delegated membership returns 403. Stale view/changed receipt returns 409. Missing/unsafe/expired links and unconfirmed remote responses return 503. Unexpected exceptions are reduced to a safe message, with only the exception class logged, so development DEBUG tracebacks cannot expose delegated tokens.
 
-## What this increment actually implements
+CARE patient OTP, patient/caregiver/coordinator writes, real patient records, arbitrary backend origins and cross-patient fallbacks are outside the contract. Hiding React controls alone is never access control.
 
-Only the local adapter interface, its synthetic implementation and the associated frontend interactions/tests. It makes no change to Supabase Auth, RLS, schemas, functions, storage, CARE permissions or current deployed accounts. The authentication bridge is the main remaining implementation boundary.
+## Verified acceptance and remaining scope
+
+Actual CARE patient action → federated route → staff authentication/CARE permissions → mapped user delegation → synthetic Supabase task read → explicit fixture review → RPC/audit → CARE reload and hosted WholeCare Activity trail all passed. Anonymous, unmapped staff, wrong patient, stale version, same-key replay and changed-note replay checks passed. A signed `patient_login` token type was separately denied; this was not a full phone/OTP enrollment test.
+
+No production CARE deployment, durable identity federation, real-file workflow, Filly/Medispeak integration, live channel send or full migration is claimed. See VERIFICATION.md for exact evidence and runtime/README.md for restart/renewal instructions.

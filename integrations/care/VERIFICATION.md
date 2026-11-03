@@ -1,27 +1,46 @@
-# CARE starter verification
+# CARE integration verification
 
-3 November 2026. Standalone browser and build-output federation checks completed locally.
+3 November 2026. The connected experiment was exercised on the actual local CARE host, not only a standalone sharing harness. All records used were synthetic. One explicit fixture review was retained in the existing shared development database.
 
-Scope: standalone synthetic UI → page-local adapter → canonical fixture response → updated UI. No live CARE or Supabase bridge is present. Host contract inspection and federation build do not establish runtime compatibility.
+## End-to-end observed result
 
-## Observed results
+1. Started an isolated official CARE backend/Celery/PostgreSQL/Redis/MinIO stack and official care_fe, with external plugin registration, dedicated names/volumes and loopback ports. Standard synthetic fixtures loaded once. Created a dedicated clearly labelled synthetic patient, encounter and standard fixture-doctor assignment.
+2. Signed into CARE as its existing fixture doctor and opened that patient's actual profile. The WholeCare action was present through PatientHomeActions. Clicking it loaded the federated plugin route inside CARE's shell with shared React and scoped styles.
+3. The connected route read 12 recently due/historical confirmed-plan actions from the existing WholeCare database: 9 closed, 1 needing review and 2 unresolved. The actor came from CARE; the server verified the separately mapped WholeCare clinician, membership and synthetic patient.
+4. Opened the pending renal-investigation source. It contained three explicitly labelled synthetic report placeholders and no clinical findings. Entered: “CARE integration acceptance: checked synthetic placeholder sources and patient mapping. No laboratory findings or clinical interpretation.” Confirmed once in the actual CARE UI.
+5. CARE showed 10/12 closed, zero needing review and the same two unresolved patient actions. Reloading the host retained the closed loop and persisted review trail.
+6. Opened the existing hosted WholeCare app as the authorized clinician. Its Activity trail showed the same renal-investigation review, clinician role, REVIEW_PENDING → CLOSED transition, exact note and server timestamp. Direct normal-user REST verification confirmed the persisted loop/note and exactly one matching audit record under the mapped clinician.
+7. Replaying that event key returned 200/current state without an extra audit record. Replaying it with a changed note returned 409. No duplicate care action or provider send occurred.
 
-- Six behavioral tests passed: dedicated-patient isolation and defensive copies; explicit pending-report review; idempotent replay and changed-payload rejection; stale version/invalid input/state rejection; follow-up note preserving unresolved completion; independent page state and fail-closed live factory.
-- TypeScript strict/no-unused checks passed. Vite production build passed. Build verifier found the standalone page and `assets/remoteEntry.js`, with no source tests, source maps, existing Supabase URL, server credential names or provider configuration in the public assets. Final build contains 18 assets, including the federation smoke harness.
-- npm installation audit reported zero vulnerabilities. Dependencies are exact-pinned with a committed lockfile. The test runner uses Node's tsx import hook rather than the CLI's unnecessary local IPC listener.
-- Browser loaded the built standalone page on localhost port 4183. Initial summary: 4 actions, 2 closed, 1 needing review, 1 awaiting the patient.
-- Explicit synthetic review changed counts to 3 closed and 0 needing review, preserved the patient task as unresolved, and recorded the actor, note and time in the page-local trail. Source remains the synthetic placeholder; no real document was reviewed.
-- Saving a fictional follow-up note left the task awaiting the patient and explicitly reported that no message was sent.
-- Reload reset all page-local actions. `/?patient=unmapped` displayed the connection-required state with no patient fixture or task data.
-- `/federation.html` loaded the actual production remote entry and manifest, supplied React/ReactDOM through its sharing registry, and rendered the lazy patient route. This checks the bundling boundary but not CARE host discovery, routing, authentication or permissions.
-- The original application still passed all 48 existing tests and its 20-asset build/allowlist checks. No current app runtime asset was changed by this increment.
+The original app's current-plan view has a different count because this integration also includes confirmed historical-plan actions; this is a bounded follow-up experiment, not a full longitudinal record or a change to the original app's filtering.
 
-## Review decisions
+## Permission and failure checks
 
-Component hooks have stable dependencies, pending workspace requests are discarded on scope changes, route instances are keyed by patient, notes render as React text, submit handling has an immediate duplicate-click lock, and every CSS selector is scoped beneath the plugin root. Forms use explicit labels, native required/minimum-length checks, focus on the opened source heading and polite status feedback. The manifest lazy-loads its view and extension component. The standalone root is separate from the federated entry.
+Actual runtime HTTP checks passed:
 
-## Unverified and deliberately absent
+- Anonymous request denied: 403 (CARE's checked authenticator uses this status).
+- Valid but unmapped CARE staff member denied: 404.
+- Linked clinician with another/unmapped patient ID denied: 404.
+- Stale workspace version denied before review: 409.
+- Correctly signed token carrying `patient_login` rather than `access` denied: 403. This checks token-class isolation; a full phone/OTP enrollment flow was not performed.
+- Same committed request replay: 200 with one matching audit; changed-note reuse: 409.
 
-No Docker/full CARE environment was available. The actual CARE host was not started, modified or tested. No backend/plugin registration, verified user mapping, credential exchange, schema migration, production deployment of this prototype, remote patient data access, private-file integration, provider send or real clinician authentication occurred. Mobile layout has responsive rules but no device/browser matrix was exercised. The code is a fixture-backed starter and connection contract, not a live integration.
+Ten pure backend bridge tests passed: exact mapping, expiry, duplicate mapping, unsafe file permissions/wrong project, missing clinician assignment, incomplete evidence cap, real-file review disabled, stale view, persisted receipt replay/changed payload, and delegated-only transport with redirects disabled. These use fake data/transports and make no network/database changes.
 
-Required next acceptance evidence is in CONNECTION_CONTRACT.md and README.md. Root CI remains responsible for the existing application; a separate CARE prototype workflow installs the nested package and runs its tests/build without adding React dependencies to the main app.
+Ten frontend behavior tests passed: four connected-adapter tests for fresh staff tokens and CARE-only requests, invalid origin/missing staff denial, cross-patient response rejection/unsupported writes and command/error handling; plus six retained fixture-adapter tests for isolation, explicit review, replay, stale input/state, non-completing follow-up and independent page-local state.
+
+Strict TypeScript/no-unused checks and the production federation build passed. The build verifier checks the standalone page and remote entry and excludes source tests/maps, existing Supabase project configuration and server/provider secret markers from browser assets. The final build contains 19 assets. Dependency versions remain pinned by the existing lockfile. Backend helper scripts compile and their argument interface loads without credentials. The interactive renewal helper's full operator-input flow is not a separately automated live test.
+
+The current local main-app workspace regression suite passed 99 tests and a 23-asset build. That workspace includes other development increments, so this number is not a claim that this CARE commit publishes those unrelated changes. This increment does not change the main app runtime files. GitHub CI separately validates the selected published source.
+
+## Preserved boundaries
+
+Both read-only official CARE core checkouts stayed at the recorded revisions with **zero tracked file changes** after acceptance. Plugin code lives in independent local plugin repositories and is handed off in integrations/care. No CARE/Supabase core schema migration, role grant, password change or service-role key was used. Normal Supabase RLS and existing checked RPCs remain authoritative. No OpenAI request, Twilio/WhatsApp/SMS care send, real medical record or clinical interpretation was made for this increment.
+
+The local backend link contains a short-lived normal clinician access token in an ignored mode-0600 mounted file. It stores no password or refresh token. The frontend receives only a CARE staff JWT; link expiry requires the documented operator renewal. The original hosted app is still Supabase/OpenAI; CARE is local and not deployed to Vercel.
+
+## Remaining verification and implementation limits
+
+Production CARE hosting/HTTPS, durable account-link lifecycle and administrative UI, multiple users/patients/facilities, private-file review inside CARE, non-review task mutations, patient OTP/caregiver/coordinator workflows, localization, full paginated history and complete browser/load/concurrency/security certification remain pending. The stale-view hash is a preflight check, not atomic cross-service/evidence concurrency control. Filly/Medispeak remain unintegrated. Existing messaging/provider work is outside this increment.
+
+Local screenshots record the mounted connected CARE page and matching hosted WholeCare audit. They remain ignored artifacts on the development machine; no authenticated screenshots or credential files were automatically added to GitHub/Drive. Runtime and renewal instructions are in runtime/README.md; protocol constraints are in CONNECTION_CONTRACT.md.

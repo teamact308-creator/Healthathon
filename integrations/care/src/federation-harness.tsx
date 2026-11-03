@@ -19,7 +19,7 @@ try {
   const manifest = 'default' in exported ? exported.default : exported;
   if (manifest.plugin !== 'care_wholecare_fe' || !manifest.components.PatientHomeActions) throw new Error('Unexpected plugin manifest');
   const patientId = new URLSearchParams(location.search).get('patient') ?? DEMO_PATIENT_ID;
-  const route = manifest.routes['/wholecare/patient/:patientId'];
+  const route = manifest.routes['/wholecare/fixture/:patientId'];
   createRoot(document.getElementById('root')!).render(route({patientId}));
   status.textContent = 'Federated manifest loaded with a shared React provider. This is a smoke harness, not the CARE host.';
 } catch {
