@@ -1,0 +1,61 @@
+.wc-care {--wc-green:#046c4e;--wc-ink:#253a32;--wc-muted:#64746d;--wc-line:#dfe6df;--wc-paper:#f7f8f5;--wc-white:#fff;color:var(--wc-ink);font-family:inherit;font-size:15px;line-height:1.5;box-sizing:border-box}
+.wc-care * {box-sizing:border-box}
+.wc-care button,.wc-care input,.wc-care textarea {font:inherit}
+.wc-care h1,.wc-care h2,.wc-care h3,.wc-care p {margin:0}
+.wc-care button,.wc-care a,.wc-care textarea {outline-offset:4px}
+.wc-care button:focus-visible,.wc-care a:focus-visible,.wc-care textarea:focus-visible {outline:3px solid #057a55}
+.wc-care button {cursor:pointer}
+.wc-care button:disabled {opacity:.55;cursor:not-allowed}
+.wc-care .wc-topbar {display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px 5%;background:var(--wc-white);border-bottom:1px solid var(--wc-line)}
+.wc-care .wc-logo {color:var(--wc-ink);text-decoration:none;font-weight:750;font-size:26px;letter-spacing:-1px;white-space:nowrap}
+.wc-care .wc-mark,.wc-care .wc-dot {color:var(--wc-green)}
+.wc-care .wc-mark {font-size:29px;vertical-align:middle;margin-right:5px}
+.wc-care .wc-top-label {font-size:11px;font-weight:700;color:var(--wc-muted);letter-spacing:1.4px}
+.wc-care .wc-person {font-weight:700;font-size:12px;display:flex;align-items:center;gap:10px;color:var(--wc-green)}
+.wc-care .wc-person span {font-weight:500;color:var(--wc-ink)}
+.wc-care .wc-main {max-width:1380px;margin:auto;padding:25px 5% 20px}
+.wc-care .wc-notice {display:flex;align-items:baseline;gap:12px;background:#ecf3e8;border:1px solid #d7e4ce;border-radius:7px;padding:11px 16px;font-size:12px;color:#425b35}
+.wc-care .wc-notice strong {white-space:nowrap}
+.wc-care .wc-breadcrumb {display:flex;gap:10px;font-size:12px;color:var(--wc-muted);margin:24px 0 30px}
+.wc-care .wc-breadcrumb span {color:#a5b3a8}
+.wc-care .wc-heading {display:flex;justify-content:space-between;align-items:center;gap:28px;margin-bottom:28px}
+.wc-care .wc-eyebrow {color:var(--wc-green);font-size:10px;font-weight:750;letter-spacing:1.5px;margin-bottom:10px}
+.wc-care h1 {font-size:clamp(28px,3.2vw,42px);font-weight:650;letter-spacing:-1.5px;line-height:1.16}
+.wc-care .wc-lead {color:var(--wc-muted);font-size:14px;margin-top:12px;max-width:460px}
+.wc-care .wc-patient {display:flex;gap:13px;align-items:center;padding:17px 0 17px 25px;border-left:1px solid var(--wc-line);min-width:280px}
+.wc-care .wc-avatar {width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:#e5eee1;color:var(--wc-green);font-weight:700;font-size:14px;flex-shrink:0}
+.wc-care .wc-patient strong,.wc-care .wc-patient span,.wc-care .wc-patient small {display:block}
+.wc-care .wc-patient strong {font-size:13px}.wc-care .wc-patient span {color:var(--wc-muted);font-size:11px;margin-top:3px}.wc-care .wc-patient small {font-size:10px;color:var(--wc-muted);margin-top:5px}
+.wc-care .wc-stats {display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--wc-line);border-radius:10px;background:var(--wc-white);overflow:hidden;margin-bottom:12px}
+.wc-care .wc-stats section {padding:20px 23px;border-right:1px solid var(--wc-line)}.wc-care .wc-stats section:last-child {border:0}
+.wc-care .wc-stats span,.wc-care .wc-stats small {display:block;color:var(--wc-muted);font-size:11px}
+.wc-care .wc-stats strong {display:block;font-size:31px;font-weight:600;letter-spacing:-1px;margin:7px 0 4px}.wc-care .wc-stats em {font-size:18px;font-style:normal;color:#93a397;font-weight:400}
+.wc-care .wc-feedback {font-size:13px;color:var(--wc-green);min-height:21px;margin:8px 0 12px}
+.wc-care .wc-columns {display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr);gap:25px;align-items:start}
+.wc-care .wc-section-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}
+.wc-care h2 {font-size:18px;font-weight:650;letter-spacing:-.35px}.wc-care .wc-section-heading>span {font-size:10px;color:var(--wc-muted)}
+.wc-care .wc-task-list {display:grid;gap:12px}
+.wc-care .wc-task {background:var(--wc-white);border:1px solid var(--wc-line);border-radius:9px;padding:20px 22px}
+.wc-care .wc-task-top {display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
+.wc-care .wc-domain {font-size:10px;font-weight:700;letter-spacing:.8px;color:var(--wc-muted);text-transform:uppercase}
+.wc-care .wc-status {font-size:10px;font-weight:600;padding:4px 8px;border-radius:5px;background:#f1f4ef;color:#536c53;white-space:nowrap}
+.wc-care .wc-status-review_pending {background:#f5eddf;color:#806031}.wc-care .wc-status-unconfirmed {background:#eeeef5;color:#62607d}
+.wc-care h3 {font-size:16px;font-weight:650;letter-spacing:-.2px;margin-bottom:6px}
+.wc-care .wc-task>p {color:var(--wc-muted);font-size:12px;max-width:550px}
+.wc-care .wc-task-bottom {display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:17px}
+.wc-care .wc-task-bottom>span {font-size:10px;color:var(--wc-muted)}.wc-care .wc-task-bottom strong {color:var(--wc-ink);margin-left:7px;font-size:11px}
+.wc-care .wc-button {display:inline-flex;align-items:center;justify-content:center;gap:7px;color:white;background:var(--wc-green);border:1px solid var(--wc-green);border-radius:6px;padding:8px 13px;font-weight:600;font-size:11px;text-decoration:none;min-height:36px;white-space:normal;text-align:center}
+.wc-care .wc-button:hover {filter:brightness(.94)}.wc-care .wc-button-quiet {color:var(--wc-green);background:transparent;border-color:#d7e1d4}
+.wc-care .wc-sidebar {display:grid;gap:18px;padding-top:42px}
+.wc-care .wc-panel {background:var(--wc-white);border:1px solid var(--wc-line);border-radius:10px;padding:23px}
+.wc-care .wc-plan {background:#edf2e8;border-color:#dde6d4}
+.wc-care .wc-plan h2 {font-size:23px;line-height:1.25;max-width:250px;letter-spacing:-.7px;margin:13px 0}
+.wc-care .wc-panel p {font-size:12px;color:var(--wc-muted)}.wc-care .wc-plan-foot {border-top:1px solid #d4dfcb;padding-top:20px;margin-top:24px;display:flex;align-items:center;gap:16px}.wc-care .wc-plan-foot>span {font-size:24px;color:var(--wc-green)}
+.wc-care .wc-trail h2 {margin-bottom:13px}.wc-care .wc-trail ol {padding:0 0 0 15px;margin:0}.wc-care .wc-trail li {padding:0 0 16px 4px}.wc-care .wc-trail li::marker {color:var(--wc-green);font-size:10px}.wc-care .wc-trail li strong {font-size:12px}.wc-care .wc-trail li p {margin:5px 0;overflow-wrap:anywhere}.wc-care .wc-trail small {font-size:10px;color:var(--wc-muted)}.wc-care .wc-trail-note {margin-top:15px;font-size:10px!important}
+.wc-care .wc-close {border:0;background:transparent;font-size:23px;color:var(--wc-muted);min-width:32px;min-height:32px}
+.wc-care blockquote {font-size:12px;line-height:1.6;white-space:pre-wrap;background:#f5f7f2;border-left:3px solid #d1dec9;margin:16px 0;padding:15px;color:var(--wc-muted)}
+.wc-care .wc-review>small {font-size:10px;color:var(--wc-muted)}.wc-care .wc-review form {margin-top:22px}.wc-care label {display:block;font-size:12px;font-weight:650;margin-bottom:8px}
+.wc-care textarea {width:100%;resize:vertical;border:1px solid #ced9cb;border-radius:6px;background:var(--wc-white);color:var(--wc-ink);padding:12px;min-height:120px;line-height:1.6;font-size:12px}
+.wc-care .wc-form-hint {margin:11px 0 17px;font-size:11px}.wc-care .wc-footer {display:flex;justify-content:space-between;gap:12px;color:var(--wc-muted);font-size:10px;border-top:1px solid var(--wc-line);margin-top:30px;padding-top:17px}
+@media (max-width:850px) {.wc-care .wc-top-label{display:none}.wc-care .wc-heading{align-items:start;flex-direction:column;gap:20px}.wc-care .wc-patient{border:0;padding:0}.wc-care .wc-stats{grid-template-columns:repeat(2,1fr)}.wc-care .wc-stats section:nth-child(2){border-right:0}.wc-care .wc-stats section:nth-child(-n+2){border-bottom:1px solid var(--wc-line)}.wc-care .wc-columns{grid-template-columns:1fr}.wc-care .wc-sidebar{padding-top:0}.wc-care .wc-notice{align-items:start;flex-direction:column;gap:4px}.wc-care .wc-topbar{padding:17px 5%}}
+@media (max-width:440px) {.wc-care .wc-person span{display:none}.wc-care .wc-stats section{padding:15px}.wc-care .wc-task{padding:17px}.wc-care .wc-section-heading>span{display:none}.wc-care .wc-task-bottom{align-items:start}.wc-care .wc-footer{flex-direction:column}}

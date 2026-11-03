@@ -62,3 +62,11 @@ All nine migrations replayed on an empty application database with real PostgreS
 - Supabase Site URL is https://healthathon.vercel.app/. Owner approved both exact reset redirects; dashboard visibly lists https://healthathon.vercel.app/?reset=1 and http://localhost:4173/?reset=1 (Total URLs: 2).
 - 48 automated tests pass, including mocked recovery/update/logout, account mismatch rejection and password validation. Production build and static asset checks pass with 20 public assets.
 - Local browser opened recovery, rejected undeliverable .test email with guidance, returned to sign-in, and opened signed-in Change password. No persona password was changed and no real recovery email was sent. Real-inbox delivery and user-completed password submission remain unverified. See PASSWORD_RECOVERY.md.
+
+
+## Isolated CARE frontend starter — 3 November 2026
+
+- The clinician fixture prototype lives in integrations/care with a dedicated package, build, behavioral tests and read-only CI permissions. Root frontend remains the 20-asset application.
+- Six fixture tests passed; strict TypeScript and a Vite federation build passed. Standalone browser checks exercised report review, follow-up notes, reload reset and unmapped-patient refusal. A shared-React smoke harness loaded the actual remote manifest and rendered the route without browser warnings/errors.
+- Existing 48 tests and root build/allowlist checks passed. Dependency audit reported no vulnerabilities at installation.
+- Actual CARE host/runtime authentication, patient mappings, backend authorization/delegation, real files and persisted cross-system actions remain unimplemented/unverified. No completed migration or live integration is claimed. See integrations/care/VERIFICATION.md and CONNECTION_CONTRACT.md.

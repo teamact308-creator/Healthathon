@@ -70,3 +70,8 @@ The agreed product increment adds separately confirmed multi-action suggestions,
 ## Password recovery - 3 November 2026
 
 Forgot password and authenticated Change password screens are implemented. The four .test persona addresses cannot receive recovery mail; use signed-in Change password to choose a memorable passphrase. New credentials must not enter repo/Drive; local provisioning credentials become stale after changes. See [recovery setup and limitations](PASSWORD_RECOVERY.md).
+
+
+## CARE plugin starter — 3 November 2026
+
+The isolated `integrations/care` package contains a synthetic clinician follow-up view, federated CARE manifest, standalone preview and build-output sharing harness. See [starter scope/setup](../integrations/care/README.md), [backend identity/API contract](../integrations/care/CONNECTION_CONTRACT.md) and [verification](../integrations/care/VERIFICATION.md). This is not a completed migration: actual CARE mounting/authentication, identity mapping and live Supabase bridge remain pending. Do not point CARE JWTs or a service key at the current browser RPCs to bypass that boundary. The current hosted app, four personas, database and Twilio hold remain as documented.

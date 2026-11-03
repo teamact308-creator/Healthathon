@@ -42,3 +42,8 @@ Patient Messages now rehearses task-linked replies, explicit confirmation, priva
 ## Bucket 3 update - 3 November 2026
 
 The agreed product increment adds separately confirmed multi-action suggestions, manual patient history/corrections, weekly schedules, activity correction history and clinician-configured operational windows. See [implementation, contracts, permissions and limits](docs/BUCKET_3_DELIVERY.md). Earlier pending descriptions above are historical where this delivery supersedes them. Live messaging/bucket 2 is on hold; clinical thresholds and broad language/intent extraction remain outside this increment.
+
+
+## Isolated CARE feasibility starter — 3 November 2026
+
+A [separate synthetic clinician plugin prototype](integrations/care/README.md) is built under integrations/care, with its own package/lockfile, port 4183, tests, federation entry and backend-connection contract. No current app runtime file, account, backend permission or provider setting was changed. This implements the bounded starter, not a CARE migration or live integration. See its verification record for exercised and unverified boundaries.
