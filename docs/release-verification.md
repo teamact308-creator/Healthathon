@@ -67,3 +67,8 @@ All nine migrations replayed on an empty application database with real PostgreS
 ## Connected local CARE integration — 3 November 2026
 
 Actual CARE patient action, federated mounting, staff authentication/CARE permissions, normal-user Supabase delegation and one explicit fixture report review passed. The loop and exact audit persisted after CARE reload and in hosted WholeCare. Anonymous/wrong staff/wrong patient/patient-token-type/stale-view requests were denied; replay did not duplicate the audit and changed-note reuse returned 409. Ten frontend and ten backend bridge tests plus strict TypeScript/federation build passed locally. No tracked CARE core changes, schema/grant/password changes or provider send occurred. This is local-only and depends on an expiring account link; the standalone preview remains page-local. See [complete evidence and limitations](../integrations/care/VERIFICATION.md) and [restart/renewal](../integrations/care/runtime/README.md).
+
+
+## Patient UI implementation — 3 November 2026
+
+Patient navigation, Today cohorts, confirmed-plan presentation, occurrence detail and direct capture are implemented. See [delivered scope, code map, actual verification and remaining release gates](PATIENT_UI_DELIVERY.md). Earlier planning-only language is historical for those portions. Do not infer that all P0 investigation rehearsals or the full accessibility/failure matrix have passed. Existing CARE integration and backend authorization are retained.

@@ -75,3 +75,8 @@ Forgot password and authenticated Change password screens are implemented. The f
 ## Connected CARE plugin — 3 November 2026
 
 The isolated `integrations/care` package now mounts inside a real local CARE host. A plugin-owned backend verifies CARE staff/patient/facility permissions, then delegates reads and fixture-only report review under an existing normal Supabase clinician session. One synthetic report review persisted and appeared after CARE reload and in the hosted WholeCare audit; replay/changed-payload and access denials were checked. See [scope/setup](../integrations/care/README.md), [identity/API contract](../integrations/care/CONNECTION_CONTRACT.md), [verification](../integrations/care/VERIFICATION.md) and [runtime/short-lived link renewal](../integrations/care/runtime/README.md). Both CARE core checkouts stayed unchanged. The fixture preview is still page-local; the connected route fails closed if its expiring server-side link is missing/invalid. Do not replace it with a service key or reuse stale saved passwords. Production CARE hosting, durable enrollment, original-file review and broader persona/task integration remain pending. No full migration or Filly/Medispeak adoption is claimed.
+
+
+## Patient UI implementation — 3 November 2026
+
+Patient navigation, Today cohorts, confirmed-plan presentation, occurrence detail and direct capture are implemented. See [delivered scope, code map, actual verification and remaining release gates](PATIENT_UI_DELIVERY.md). Earlier planning-only language is historical for those portions. Do not infer that all P0 investigation rehearsals or the full accessibility/failure matrix have passed. Existing CARE integration and backend authorization are retained.
