@@ -83,3 +83,9 @@ export async function changeOwnPassword(current,password,confirmation){
  if(!updated.response.ok){try{await raw('/auth/v1/logout?scope=local','POST',{},value.access_token);}catch{}throw Error('Password could not be updated. Choose a different password or sign in again.');}
  try{await raw('/auth/v1/logout?scope=global','POST',{},value.access_token);}finally{save(null);}
 }
+
+// Clinician-only transport diagnostic; the server enforces clinical membership.
+// This does not send a message or change messaging channel settings.
+export async function checkPersonalTwilioConnection() {
+  return request('/functions/v1/twilio-personal-connection-check', 'POST', {});
+}
