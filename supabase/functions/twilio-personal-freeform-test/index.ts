@@ -8,7 +8,8 @@ Deno.serve(async(req:Request)=>{
  const bearer=req.headers.get('Authorization');
  if(!bearer?.startsWith('Bearer '))return reply({error:'Sign in required'},401);
  const url=Deno.env.get('SUPABASE_URL'),service=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
- const anon=Deno.env.get('SUPABASE_ANON_KEY');
+ let anon=Deno.env.get('SUPABASE_ANON_KEY');
+ try{anon=JSON.parse(Deno.env.get('SUPABASE_PUBLISHABLE_KEYS')||'{}').default||anon;}catch{}
  if(!url||!service||!anon)return reply({error:'Backend unavailable'},503);
  const h={apikey:anon,Authorization:bearer,'Content-Type':'application/json'};
  try{
