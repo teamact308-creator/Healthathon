@@ -38,6 +38,16 @@ Deno.serve(async (req: Request) => {
     if (!/^AC[0-9a-f]{32}$/i.test(account) || !/^SK[0-9a-f]{32}$/i.test(keySid) || from !== 'whatsapp:+14155238886' || !/^whatsapp:\+[1-9][0-9]{7,14}$/.test(to)) {
       return json({ configured: true, connected: false, error: 'Invalid Account SID, API key SID or Sandbox sender/recipient format' }, 422);
     }
+    // Compare the configured public identifiers to the personal-account screenshots.
+    // Only hashes are included in server code; no credentials are returned or logged.
+    const digest = async (value: string) => Array.from(
+      new Uint8Array(await crypto.subtle.digest('SHA-256',
+        new TextEncoder().encode(value.toLowerCase())))
+    ).map(byte => byte.toString(16).padStart(2, '0')).join('');
+    const identity = {
+      account_matches_personal_console: await digest(account) === 'ae07a1110c51ce3f62be26d5e5e0c0fafeed9386db630db28f58aa74fbfaf8b6',
+      api_key_matches_personal_console: await digest(keySid) === 'af0d9b7b30bf382835ecb5227af2cbbd06e7cf151353dce8e1574a1cabfbf422',
+    };
     // Fixed read-only request. Discard all message records without returning or logging them.
     const endpoint = `https://api.twilio.com/2010-04-01/Accounts/${account}/Messages.json?PageSize=1`;
     const checks: Record<string, boolean> = {};
@@ -52,7 +62,7 @@ Deno.serve(async (req: Request) => {
         failed_check: label, upstream_status: response.status,
         error: 'Twilio rejected the credential or its access to messaging' }, 502);
     }
-    return json({ configured: true, connected: true, checks, messages_sent: 0,
+    return json({ configured: true, connected: true, checks, identity, messages_sent: 0,
       whatsapp_sender_tested: false, sms_sender_tested: false });
   } catch {
     return json({ error: 'Connection check timed out or the provider is unreachable' }, 504);
