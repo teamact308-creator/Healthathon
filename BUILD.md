@@ -47,3 +47,7 @@ The agreed product increment adds separately confirmed multi-action suggestions,
 ## Isolated CARE feasibility starter — 3 November 2026
 
 A [separate synthetic clinician plugin prototype](integrations/care/README.md) is built under integrations/care, with its own package/lockfile, port 4183, tests, federation entry and backend-connection contract. No current app runtime file, account, backend permission or provider setting was changed. This implements the bounded starter, not a CARE migration or live integration. See its verification record for exercised and unverified boundaries.
+
+## Verified Care Plan Intake branch — 3 November 2026
+
+[VCPI implementation, deployment state, checks and blockers](docs/VCPI_DELIVERY.md) describes weekly extraction, structured source evidence, deterministic exceptions, clinician field verification, review snapshots and the isolated privacy/CARE follow-up work. The additive dev migration and separate `plan-extract-vcpi` endpoint are deployed; frontend rollout remains pending browser verification.

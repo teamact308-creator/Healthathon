@@ -32,7 +32,7 @@ try:
  # Fixture identities are local SQL-contract rows, not production onboarding instructions.
  sql(first,"insert into auth.users(id,email) select gen_random_uuid(),email from unnest(array['patient@wholecare.test','clinician@wholecare.test','coordinator@wholecare.test','caregiver@wholecare.test']) email;")
  sql(first,(root/'database/seed.sql').read_text())
- for f in ['verify-capture.sql','verify-operations.sql','verify-bucket-three.sql']:
+ for f in ['verify-capture.sql','verify-operations.sql','verify-bucket-three.sql','verify-vcpi.sql']:
   sql(first,(root/'database'/f).read_text());report['checks'].append('clean rebuild: '+f)
  snapshot=json.loads(sql(first,(root/'scripts/schema-snapshot.sql').read_text()).strip());(work/'rebuilt-schema.json').write_text(json.dumps(snapshot))
  if args.live_snapshot:
@@ -48,7 +48,7 @@ try:
  restored=json.loads(sql(second,(root/'scripts/schema-snapshot.sql').read_text()).strip());(work/'restored-schema.json').write_text(json.dumps(restored))
  diff=subprocess.run(['python3',str(root/'scripts/compare-schema.py'),str(work/'rebuilt-schema.json'),str(work/'restored-schema.json')],capture_output=True,text=True)
  if diff.returncode:raise RuntimeError('Restored schema differs: '+diff.stdout[:3000])
- for f in ['verify-capture.sql','verify-operations.sql','verify-bucket-three.sql']:
+ for f in ['verify-capture.sql','verify-operations.sql','verify-bucket-three.sql','verify-vcpi.sql']:
   sql(second,(root/'database'/f).read_text());report['checks'].append('restored database: '+f)
  before=sql(first,"select (select count(*) from public.care_loops),(select count(*) from public.patients),(select count(*) from public.glucose_observations);")
  after=sql(second,"select (select count(*) from public.care_loops),(select count(*) from public.patients),(select count(*) from public.glucose_observations);")

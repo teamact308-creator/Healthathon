@@ -49,7 +49,7 @@ export async function uploadPrivate(bucket,file){
  if(!response.ok)throw Error('Private upload failed. Check your role, file type and size.');return path;
 }
 export async function privateFile(bucket,path){const result=await request(`/storage/v1/object/sign/${bucket}/${path}`,'POST',{expiresIn:120});return SUPABASE_URL+'/storage/v1'+result.signedURL;}
-export async function extractPlan(data){return request('/functions/v1/plan-extract','POST',{patient_id:membership.patient_id,...data});}
+export async function extractPlan(data){return request('/functions/v1/plan-extract-vcpi','POST',{patient_id:membership.patient_id,...data});}
 export async function logActivity(loop,status,details,event){return rpc('log_care_activity',{p_loop:loop,p_status:status,p_details:details,p_event:event});}
 export async function submitReport(loop,path,label,event){return request('/functions/v1/report-submit','POST',{patient_id:membership.patient_id,loop_id:loop,source_path:path,label,event_key:event});}
 export async function transcribeVoice(path,language){return request('/functions/v1/voice-transcribe','POST',{patient_id:membership.patient_id,source_path:path,language});}
