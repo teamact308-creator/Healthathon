@@ -1,5 +1,5 @@
-const patientViews=['today','journey','capture','messages','plans','context','account'];
-export function allowedViews(role){return role==='Patient'?patientViews:role==='Caregiver'?['today']:['Clinician','Coordinator'].includes(role)?['today','journey','capture','messages','plans','context','queue','operations','inbox','audit']:[];}
+const patientViews=['today','journey','capture','messages','plans','context','account','trends'];
+export function allowedViews(role){return role==='Patient'?patientViews:role==='Caregiver'?['today']:['Clinician','Coordinator'].includes(role)?['today','journey','capture','messages','plans','context','queue','operations','inbox','audit',...(role==='Clinician'?['trends']:[])]:[];}
 export const defaultView=role=>['Clinician','Coordinator'].includes(role)?'queue':'today';
 export function safeView(role,view){return allowedViews(role).includes(view)?view:defaultView(role);}
 export function dayKey(value,timezone='Asia/Kolkata'){
@@ -29,4 +29,29 @@ export function loopMeaning(loop,now=Date.now()){
  const names=test?['Scheduled','Report submitted','Clinician review','Follow-up complete']:['Scheduled','Record activity','Activity recorded'];
  const current=closed?names.length:waiting?2:recordable||loop.state==='UNCONFIRMED'?1:0;
  return {label,next,recordable,steps:names.map((text,index)=>({text,state:index<current?'complete':index===current?'current':'pending'}))};
+}
+
+export function trendDays(observations,events,timezone,now=Date.now()){
+ const today=dayKey(now,timezone);
+ const days=Array.from({length:30},(_,i)=>({date:new Date(Date.parse(today)-(29-i)*86400000).toISOString().slice(0,10),readings:[],events:[]}));
+ const byDate=new Map(days.map(d=>[d.date,d]));
+ for(const r of observations){
+  if(r.unit!=='mg/dL'||r.value==null||r.value===''||!Number.isFinite(Number(r.value))||Date.parse(r.observed_at)>now)continue;
+  byDate.get(dayKey(r.observed_at,timezone))?.readings.push(r);
+ }
+ for(const e of events){
+  if(!['meals','medication'].includes(e.domain)||Date.parse(e.occurred_at)>now)continue;
+  byDate.get(dayKey(e.occurred_at,timezone))?.events.push(e);
+ }
+ for(const d of days){d.readings.sort((a,b)=>Date.parse(a.observed_at)-Date.parse(b.observed_at));d.events.sort((a,b)=>Date.parse(a.occurred_at)-Date.parse(b.occurred_at));}
+ return days;
+}
+export function trendSample(now=Date.now()){
+ const observations=[],events=[],end=Date.parse(new Date(now).toISOString().slice(0,10));
+ for(let i=1;i<30;i++){
+  const at=h=>new Date(end-i*86400000+h*3600000).toISOString();
+  if(i%6!==0)for(const [h,value] of (i%4===0?[[4,109],[6,152]]:[[4,106],[6,128]]))observations.push({observed_at:at(h),value:value+i%8,unit:'mg/dL'});
+  events.push({domain:'meals',status:'meal_logged',occurred_at:at(5),details:{note:'Fictional lunch'}},{domain:'medication',status:i%4===0?'missed':'taken',occurred_at:at(2)});
+ }
+ return {observations,events};
 }

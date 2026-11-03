@@ -24,3 +24,17 @@ test('unconfirmed outcome does not become a successful activity or missed-dose i
 test('role routing cannot retain a hidden team view after persona change',()=>{
  assert.equal(safeView('Patient','operations'),'today');assert.equal(safeView('Caregiver','plans'),'today');assert.equal(safeView('Clinician','account'),'queue');assert.ok(!allowedViews('Patient').includes('inbox'));
 });
+
+test('trend days keep local midnight, missing readings and reported medication outcomes distinct',async()=>{
+ const {trendDays}=await import('./patient-model.mjs');
+ const days=trendDays([
+  {observed_at:'2026-11-03T18:29:00Z',value:104,unit:'mg/dL'},
+  {observed_at:'2026-11-03T18:31:00Z',value:122,unit:'mg/dL'},
+  {observed_at:'2026-11-03T18:32:00Z',value:0,unit:'other'}
+ ],[{domain:'medication',status:'missed',occurred_at:'2026-11-03T18:31:00Z'}],'Asia/Kolkata',Date.parse('2026-11-04T06:00:00Z'));
+ assert.equal(days.length,30);
+ assert.equal(days.at(-3).readings.length,0);
+ assert.equal(days.at(-2).readings[0].value,104);
+ assert.deepEqual(days.at(-1).readings.map(r=>r.value),[122]);
+ assert.equal(days.at(-1).events[0].status,'missed');
+});

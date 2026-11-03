@@ -39,3 +39,6 @@ body.patient-workspace #content>section{max-width:960px}
 body.patient-workspace #content textarea{min-height:110px}
 body.patient-workspace #content select,body.patient-workspace #content input{max-width:100%}
 @media(max-width:650px){.health-record-grid,.message-setup{grid-template-columns:1fr}.patient-section-buttons button{flex:1 1 140px}.health-record-group{padding:14px}}
+.trend-days{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:6px}
+.trend-days button{min-height:52px}.trend-days small{display:block}.trend-days [aria-pressed=true]{background:#dcebdd;border-color:#477559}
+.trends svg{display:block;width:100%;height:auto;max-width:850px}.trends svg text{font-size:12px;fill:#314b3d}
