@@ -31,3 +31,13 @@ test('observation reads traverse provider row limits using stable time/id cursor
  };
  await signIn('fixture','fixture');const w=await loadWorkspace();assert.equal(observations,2);assert.equal(w.state.observations.length,501);
 });
+test('password change rejects a fresh grant for a different identity without updating',async()=>{
+ const {changeOwnPassword}=await import('./connected-store.js');let updates=0;
+ globalThis.fetch=async(url,opts)=>{if(url.includes('grant_type=password'))return response({access_token:'fixture',refresh_token:'fixture',expires_at:Date.now()/1000+3600,user:{id:'other'}});if(opts.method==='PUT')updates++;return response({id:'current',email:'fixture@example.com'});};
+ await signIn('fixture@example.com','fixture');await assert.rejects(()=>changeOwnPassword('fixture','memorable-demo-phrase','memorable-demo-phrase'),/Current password/);assert.equal(updates,0);
+});
+test('authenticated password change re-verifies the account and clears its local session',async()=>{
+ const {changeOwnPassword}=await import('./connected-store.js');const calls=[];
+ globalThis.fetch=async(url,opts)=>{calls.push({url,method:opts.method});if(url.includes('grant_type=password'))return response({access_token:'fixture',refresh_token:'fixture',expires_at:Date.now()/1000+3600,user:{id:'current'}});return response({id:'current',email:'fixture@example.com'});};
+ await signIn('fixture@example.com','fixture');await changeOwnPassword('fixture','memorable-demo-phrase','memorable-demo-phrase');assert.ok(calls.some(x=>x.method==='PUT'));assert.ok(calls.some(x=>x.url.endsWith('logout?scope=global')));assert.equal(hasSession(),false);
+});

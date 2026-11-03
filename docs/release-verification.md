@@ -54,3 +54,11 @@ All nine migrations replayed on an empty application database with real PostgreS
 - 42 Node tests passed; build/static allowlist contains 18 public browser assets. Eleven migrations replayed successfully, matched live application metadata, then passed dump/restore and all three SQL workflow/role suites. See bucket-3-verification.json for migration hashes and scope.
 - Hosted schema migration/rollback-role tests passed. Security advisors report the pre-existing five intentional deny-all tables and existing leaked-password-protection setting; no new bucket 3 warning. No live provider send, phone enrollment, channel gate or clinical threshold changed.
 - Scope details and later work: BUCKET_3_DELIVERY.md. This accepts the four agreed bounded web capabilities, not full MVP/production readiness, general semantic LLM interpretation, historical policy reconstruction or full Supabase service recovery.
+
+
+## Password recovery increment — 3 November 2026
+
+- Added Forgot password email recovery and signed-in Change password with same-account current-password verification. Persona IDs and care memberships are retained.
+- Supabase Site URL is https://healthathon.vercel.app/. Owner approved both exact reset redirects; dashboard visibly lists https://healthathon.vercel.app/?reset=1 and http://localhost:4173/?reset=1 (Total URLs: 2).
+- 48 automated tests pass, including mocked recovery/update/logout, account mismatch rejection and password validation. Production build and static asset checks pass with 20 public assets.
+- Local browser opened recovery, rejected undeliverable .test email with guidance, returned to sign-in, and opened signed-in Change password. No persona password was changed and no real recovery email was sent. Real-inbox delivery and user-completed password submission remain unverified. See PASSWORD_RECOVERY.md.

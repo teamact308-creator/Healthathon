@@ -12,3 +12,5 @@
 #summary-range{display:flex;flex-wrap:wrap;align-items:end;gap:12px} #summary-range label{flex:1;min-width:180px}
 .event form{max-width:680px}.event textarea{min-height:70px}.event .quiet{margin:4px}
 @media(max-width:650px){.stats{grid-template-columns:1fr}.dialog-actions{flex-wrap:wrap}.header-right{flex-wrap:wrap}header{gap:8px;flex-wrap:wrap}.event{overflow-wrap:anywhere}.task-bottom{flex-wrap:wrap}input,select,textarea{max-width:100%;box-sizing:border-box}}
+
+#password-dialog{max-width:500px;width:calc(100% - 40px);border:1px solid #d0ded5;border-radius:18px;padding:24px}#password-dialog label{display:block;margin:14px 0}#password-dialog input{display:block;width:100%;box-sizing:border-box;padding:12px;font:inherit}#password-dialog [role=status]{color:#6c4d25}

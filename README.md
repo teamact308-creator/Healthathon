@@ -143,3 +143,7 @@ Messages now offers an explicitly simulated patient conversation with confirmati
 ## Bucket 3 product increment
 
 [Agreed four-item delivery and scope](docs/BUCKET_3_DELIVERY.md): individually confirmed text/transcribed-voice suggestions, manual dated patient context with retained corrections, weekly schedules/audited activity correction, and configurable operational reporting windows. General LLM intent extraction and clinical interpretation are not enabled. Bucket 2 live messaging is on hold.
+
+## Password recovery - 3 November 2026
+
+Forgot password and authenticated Change password screens are implemented. The four .test persona addresses cannot receive recovery mail; use signed-in Change password to choose a memorable passphrase. New credentials must not enter repo/Drive; local provisioning credentials become stale after changes. See [recovery setup and limitations](docs/PASSWORD_RECOVERY.md).

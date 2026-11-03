@@ -70,3 +70,16 @@ export async function recordFailure(operation,code,event=crypto.randomUUID()){
 export const recordContext=(kind,time,value,unit,source,previous,reason,key)=>rpc('record_patient_context',{p_patient:membership.patient_id,p_kind:kind,p_time:time,p_value:value,p_unit:unit,p_source:source,p_previous:previous,p_reason:reason,p_key:key});
 export const saveWorkflowPolicy=(policy,previous,reason,key)=>rpc('save_workflow_policy',{p_patient:membership.patient_id,p_policy:policy,p_previous:previous,p_reason:reason,p_key:key});
 export const correctActivity=(id,expected,status,note,time,reason,key)=>rpc('correct_care_activity',{p_id:id,p_expected:expected,p_status:status,p_note:note,p_time:time,p_reason:reason,p_key:key});
+
+// Re-authenticate with the current password before a signed-in password change.
+export async function changeOwnPassword(current,password,confirmation){
+ if(password!==confirmation||password.length<12||password.length>128)throw Error('Use matching passwords of 12–128 characters.');
+ if(!session)throw Error('Sign in first.');
+ const {response:identityResponse,value:user}=await raw('/auth/v1/user','GET',undefined,session.access_token);
+ if(!identityResponse.ok||!user?.email)throw Error('Your session has expired. Sign in again.');
+ const {response,value}=await raw('/auth/v1/token?grant_type=password','POST',{email:user.email,password:current});
+ if(!response.ok||value?.user?.id!==user.id)throw Error('Current password was not accepted.');
+ const updated=await raw('/auth/v1/user','PUT',{password},value.access_token);
+ if(!updated.response.ok){try{await raw('/auth/v1/logout?scope=local','POST',{},value.access_token);}catch{}throw Error('Password could not be updated. Choose a different password or sign in again.');}
+ try{await raw('/auth/v1/logout?scope=global','POST',{},value.access_token);}finally{save(null);}
+}

@@ -1,3 +1,4 @@
+import {bindPasswordUI} from './auth-ui.js';
 import {multiPanel,bindMulti,contextPanel,bindContext,correctionButtons,bindCorrections,clearBucket} from './bucket-ui.js';
 import {messagingPanel,bindMessaging,clearMessaging} from './messaging-ui.js';
 import {operationsPanel,bindOperations,intakePanel,bindIntake,clearOperations} from './operations-ui.js';
@@ -51,4 +52,5 @@ $('#refresh').addEventListener('click',()=>update(async()=>{},'Shared records re
 $('#signout').addEventListener('click',async()=>{if(busy)return;busy=true;epoch++;const b=$('#signin-form button');b.disabled=true;showLogin('Signing out…');try{await signOut();showLogin('Signed out.');}finally{busy=false;b.disabled=false;}});
 $('#signin-form').addEventListener('submit',async e=>{e.preventDefault();const b=$('#signin-form button');b.disabled=true;$('#auth-status').textContent='Connecting to your care workspace…';epoch++;try{await signIn($('#signin-email').value,$('#signin-password').value);$('#signin-password').value='';await refreshWorkspace();}catch(e){showLogin(e.message);}finally{b.disabled=false;}});
 window.addEventListener('focus',()=>{if(state&&!busy&&!['plans','capture','context'].includes(view)&&!document.querySelector('dialog[open]'))update(async()=>{},'Shared records refreshed.');});
-if(hasSession()){showLogin('Restoring your session…');refreshWorkspace().catch(e=>showLogin(e.message));}else showLogin();
+const startPasswordRecovery=bindPasswordUI({showLogin,toast,isBusy:()=>busy,setBusy:v=>busy=v});
+startPasswordRecovery().then(handled=>{if(handled)return;if(hasSession()){showLogin('Restoring your session…');refreshWorkspace().catch(e=>showLogin(e.message));}else showLogin();});

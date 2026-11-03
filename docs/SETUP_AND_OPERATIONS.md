@@ -81,3 +81,7 @@ Current database reconstruction status: The connected baseline is adopted in rem
 ## Bucket 3 update - 3 November 2026
 
 The agreed product increment adds separately confirmed multi-action suggestions, manual patient history/corrections, weekly schedules, activity correction history and clinician-configured operational windows. See [implementation, contracts, permissions and limits](BUCKET_3_DELIVERY.md). Earlier pending descriptions above are historical where this delivery supersedes them. Live messaging/bucket 2 is on hold; clinical thresholds and broad language/intent extraction remain outside this increment.
+
+## Password recovery - 3 November 2026
+
+Forgot password and authenticated Change password screens are implemented. The four .test persona addresses cannot receive recovery mail; use signed-in Change password to choose a memorable passphrase. New credentials must not enter repo/Drive; local provisioning credentials become stale after changes. See [recovery setup and limitations](PASSWORD_RECOVERY.md).
