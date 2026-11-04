@@ -73,3 +73,12 @@ body.patient-workspace #content select,body.patient-workspace #content input{max
 .medication-capture .med-options label:has(:checked){background:#edf3e8;border-color:#477559}
 .medication-capture input:is([type=radio],[type=checkbox]){width:16px;min-height:16px;flex:none;accent-color:#37634b;padding:0}
 .med-time{margin-bottom:16px}.med-time p{margin:0 0 6px}.medication-capture .med-time-toggle{min-height:44px;margin:0}
+
+/* Keep labels clear of focused fields in every workspace and dialog. */
+label > :is(select,textarea,input:not([type=checkbox],[type=radio],[type=hidden])){margin-block-start:8px}
+#capture-dialog.medication-capture label{margin-block:0 14px}
+#capture-dialog.medication-capture label > :is(select,textarea,input:not([type=checkbox],[type=radio],[type=hidden])){margin-block-start:0}
+#capture-dialog.medication-capture .med-options label,#capture-dialog.medication-capture .med-time-toggle{margin:0}
+:is(input:not([type=checkbox],[type=radio]),select,textarea):focus-visible{outline-offset:-3px}
+dialog,.medication-capture .capture-content{scroll-padding-block:24px}
+dialog :is(input,select,textarea){scroll-margin-block:12px}
