@@ -1,4 +1,5 @@
-import {confirmPlan,savePlan,reviewPlan,uploadPrivate,privateFile,extractPlan} from './connected-store.js';
+import {confirmPlan,savePlan,reviewPlan,uploadPrivate,privateFile,extractPlan,transcribeVoice} from './connected-store.js';
+import {voiceRecorderControls,bindVoiceRecorder} from './capture-ui.js';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let draft=null;
 const empty=()=>({id:crypto.randomUUID(),source_note:'',source_path:null,extraction_id:null,timezone:'Asia/Kolkata',items:[],warnings:[]});
@@ -10,7 +11,7 @@ export function renderPlans(state,role){
  if(role!=='Clinician')return versions;
  draft??=empty();
  const saved=plans.find(p=>p.id===draft.id&&p.status==='proposed');
- return `<div class="grid"><section class="card"><h2>Create and review a care plan</h2><p>Use fictional documents only. AI proposals require your review; nothing is scheduled until you confirm a saved draft.</p><div class="dialog-actions"><button class="quiet" data-plan-new>New draft</button></div><form id="plan-form"><label>Prescription / consultation source (PDF, PNG, JPEG; up to 8 MB)<input id="plan-file" type="file" accept="application/pdf,image/png,image/jpeg"></label>${draft.source_path?'<p class="mini">Private source attached.</p>':''}<label>Source note<textarea id="plan-note" maxlength="20000" required>${esc(draft.source_note)}</textarea></label><button class="quiet" type="button" data-plan-extract>Extract proposals with AI</button><p class="mini">Sends the selected fictional source to OpenAI for extraction. Does not diagnose or activate a plan. Unspecified dates/times must be entered by the clinician.</p>${draft.warnings.map(w=>`<p role="status">${esc(w)}</p>`).join('')}<label>Schedule timezone<select id="plan-timezone">${['Asia/Kolkata','UTC','America/New_York','Europe/London'].map(t=>`<option ${draft.timezone===t?'selected':''}>${t}</option>`).join('')}</select></label><div id="plan-items">${draft.items.map(row).join('')}</div><button class="quiet" type="button" data-plan-add>Add action</button><p class="mini">Daily and weekly schedules allow up to four times; weekly uses the selected weekdays in the plan timezone. one-off actions require the same first/last date and one time. Confirmation generates 14 days ahead; a background job extends the schedule. Reminders enter the in-app outbox 30 minutes after due time, outside quiet hours (20:00–09:00). No care reminders are sent to WhatsApp yet.</p><button class="primary" type="submit">Save proposed plan</button></form>${saved?`<section class="sample"><h3>Human confirmation</h3><p>Confirming this plan replaces the active plan and cancels its outstanding tasks. Completed history and evidence awaiting review are retained.</p><label>Review note<textarea id="plan-review-note" required></textarea></label><label><input id="plan-checked" type="checkbox"> I checked the source, every instruction, dates, times and timezone.</label><div class="dialog-actions"><button class="quiet" data-plan-review="reject">Reject draft</button><button class="primary" data-plan-review="confirm">Confirm and activate</button></div></section>`:''}<p id="plan-status" role="status" aria-live="polite"></p></section><div>${versions}<section class="card"><h2>Plan and automation history</h2>${state.planActivity.length>=state.historyLimits.planActivity?'<button class="quiet" data-history="planActivity">Load earlier plan history</button>':''}${state.planActivity.map(a=>`<div class="event"><strong>${esc(a.action)}</strong><p>${esc(a.note)}</p><time>${new Date(a.created_at).toLocaleString()}</time></div>`).join('')}</section></div></div>`;
+ return `<div class="grid"><section class="card"><h2>Create and review a care plan</h2><p>Use fictional documents only. AI proposals require your review; nothing is scheduled until you confirm a saved draft.</p><div class="dialog-actions"><button class="quiet" data-plan-new>New draft</button></div><form id="plan-form"><label>Prescription / consultation source (PDF, PNG, JPEG; up to 8 MB)<input id="plan-file" type="file" accept="application/pdf,image/png,image/jpeg"></label><label>Scan prescription with camera<input id="plan-scan" type="file" accept="image/jpeg,image/png" capture="environment"></label>${draft.source_path?'<p class="mini">Private source attached.</p>':''}<details id="plan-dictation"><summary>Dictate a consultation note</summary><p class="mini">Use fictional data only. Transcription sends your audio to OpenAI. Review the text before extracting proposals or saving.</p><label>Recording language<select id="plan-voice-language"><option value="en">English</option><option value="hi">Hindi</option></select></label>${voiceRecorderControls()}<button type="button" class="quiet" id="transcribe-voice">Transcribe into source note</button></details><label>Source note<textarea id="plan-note" maxlength="20000" required>${esc(draft.source_note)}</textarea></label><button class="quiet" type="button" data-plan-extract>Extract proposals with AI</button><p class="mini">Sends the selected fictional source to OpenAI for extraction. Does not diagnose or activate a plan. Unspecified dates/times must be entered by the clinician.</p>${draft.warnings.map(w=>`<p role="status">${esc(w)}</p>`).join('')}<label>Schedule timezone<select id="plan-timezone">${['Asia/Kolkata','UTC','America/New_York','Europe/London'].map(t=>`<option ${draft.timezone===t?'selected':''}>${t}</option>`).join('')}</select></label><div id="plan-items">${draft.items.map(row).join('')}</div><button class="quiet" type="button" data-plan-add>Add action</button><p class="mini">Daily and weekly schedules allow up to four times; weekly uses the selected weekdays in the plan timezone. one-off actions require the same first/last date and one time. Confirmation generates 14 days ahead; a background job extends the schedule. Reminders enter the in-app outbox 30 minutes after due time, outside quiet hours (20:00–09:00). No care reminders are sent to WhatsApp yet.</p><button class="primary" type="submit">Save proposed plan</button></form>${saved?`<section class="sample"><h3>Human confirmation</h3><p>Confirming this plan replaces the active plan and cancels its outstanding tasks. Completed history and evidence awaiting review are retained.</p><label>Review note<textarea id="plan-review-note" required></textarea></label><label><input id="plan-checked" type="checkbox"> I checked the source, every instruction, dates, times and timezone.</label><div class="dialog-actions"><button class="quiet" data-plan-review="reject">Reject draft</button><button class="primary" data-plan-review="confirm">Confirm and activate</button></div></section>`:''}<p id="plan-status" role="status" aria-live="polite"></p></section><div>${versions}<section class="card"><h2>Plan and automation history</h2>${state.planActivity.length>=state.historyLimits.planActivity?'<button class="quiet" data-history="planActivity">Load earlier plan history</button>':''}${state.planActivity.map(a=>`<div class="event"><strong>${esc(a.action)}</strong><p>${esc(a.note)}</p><time>${new Date(a.created_at).toLocaleString()}</time></div>`).join('')}</section></div></div>`;
 }
 export function bindPlans(root,state,{refresh,toast,setBusy}){
  const form=root.querySelector('#plan-form');
@@ -18,7 +19,39 @@ export function bindPlans(root,state,{refresh,toast,setBusy}){
  const redraw=()=>{root.innerHTML=renderPlans(state,'Clinician');bindPlans(root,state,{refresh,toast,setBusy});};
  form?.addEventListener('input',sync);form?.addEventListener('change',sync);
  const run=async(fn)=>{setBusy(true);root.querySelectorAll('button').forEach(b=>b.disabled=true);try{await fn();}catch(e){toast(e.message);}finally{setBusy(false);root.querySelectorAll('button').forEach(b=>b.disabled=false);}};
- const upload=async()=>{const file=form?.querySelector('#plan-file').files[0];if(file){draft.source_path=await uploadPrivate('plan-documents',file);draft.extraction_id=null;}};
+ const scan=form?.querySelector('#plan-scan'),uploadInput=form?.querySelector('#plan-file');
+ scan?.addEventListener('change',()=>{if(scan.files.length)uploadInput.value='';});
+ uploadInput?.addEventListener('change',()=>{if(uploadInput.files.length)scan.value='';});
+ const voicePanel=form?.querySelector('#plan-dictation');
+ if(voicePanel){
+  let path=null;
+  const voice=bindVoiceRecorder(voicePanel,()=>{path=null;});
+  voicePanel.querySelector('#transcribe-voice').onclick=async()=>{
+   const file=voice.file(),status=voicePanel.querySelector('#voice-status');
+   if(!file||voice.busy())return;
+   const language=voicePanel.querySelector('#plan-voice-language').value;
+   voice.lock(true);status.textContent='Transcribing…';
+   try{
+    path??=await uploadPrivate('voice-notes',file);
+    if(voice.closed())return;
+    const result=await transcribeVoice(path,language);
+    if(voice.closed())return;
+    const transcript=result.text?.trim();
+    if(!transcript)throw Error('No speech was transcribed. Try a clearer recording or type your note.');
+    const note=form.querySelector('#plan-note');
+    const value=[note.value.trimEnd(),transcript].filter(Boolean).join('\n\n');
+    if(value.length>note.maxLength)throw Error('The transcript would exceed the source note limit. Shorten the existing note first.');
+    note.value=value;
+    for(const type of ['input','change'])note.dispatchEvent(new Event(type,{bubbles:true}));
+    voice.lock(false);
+    voicePanel.querySelector('#voice-discard').click();
+    status.textContent='Transcript added. Review and edit the source note.';
+    note.focus();
+   }catch(error){if(!voice.closed())status.textContent=error.message;}
+   finally{if(!voice.closed())voice.lock(false);}
+  };
+ }
+ const upload=async()=>{const file=scan?.files[0]||uploadInput?.files[0];if(file){draft.source_path=await uploadPrivate('plan-documents',file);draft.extraction_id=null;}};
  form?.addEventListener('submit',e=>{e.preventDefault();sync();run(async()=>{await upload();await savePlan(draft.id,draft);await refresh();toast('Draft saved. Review before activation.');});});
  root.querySelectorAll('[data-plan-add]').forEach(b=>b.onclick=()=>{sync();draft.items.push({domain:'medication',label:'',source_excerpt:'',cadence:'',start_date:'',end_date:'',times:[]});redraw();});
  root.querySelectorAll('[data-plan-remove]').forEach(b=>b.onclick=()=>{sync();draft.items.splice(Number(b.dataset.planRemove),1);redraw();});
