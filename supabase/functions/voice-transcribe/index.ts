@@ -1,4 +1,4 @@
-import {interpretMedication} from './interpret.mjs';
+import {interpretMedication,translateVoiceText} from './interpret.mjs';
 const origins = new Set(['https://healthathon.vercel.app','http://localhost:4173']);
 const model = 'gpt-4o-mini-transcribe';
 Deno.serve(async(req: Request) => {
@@ -30,12 +30,17 @@ Deno.serve(async(req: Request) => {
  const file=await fetch(`${url}/storage/v1/object/authenticated/voice-notes/${path}`,{headers,signal:AbortSignal.timeout(15000)});
  if(!file.ok)return json({error:'Recording not accessible'},400);
  const bytes=await file.arrayBuffer();if(bytes.byteLength>8388608)return json({error:'Recording exceeds 8 MB'},413);
- const form=new FormData();form.append('file',new Blob([bytes],{type:file.headers.get('content-type')||'audio/webm'}),path.split('/').pop()!);form.append('model',model);form.append('language',input.language);form.append('response_format','json');
+ const form=new FormData();form.append('file',new Blob([bytes],{type:file.headers.get('content-type')||'audio/webm'}),path.split('/').pop()!);form.append('model',model);form.append('language',input.language);if(input.language==='hi')form.append('prompt','हिंदी भाषण को देवनागरी में लिखें। अंग्रेज़ी शब्द मूल रूप में रखें।');form.append('response_format','json');
  const response=await fetch('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:{Authorization:`Bearer ${key}`},body:form,signal:AbortSignal.timeout(90000)});
  if(!response.ok)return json({error:'Transcription unavailable. You can type the activity instead.',provider_status:response.status},502);
  const result=await response.json();
  const text=typeof result.text==='string'?result.text:'';
- const interpretation=input.interpret_medication===true&&text.trim()&&text.length<=2000&&Date.now()-started<83000?await interpretMedication(text,key):null;
- return json({text,language:input.language,source_path:path,requires_confirmation:true,interpretation});
+ const canAnalyze=!!text.trim()&&text.length<=2000&&Date.now()-started<83000;
+ const scriptMismatch=input.language==='hi'&&/\p{Script=Arabic}/u.test(text);
+ const [interpretation,english]=await Promise.all([
+  canAnalyze&&input.interpret_medication===true&&!scriptMismatch?interpretMedication(text,key):null,
+  canAnalyze?translateVoiceText(text,key):null
+ ]);
+ return json({text,english,script_mismatch:scriptMismatch,language:input.language,source_path:path,requires_confirmation:true,interpretation});
  }catch{return json({error:'Transcription failed. Type the activity or try another audio file.'},503);}
 });
