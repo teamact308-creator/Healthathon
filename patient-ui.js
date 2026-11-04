@@ -43,7 +43,7 @@ export function patientJourney(state,domain='',page=0,status='open'){
   groups.get(day).push(activity);
  }
  const ascending=status==='open'||status==='upcoming';
- const dates=[...groups.keys()].sort((a,b)=>ascending?a.localeCompare(b):b.localeCompare(a));
+ const dates=[...groups.keys()].sort((a,b)=>a===b?0:!a?1:!b?-1:ascending?a.localeCompare(b):b.localeCompare(a));
  const datesPerPage=7;
  const pages=Math.max(1,Math.ceil(dates.length/datesPerPage));page=Math.max(0,Math.min(page,pages-1));
  const formatDate=new Intl.DateTimeFormat('en-IN',{dateStyle:'full',timeZone:'UTC'});
