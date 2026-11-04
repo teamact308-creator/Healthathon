@@ -85,3 +85,23 @@ export function patientNotifications(state){
  }
  return rows.sort((a,b)=>Date.parse(b.at)-Date.parse(a.at)).slice(0,100);
 }
+
+export function trendOverview(state,{sample=false,now=Date.now()}={}){
+ let timezone=sample?'Asia/Kolkata':state.patient?.timezone||'Asia/Kolkata';
+ try{new Intl.DateTimeFormat('en',{timeZone:timezone});}catch{timezone='UTC';}
+ const source=sample?trendSample(now):state;
+ const days=trendDays(source.observations||[],source.events||[],timezone,now).map(day=>{
+  const values=day.readings.map(r=>Number(r.value)).sort((a,b)=>a-b),n=values.length;
+  const medication=day.events.filter(e=>e.domain==='medication');
+  return {...day,low:n?values[0]:null,high:n?values[n-1]:null,median:n?(values[Math.floor((n-1)/2)]+values[Math.floor(n/2)])/2:null,meals:day.events.filter(e=>e.domain==='meals').length,medication};
+ });
+ return {days,timezone,sample};
+}
+export function trendCsv({days,timezone,sample}){
+ const rows=[['date','timezone','source','glucose_unit','reading_count','glucose_low','glucose_median','glucose_high','meal_logs','medication_logs','taken','missed','delayed','skipped_by_instruction','other_medication_outcome']];
+ for(const d of days){
+  const counts=['taken','missed','delayed','skipped_by_instruction'].map(status=>d.medication.filter(e=>e.status===status).length);
+  rows.push([d.date,timezone,sample?'fictional_sample':'loaded_workspace','mg/dL',d.readings.length,d.low,d.median,d.high,d.meals,d.medication.length,...counts,d.medication.length-counts.reduce((sum,n)=>sum+n,0)]);
+ }
+ return rows.map(row=>row.map(v=>v==null?'':typeof v==='number'?String(v):'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\r\n')+'\r\n';
+}

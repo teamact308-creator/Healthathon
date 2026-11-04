@@ -58,3 +58,14 @@ test('patient inbox links active reminders and clinician reviews, excluding care
  audit:[{id:'4',loopId:'report',action:'review',role:'Clinician',to:'CLOSED',at:'2026-11-04'},{id:'5',loopId:'report',action:'reopen',role:'Clinician'}]};
  assert.deepEqual(patientNotifications(state).map(n=>[n.id,n.loopId]),[['review:4','report'],['reminder:1','due']]);
 });
+
+test('30-day CSV exports the same median and blank dates as the overview',async()=>{
+ const {trendOverview,trendCsv}=await import('./patient-model.mjs');
+ const state={patient:{timezone:'UTC'},observations:[{observed_at:'2026-11-04T01:00:00Z',value:110,unit:'mg/dL'},{observed_at:'2026-11-04T02:00:00Z',value:140,unit:'mg/dL'}],events:[{domain:'medication',status:'missed',occurred_at:'2026-11-04T03:00:00Z'}]};
+ const data=trendOverview(state,{now:Date.parse('2026-11-04T04:00:00Z')});
+ assert.equal(data.days.at(-1).median,125);
+ const lines=trendCsv(data).trimEnd().split('\r\n');
+ assert.equal(lines.length,31);
+ assert.match(lines.at(-2),/,"mg\/dL",0,,,,0,0,0,0,0,0,0$/);
+ assert.match(lines.at(-1),/,"mg\/dL",2,110,125,140,0,1,0,1,0,0,0$/);
+});

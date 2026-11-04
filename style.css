@@ -109,3 +109,9 @@ dialog :is(input,select,textarea){scroll-margin-block:12px}
 .notification-bell svg{width:22px;height:22px}
 #notification-count{position:absolute;top:1px;right:1px;min-width:16px;border-radius:10px;padding:1px 3px;background:#37634b;color:white;font-size:10px;text-align:center}
 .notification-inbox .event{overflow-wrap:anywhere}
+.trend-toolbar,.trend-legend{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between}
+.trend-legend{justify-content:flex-start;font-size:13px}
+.trend-scroll{overflow-x:auto}
+.trends .trend-scroll svg{min-width:650px;max-width:none}
+.trend-scroll [data-trend-date]{cursor:pointer}
+.trend-scroll [data-trend-date]:focus-visible rect{stroke:#37634b;stroke-width:2}
