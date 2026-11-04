@@ -115,3 +115,12 @@ dialog :is(input,select,textarea){scroll-margin-block:12px}
 .trends .trend-scroll svg{min-width:650px;max-width:none}
 .trend-scroll [data-trend-date]{cursor:pointer}
 .trend-scroll [data-trend-date]:focus-visible rect{stroke:#37634b;stroke-width:2}
+
+.visit-note-list{display:grid;gap:8px;margin:12px 0 24px}
+.visit-note-day{border:1px solid var(--border);border-radius:10px}
+.visit-note-day>summary{cursor:pointer;padding:12px 14px;font-weight:650}
+.visit-note-day>summary .mini{margin-inline-start:6px;font-weight:400;white-space:nowrap}
+.visit-note-rows{display:grid;padding:0 14px}
+#visit-prep .visit-note-row{display:grid;grid-template-columns:20px minmax(0,1fr);align-items:start;gap:10px;margin:0;padding:11px 0;border-top:1px solid var(--border);font-weight:400;cursor:pointer}
+.visit-note-row input[type=checkbox]{margin:3px 0 0;width:16px;height:16px}
+.visit-note-row span{overflow-wrap:anywhere;white-space:pre-wrap}
