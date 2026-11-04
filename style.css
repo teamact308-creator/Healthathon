@@ -86,3 +86,12 @@ dialog :is(input,select,textarea){scroll-margin-block:12px}
 .capture-voice audio{display:block;width:100%;margin:8px 0}
 .capture-voice audio[hidden],.voice-actions button[hidden]{display:none}
 .capture-voice #voice-status:empty{display:none}
+.capture-voice .voice-actions{justify-content:center;align-items:center}
+.voice-recorder{display:grid;justify-items:center;gap:6px;width:100%;padding:8px 0}
+.voice-record{display:grid;justify-items:center;gap:8px;background:none;border:0;color:#294a3b;font:inherit;font-weight:600;padding:6px 12px;border-radius:12px}
+.voice-record-icon{display:grid;place-items:center;width:60px;height:60px;border-radius:50%;color:white;background:#37634b}
+.voice-record-icon svg{width:26px;height:26px}
+.voice-stop-icon,.voice-record[data-recording=true] svg{display:none}
+.voice-record[data-recording=true] .voice-record-icon{background:#a52f34}
+.voice-record[data-recording=true] .voice-stop-icon{display:block;width:18px;height:18px;border-radius:3px;background:white}
+#voice-elapsed{font-variant-numeric:tabular-nums;color:#53675d;font-size:14px}
