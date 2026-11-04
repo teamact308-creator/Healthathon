@@ -55,3 +55,13 @@ export function trendSample(now=Date.now()){
  }
  return {observations,events};
 }
+
+// Only recognize explicit first-person reports about this dose. Other wording needs review.
+export function medicationOutcomeFromTranscript(text){
+ const value=String(text??'').normalize('NFKC').trim().toLowerCase().replace(/[.!।]+$/u,'').trim();
+ if(/^(?:i )?(?:took (?:it|my (?:dose|medication)|the (?:dose|medication))|(?:मैंने )?(?:दवा|खुराक) ली)$/u.test(value))return 'taken';
+ if(/^(?:i )?(?:missed (?:it|my (?:dose|medication)|the (?:dose|medication))|did not take (?:it|my (?:dose|medication)|the (?:dose|medication))|(?:मैंने )?(?:दवा|खुराक) नहीं ली)$/u.test(value))return 'missed';
+ if(/^(?:i )?(?:took (?:it|my (?:dose|medication)|the (?:dose|medication)) late|(?:मैंने )?(?:दवा|खुराक) देर से ली)$/u.test(value))return 'delayed';
+ if(/^i skipped (?:it|my (?:dose|medication)|the (?:dose|medication)) as (?:my doctor|my clinician) instructed$/u.test(value))return 'skipped_by_instruction';
+ return null;
+}

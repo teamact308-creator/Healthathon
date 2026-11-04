@@ -38,3 +38,12 @@ test('trend days keep local midnight, missing readings and reported medication o
  assert.deepEqual(days.at(-1).readings.map(r=>r.value),[122]);
  assert.equal(days.at(-1).events[0].status,'missed');
 });
+
+test('voice outcome suggestions accept explicit reports and abstain on ambiguous language',async()=>{
+ const {medicationOutcomeFromTranscript:outcome}=await import('./patient-model.mjs');
+ assert.equal(outcome('I took my medication.'),'taken');
+ assert.equal(outcome('I took it late.'),'delayed');
+ assert.equal(outcome('मैंने दवा नहीं ली।'),'missed');
+ assert.equal(outcome('I skipped my dose as my doctor instructed.'),'skipped_by_instruction');
+ for(const phrase of ['I will take my medication','I might have missed my dose','I took it but missed yesterday','I skipped my dose','I did not take it yet'])assert.equal(outcome(phrase),null);
+});
