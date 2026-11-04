@@ -26,3 +26,10 @@ export function workflowMetrics(data){
 
 export const contextValue=e=>e.kind==='bp'?`${e.value.systolic}/${e.value.diastolic}`:e.kind==='investigation'?e.value.reference:e.value.value;
 export const policyText=p=>['medication','meals','glucose','test'].map(k=>`${k}: ${p.windows[k]===null?'unconfigured':p.windows[k]+' min'}`).join('; ')+`; outstanding age: ${p.overdue_hours??'unconfigured'} hours; monitoring availability: ${p.stale_hours??'unconfigured'} hours`;
+
+export function matchLogSuggestion(proposal,items,now=Date.now()){
+ const valid=activityStatuses[proposal.domain]?.some(([status])=>status===proposal.status);
+ const kind=proposal.kind==='planned'?'planned':proposal.kind==='activity'&&valid?'activity':'clarify';
+ const candidates=kind==='activity'?items.filter(i=>i.id===proposal.domain&&i.planActive!==false&&['DUE','UNCONFIRMED'].includes(i.state)&&Date.parse(i.dueAt)<=now):[];
+ return {...proposal,kind,candidates:candidates.map(i=>i.loopId),loop:candidates.length===1?candidates[0].loopId:'',status:valid?proposal.status:''};
+}

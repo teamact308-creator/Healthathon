@@ -1,4 +1,4 @@
-import {interpretMedication,translateVoiceText} from './interpret.mjs';
+import {interpretMedication,translateVoiceText,suggestLogActions} from './interpret.mjs';
 const origins = new Set(['https://healthathon.vercel.app','http://localhost:4173']);
 const model = 'gpt-4o-mini-transcribe';
 Deno.serve(async(req: Request) => {
@@ -18,6 +18,11 @@ Deno.serve(async(req: Request) => {
  const c=await fetch(`${url}/rest/v1/rpc/my_context`,{method:'POST',headers,body:'{}',signal:AbortSignal.timeout(10000)});const context=await c.json();
  if(!c.ok||!context.memberships?.some((m:{patient_id:string;role:string})=>m.patient_id===input.patient_id&&['patient','clinician'].includes(m.role)))return json({error:'Assigned patient or clinician required'},403);
  if(!key)return json({error:'Transcription is not configured'},503);
+ if(Object.hasOwn(input,'activity_note')){
+  const note=typeof input.activity_note==='string'?input.activity_note.trim():'';
+  if(!note||note.length>2000)return json({error:'Enter a note of up to 2,000 characters.'},400);
+  return json({actions:await suggestLogActions(note,key),requires_confirmation:true});
+ }
  if(Object.hasOwn(input,'typed_note')){
   const note=typeof input.typed_note==='string'?input.typed_note.trim():'';
   if(!note||note.length>2000)return json({error:'Enter a note of up to 2,000 characters.'},400);

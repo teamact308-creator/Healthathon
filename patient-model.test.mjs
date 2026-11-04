@@ -88,3 +88,14 @@ test('plan change summary ignores drafts and identifies a schedule-only revision
  const items=[{id:'a',plan_id:'old',domain:'test',label:'Report'},{id:'b',plan_id:'new',domain:'test',label:'Report'}];
  assert.deepEqual(planChanges(current,plans,items,[{item_id:'a',times:['09:00']},{item_id:'b',times:['10:00']}]),[{domain:'test',before:['Report'],after:['Report']}]);
 });
+
+test('Log matches only one eligible activity and never treats a planned note as completed',async()=>{
+ const {matchLogSuggestion}=await import('./intake-model.mjs');
+ const due={id:'med',loopId:'due',state:'DUE',dueAt:'2026-11-04T08:00:00Z'};
+ const now=Date.parse('2026-11-05T08:00:00Z');
+ const p={domain:'med',kind:'activity',status:'delayed'};
+ assert.equal(matchLogSuggestion(p,[due,{...due,loopId:'old',planActive:false}],now).loop,'due');
+ assert.equal(matchLogSuggestion(p,[due,{...due,loopId:'also-due'}],now).loop,'');
+ assert.equal(matchLogSuggestion({...p,kind:'planned'},[due],now).loop,'');
+ assert.equal(matchLogSuggestion({...p,status:'meal_logged'},[due],now).kind,'clarify');
+});

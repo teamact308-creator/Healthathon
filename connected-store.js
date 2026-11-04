@@ -95,3 +95,5 @@ export const sendPersonalWhatsAppTest=(action,confirmed=false)=>request('/functi
 export async function interpretMedicationNote(note){return request('/functions/v1/voice-transcribe','POST',{patient_id:membership.patient_id,typed_note:note});}
 
 export const requestActivityHelp=(loop,text,event)=>rpc('request_activity_help',{p_loop:loop,p_text:text,p_event:event});
+
+export const suggestActivityNote=note=>request('/functions/v1/voice-transcribe','POST',{patient_id:membership.patient_id,activity_note:note});
