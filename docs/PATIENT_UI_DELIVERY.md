@@ -55,3 +55,9 @@ Patients can open Trends from Journey or Log → Monitoring data. Clinicians can
 
 ## Journey follow-up
 Journey defaults to open due activities and can filter by status and care dimension. My care plan compares the loaded current and prior confirmed versions. Reports aggregates investigation occurrences with submission and review context. Patients can request practical help on an open due activity; the assigned team replies and resolves the request in Intake & issues without altering the activity. The patient reads the reply in Journey → Help requests. The activity-help RPC validates patient scope and retries; the shared database check exercised patient submission, replay, caregiver denial and coordinator reply inside a rolled-back transaction.
+
+## November 5 patient workflow follow-through
+
+Journey → Documents groups investigation reports, confirmed care-plan originals and standalone uploads for association. Messages contains persistent task-linked help threads with separate claim, reply, follow-up and resolution actions. Team replies and resolutions appear in the patient notification bell. A help resolution leaves care-task status unchanged. Today capture shows a saved receipt and return action, plan revisions show previous and current changed entries, and Trends keeps its 30-day default with a separate day selector and CSV export.
+
+See JUDGE_WALKTHROUGH.md for role-by-role verification and PILOT_READINESS.md for the synthetic baseline and real-enrollment dependencies.
