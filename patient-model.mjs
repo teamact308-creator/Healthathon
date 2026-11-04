@@ -1,4 +1,4 @@
-const patientViews=['today','journey','capture','messages','plans','context','account','trends','notifications'];
+const patientViews=['today','journey','capture','messages','plans','context','account','trends','notifications','reports','help'];
 export function allowedViews(role){return role==='Patient'?patientViews:role==='Caregiver'?['today']:['Clinician','Coordinator'].includes(role)?['today','journey','capture','messages','plans','context','queue','operations','inbox','audit',...(role==='Clinician'?['trends']:[])]:[];}
 export const defaultView=role=>['Clinician','Coordinator'].includes(role)?'queue':'today';
 export function safeView(role,view){return allowedViews(role).includes(view)?view:defaultView(role);}
@@ -104,4 +104,28 @@ export function trendCsv({days,timezone,sample}){
   rows.push([d.date,timezone,sample?'fictional_sample':'loaded_workspace','mg/dL',d.readings.length,d.low,d.median,d.high,d.meals,d.medication.length,...counts,d.medication.length-counts.reduce((sum,n)=>sum+n,0)]);
  }
  return rows.map(row=>row.map(v=>v==null?'':typeof v==='number'?String(v):'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\r\n')+'\r\n';
+}
+
+export function journeyOccurrences(occurrences,domain='',status='open',now=Date.now()){
+ const matches=l=>{
+  if(domain&&l.domainKey!==domain)return false;
+  if(status==='open')return l.planActive!==false&&['DUE','UNCONFIRMED'].includes(l.state)&&Date.parse(l.dueAt)<=now;
+  if(status==='upcoming')return l.planActive!==false&&l.state==='DUE'&&Date.parse(l.dueAt)>now;
+  if(status==='review')return l.state==='REVIEW_PENDING';
+  if(status==='completed')return l.state==='CLOSED';
+  return true;
+ };
+ return occurrences.filter(matches).sort((a,b)=>status==='open'||status==='upcoming'?Date.parse(a.dueAt)-Date.parse(b.dueAt):Date.parse(b.dueAt)-Date.parse(a.dueAt));
+}
+
+export function planChanges(current,plans,items,schedules){
+ const date=p=>Date.parse(p.confirmed_at||p.created_at);
+ const previous=plans.filter(p=>p.status==='confirmed'&&p.id!==current.id&&date(p)<date(current)).sort((a,b)=>date(b)-date(a))[0];
+ if(!previous)return null;
+ const signature=i=>{const s=schedules.find(x=>x.item_id===i.id);return JSON.stringify([i.label,i.source_excerpt||'',i.cadence,s?.start_date,s?.end_date,s?.times,s?.weekdays]);};
+ return ['medication','meals','glucose','test'].flatMap(domain=>{
+  const before=items.filter(i=>i.plan_id===previous.id&&i.domain===domain),after=items.filter(i=>i.plan_id===current.id&&i.domain===domain);
+  if(JSON.stringify(before.map(signature).sort())===JSON.stringify(after.map(signature).sort()))return [];
+  return [{domain,before:before.map(i=>i.label),after:after.map(i=>i.label)}];
+ });
 }

@@ -69,3 +69,22 @@ test('30-day CSV exports the same median and blank dates as the overview',async(
  assert.match(lines.at(-2),/,"mg\/dL",0,,,,0,0,0,0,0,0,0$/);
  assert.match(lines.at(-1),/,"mg\/dL",2,110,125,140,0,1,0,1,0,0,0$/);
 });
+
+test('Journey separates actionable, upcoming and waiting work across plan versions',async()=>{
+ const {journeyOccurrences}=await import('./patient-model.mjs');
+ const now=Date.parse('2026-11-05T06:00:00Z');
+ const dueAt='2026-11-05T05:00:00Z';
+ const items=[{loopId:'active',state:'DUE',dueAt,domainKey:'medication'},{loopId:'future',state:'DUE',dueAt:'2026-11-05T08:00:00Z'},{loopId:'old',state:'UNCONFIRMED',dueAt,planActive:false},{loopId:'waiting',state:'REVIEW_PENDING',dueAt,domainKey:'test',planActive:false},{loopId:'closed',state:'CLOSED',dueAt,domainKey:'test'}];
+ assert.deepEqual(journeyOccurrences(items,'','open',now).map(l=>l.loopId),['active']);
+ assert.deepEqual(journeyOccurrences(items,'test','review',now).map(l=>l.loopId),['waiting']);
+ assert.deepEqual(journeyOccurrences(items,'test','completed',now).map(l=>l.loopId),['closed']);
+ assert.deepEqual(journeyOccurrences(items,'','upcoming',now).map(l=>l.loopId),['future']);
+});
+
+test('plan change summary ignores drafts and identifies a schedule-only revision',async()=>{
+ const {planChanges}=await import('./patient-model.mjs');
+ const current={id:'new',status:'confirmed',confirmed_at:'2026-11-05'};
+ const plans=[current,{id:'old',status:'confirmed',confirmed_at:'2026-11-03'},{id:'draft',status:'proposed',created_at:'2026-11-04'}];
+ const items=[{id:'a',plan_id:'old',domain:'test',label:'Report'},{id:'b',plan_id:'new',domain:'test',label:'Report'}];
+ assert.deepEqual(planChanges(current,plans,items,[{item_id:'a',times:['09:00']},{item_id:'b',times:['10:00']}]),[{domain:'test',before:['Report'],after:['Report']}]);
+});
