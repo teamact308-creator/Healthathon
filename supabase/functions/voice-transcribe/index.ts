@@ -1,13 +1,15 @@
+import {interpretMedication} from './interpret.mjs';
 const origins = new Set(['https://healthathon.vercel.app','http://localhost:4173']);
 const model = 'gpt-4o-mini-transcribe';
 Deno.serve(async(req: Request) => {
+ const started=Date.now();
  const origin=req.headers.get('origin');
  const cors=origin && origins.has(origin)?{'Access-Control-Allow-Origin':origin,'Vary':'Origin','Access-Control-Allow-Headers':'authorization,apikey,content-type','Access-Control-Allow-Methods':'POST,OPTIONS'}:{};
  const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{...cors,'Content-Type':'application/json','Cache-Control':'no-store'}});
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers:cors});
  if(req.method!=='POST')return json({error:'POST required'},405);
  const auth=req.headers.get('authorization');if(!auth?.startsWith('Bearer '))return json({error:'Sign in required'},401);
- const url=Deno.env.get('SUPABASE_URL')!,pub=Deno.env.get('SUPABASE_ANON_KEY')!,service=Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,key=Deno.env.get('OPENAI_API_KEY');
+ const url=Deno.env.get('SUPABASE_URL')!,pub=Deno.env.get('SUPABASE_ANON_KEY')!,key=Deno.env.get('OPENAI_API_KEY');
  const headers={apikey:pub,Authorization:auth,'Content-Type':'application/json'};
  try{
  const u=await fetch(`${url}/auth/v1/user`,{headers,signal:AbortSignal.timeout(10000)});if(!u.ok)return json({error:'Sign in required'},401);const user=await u.json();
@@ -25,6 +27,9 @@ Deno.serve(async(req: Request) => {
  const form=new FormData();form.append('file',new Blob([bytes],{type:file.headers.get('content-type')||'audio/webm'}),path.split('/').pop()!);form.append('model',model);form.append('language',input.language);form.append('response_format','json');
  const response=await fetch('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:{Authorization:`Bearer ${key}`},body:form,signal:AbortSignal.timeout(90000)});
  if(!response.ok)return json({error:'Transcription unavailable. You can type the activity instead.',provider_status:response.status},502);
- const result=await response.json();return json({text:result.text,language:input.language,source_path:path,requires_confirmation:true});
+ const result=await response.json();
+ const text=typeof result.text==='string'?result.text:'';
+ const interpretation=input.interpret_medication===true&&text.trim()&&text.length<=2000&&Date.now()-started<83000?await interpretMedication(text,key):null;
+ return json({text,language:input.language,source_path:path,requires_confirmation:true,interpretation});
  }catch{return json({error:'Transcription failed. Type the activity or try another audio file.'},503);}
 });

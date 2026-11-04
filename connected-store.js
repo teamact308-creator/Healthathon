@@ -52,7 +52,7 @@ export async function privateFile(bucket,path){const result=await request(`/stor
 export async function extractPlan(data){return request('/functions/v1/plan-extract','POST',{patient_id:membership.patient_id,...data});}
 export async function logActivity(loop,status,details,event){return rpc('log_care_activity',{p_loop:loop,p_status:status,p_details:details,p_event:event});}
 export async function submitReport(loop,path,label,event){return request('/functions/v1/report-submit','POST',{patient_id:membership.patient_id,loop_id:loop,source_path:path,label,event_key:event});}
-export async function transcribeVoice(path,language){return request('/functions/v1/voice-transcribe','POST',{patient_id:membership.patient_id,source_path:path,language});}
+export async function transcribeVoice(path,language,interpretMedication=false){return request('/functions/v1/voice-transcribe','POST',{patient_id:membership.patient_id,source_path:path,language,interpret_medication:interpretMedication});}
 export async function importGlucose(readings){return rpc('import_synthetic_glucose',{p_patient:membership.patient_id,p_rows:readings});}
 
 export async function manageLoop(loop,action,due,note,event){return rpc("manage_care_loop",{p_loop:loop,p_action:action,p_due:due,p_note:note,p_event:event});}
