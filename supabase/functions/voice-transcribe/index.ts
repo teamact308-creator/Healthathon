@@ -18,6 +18,12 @@ Deno.serve(async(req: Request) => {
  const c=await fetch(`${url}/rest/v1/rpc/my_context`,{method:'POST',headers,body:'{}',signal:AbortSignal.timeout(10000)});const context=await c.json();
  if(!c.ok||!context.memberships?.some((m:{patient_id:string;role:string})=>m.patient_id===input.patient_id&&['patient','clinician'].includes(m.role)))return json({error:'Assigned patient or clinician required'},403);
  if(!key)return json({error:'Transcription is not configured'},503);
+ if(Object.hasOwn(input,'typed_note')){
+  const note=typeof input.typed_note==='string'?input.typed_note.trim():'';
+  if(!note||note.length>2000)return json({error:'Enter a note of up to 2,000 characters.'},400);
+  return json({interpretation:await interpretMedication(note,key),requires_confirmation:true});
+ }
+
  const path=input.source_path;
  if(typeof path!=='string'||!path.startsWith(input.patient_id+'/')||path.includes('..'))return json({error:'Invalid recording path'},400);
  if(!['en','hi'].includes(input.language))return json({error:'Choose English or Hindi'},400);
