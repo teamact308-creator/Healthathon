@@ -82,3 +82,7 @@ label > :is(select,textarea,input:not([type=checkbox],[type=radio],[type=hidden]
 :is(input:not([type=checkbox],[type=radio]),select,textarea):focus-visible{outline-offset:-3px}
 dialog,.medication-capture .capture-content{scroll-padding-block:24px}
 dialog :is(input,select,textarea){scroll-margin-block:12px}
+.voice-actions{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.capture-voice audio{display:block;width:100%;margin:8px 0}
+.capture-voice audio[hidden],.voice-actions button[hidden]{display:none}
+.capture-voice #voice-status:empty{display:none}
