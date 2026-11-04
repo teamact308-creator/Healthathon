@@ -66,16 +66,18 @@ function navigate(target){if(!state||busy)return;view=safeView(role,target);feed
 function bindVisitPrep(){
  const form=$('#visit-prep');
  if(!form)return;
- const status=$('#visit-status'),draft=$('#visit-draft');
+ const status=$('#visit-status'),noticed=$('#visit-noticed'),records=$('#visit-records'),discuss=$('#visit-discuss');
  form.onsubmit=event=>{
   event.preventDefault();
   const notes=new FormData(form).getAll('visit-note');
   if(notes.length>3){status.textContent='Choose up to three notes.';return;}
   const facts=[...form.querySelectorAll('[data-visit-fact]')].map(point=>point.textContent);
-  draft.value=['What I noticed',...notes,'','What my records show',...facts,'','What I’d like to discuss','I’d like to review these entries with you.'].join('\n');
+  noticed.value=notes.join('\n');
+  records.value=facts.join('\n');
+  discuss.value='I’d like to review these entries with you.';
   $('#visit-result').hidden=false;
   status.textContent='Visit draft ready to review.';
-  draft.focus();
+  noticed.focus();
  };
  const ai=$('#visit-ai');
  if(ai)ai.onclick=async()=>{
@@ -93,8 +95,21 @@ function bindVisitPrep(){
   finally{ai.disabled=false;}
  };
  $('#visit-copy').onclick=async()=>{
-  try{await navigator.clipboard.writeText(draft.value);status.textContent='Visit note copied.';}
-  catch{draft.select();status.textContent='Copy the selected visit note using your device controls.';}
+  const text=[['What I noticed',noticed.value],['What my records show',records.value],['What I’d like to discuss',discuss.value]].map(([heading,value])=>heading+'\n'+value.trim()).join('\n\n');
+  try{await navigator.clipboard.writeText(text);status.textContent='Visit note copied.';}
+  catch{
+   let fallback=$('#visit-copy-text');
+   if(!fallback){
+    fallback=document.createElement('textarea');
+    fallback.id='visit-copy-text';
+    fallback.readOnly=true;
+    fallback.setAttribute('aria-label','Complete visit draft for manual copying');
+    status.before(fallback);
+   }
+   fallback.value=text;
+   fallback.select();
+   status.textContent='Copy the selected visit note using your device controls.';
+  }
  };
  form.querySelectorAll('[data-visit-date]').forEach(button=>button.onclick=()=>{
   trendOptions.date=button.dataset.visitDate;
