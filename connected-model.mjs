@@ -7,7 +7,7 @@ export function normalizeWorkspace({items,loops,evidence=[],audit=[],messages=[]
  const current=loops.filter(l=>visible(l)&&l.state!=='CANCELLED'&&Date.parse(l.due_at)<=now).sort((a,b)=>Date.parse(a.due_at)-Date.parse(b.due_at));
  const allMap=new Map(loops.map(l=>[l.id,l]));
  return {occurrences:loops.map(decorate).filter(Boolean),items:current.map(decorate).filter(Boolean),upcoming:loops.filter(l=>visible(l)&&l.state!=='CANCELLED'&&Date.parse(l.due_at)>now).map(decorate).filter(Boolean),
- audit:audit.map(a=>({loopId:a.loop_id,label:itemMap.get(allMap.get(a.loop_id)?.item_id)?.label??'Caregiver support consent',action:a.action,role:title(a.actor_role),from:a.previous_state??'—',to:a.next_state??'—',note:a.note,at:a.created_at})),
+ audit:audit.map(a=>({id:a.id,loopId:a.loop_id,label:itemMap.get(allMap.get(a.loop_id)?.item_id)?.label??'Caregiver support consent',action:a.action,role:title(a.actor_role),from:a.previous_state??'—',to:a.next_state??'—',note:a.note,at:a.created_at})),
  schedules,planActivity,rawItems,events,rawEvidence,extractions,intake,intakeActivity,failures,delivery,health,contextEntries,policies,corrections,historyLimits,
- messages:messages.map(m=>({text:m.body,to:title(m.recipient_role),at:m.created_at,status:m.delivery_status})),observations,plans,patient:patients[0],profile,supportTasks:support.filter(t=>t.status==='open'),caregivers,consent:caregivers[0]?.granted??false};
+ messages:messages.map(m=>({id:m.id,loopId:m.loop_id,text:m.body,to:title(m.recipient_role),at:m.created_at,status:m.delivery_status})),observations,plans,patient:patients[0],profile,supportTasks:support.filter(t=>t.status==='open'),caregivers,consent:caregivers[0]?.granted??false};
 }

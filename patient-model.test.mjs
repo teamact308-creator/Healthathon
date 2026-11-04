@@ -50,3 +50,11 @@ test('voice outcome suggestions accept explicit reports and abstain on ambiguous
  assert.equal(outcome('I skipped my dose as my doctor instructed.'),'skipped_by_instruction');
  for(const phrase of ['I will take my medication','I might have missed my dose','I took it but missed yesterday','I skipped my dose','I did not take it yet'])assert.equal(outcome(phrase),null);
 });
+
+test('patient inbox links active reminders and clinician reviews, excluding caregiver and resolved reminders',async()=>{
+ const {patientNotifications}=await import('./patient-model.mjs');
+ const state={occurrences:[{loopId:'due',id:'med',label:'Medication',state:'DUE'},{loopId:'report',id:'test',label:'Report',state:'CLOSED'}],
+ messages:[{id:'1',loopId:'due',to:'Patient',at:'2026-11-03'},{id:'2',loopId:'due',to:'Caregiver'},{id:'3',loopId:'report',to:'Patient'}],
+ audit:[{id:'4',loopId:'report',action:'review',role:'Clinician',to:'CLOSED',at:'2026-11-04'},{id:'5',loopId:'report',action:'reopen',role:'Clinician'}]};
+ assert.deepEqual(patientNotifications(state).map(n=>[n.id,n.loopId]),[['review:4','report'],['reminder:1','due']]);
+});

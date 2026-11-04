@@ -104,3 +104,8 @@ dialog :is(input,select,textarea){scroll-margin-block:12px}
 .med-chat-reply,.med-chat-prompt{padding:10px 14px;border-radius:12px;overflow-wrap:anywhere;white-space:pre-wrap}
 .med-chat-reply{background:#edf3e8;margin-inline-start:20px!important}
 .med-chat-prompt{background:#f5f7f4;border:1px solid var(--border);margin-inline-end:20px!important}
+.notification-bell{position:relative;display:grid;place-items:center;min-width:44px;min-height:44px;padding:8px}
+.notification-bell[hidden],#notification-count[hidden]{display:none}
+.notification-bell svg{width:22px;height:22px}
+#notification-count{position:absolute;top:1px;right:1px;min-width:16px;border-radius:10px;padding:1px 3px;background:#37634b;color:white;font-size:10px;text-align:center}
+.notification-inbox .event{overflow-wrap:anywhere}

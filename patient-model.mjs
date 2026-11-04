@@ -1,4 +1,4 @@
-const patientViews=['today','journey','capture','messages','plans','context','account','trends'];
+const patientViews=['today','journey','capture','messages','plans','context','account','trends','notifications'];
 export function allowedViews(role){return role==='Patient'?patientViews:role==='Caregiver'?['today']:['Clinician','Coordinator'].includes(role)?['today','journey','capture','messages','plans','context','queue','operations','inbox','audit',...(role==='Clinician'?['trends']:[])]:[];}
 export const defaultView=role=>['Clinician','Coordinator'].includes(role)?'queue':'today';
 export function safeView(role,view){return allowedViews(role).includes(view)?view:defaultView(role);}
@@ -66,4 +66,22 @@ export function medicationOutcomeFromTranscript(text){
  if(/^(?:i )?(?:took (?:it|my (?:dose|medication)|the (?:dose|medication)) late|(?:मैंने )?(?:दवा|खुराक) देर से ली)$/u.test(value))return 'delayed';
  if(/^i skipped (?:it|my (?:dose|medication)|the (?:dose|medication)) as (?:my doctor|my clinician) instructed$/u.test(value))return 'skipped_by_instruction';
  return null;
+}
+
+export function patientNotifications(state){
+ const occurrences=new Map((state.occurrences||[]).map(item=>[item.loopId,item]));
+ const rows=[];
+ for(const m of state.messages||[]){
+  const item=occurrences.get(m.loopId);
+  if(m.id&&m.to==='Patient'&&item&&item.planActive!==false&&['DUE','UNCONFIRMED'].includes(item.state)){
+   rows.push({id:'reminder:'+m.id,loopId:m.loopId,at:m.at,title:'An activity needs your attention',label:item.label,timezone:item.timezone});
+  }
+ }
+ for(const event of state.audit||[]){
+  const item=occurrences.get(event.loopId);
+  if(event.id&&event.action==='review'&&event.role==='Clinician'&&event.to==='CLOSED'&&item?.id==='test'){
+   rows.push({id:'review:'+event.id,loopId:event.loopId,at:event.at,title:'Your clinician reviewed your report',label:item.label,timezone:item.timezone});
+  }
+ }
+ return rows.sort((a,b)=>Date.parse(b.at)-Date.parse(a.at)).slice(0,100);
 }
