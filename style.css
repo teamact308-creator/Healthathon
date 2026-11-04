@@ -65,3 +65,11 @@ body.patient-workspace #content select,body.patient-workspace #content input{max
 .medication-capture .dialog-actions button{min-height:44px}
 .medication-capture #capture-status-text:empty{display:none}
 @media(max-width:520px){.medication-capture .capture-fields{grid-template-columns:1fr;gap:0}.medication-capture .capture-content{padding:16px}.medication-capture .dialog-actions{padding:10px 16px}}
+.medication-capture .med-outcomes{min-width:0;border:0;padding:0;margin:0 0 16px}
+.med-outcomes legend{font-weight:600;font-size:14px;margin-bottom:8px}
+.med-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.medication-capture .med-options label,.medication-capture .med-time-toggle{display:flex;align-items:center;gap:8px}
+.medication-capture .med-options label{border:1px solid var(--border);border-radius:8px;min-height:44px;padding:8px 10px;margin:0;cursor:pointer}
+.medication-capture .med-options label:has(:checked){background:#edf3e8;border-color:#477559}
+.medication-capture input:is([type=radio],[type=checkbox]){width:16px;min-height:16px;flex:none;accent-color:#37634b;padding:0}
+.med-time{margin-bottom:16px}.med-time p{margin:0 0 6px}.medication-capture .med-time-toggle{min-height:44px;margin:0}
