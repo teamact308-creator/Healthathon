@@ -97,3 +97,5 @@ export async function interpretMedicationNote(note){return request('/functions/v
 export const requestActivityHelp=(loop,text,event)=>rpc('request_activity_help',{p_loop:loop,p_text:text,p_event:event});
 
 export const suggestActivityNote=note=>request('/functions/v1/voice-transcribe','POST',{patient_id:membership.patient_id,activity_note:note});
+
+export const updateHelpThread=(id,action,message,event)=>rpc('update_help_thread',{p_request:id,p_action:action,p_text:message,p_event:event});

@@ -68,6 +68,17 @@ export function medicationOutcomeFromTranscript(text){
  return null;
 }
 
+export const isHelpRequest = item => !item.source_path && !!item.loop_id && item.label.startsWith('Help request: ');
+
+export function helpThread(state, item) {
+ const entries = (state.intakeActivity || []).filter(event => event.intake_id === item.id)
+  .sort((a,b) => Date.parse(a.created_at) - Date.parse(b.created_at));
+ const owner = entries.find(event => event.action === 'help_claim');
+ const replies = entries.filter(event => ['help_reply','help_patient_reply','help_resolve','acknowledge','dismiss'].includes(event.action));
+ const open = !['resolved','dismissed'].includes(item.state);
+ return {owner,replies,open,waitingForPatient:open && replies.at(-1)?.action === 'help_reply'};
+}
+
 export function patientNotifications(state){
  const occurrences=new Map((state.occurrences||[]).map(item=>[item.loopId,item]));
  const rows=[];
@@ -81,6 +92,12 @@ export function patientNotifications(state){
   const item=occurrences.get(event.loopId);
   if(event.id&&event.action==='review'&&event.role==='Clinician'&&event.to==='CLOSED'&&item?.id==='test'){
    rows.push({id:'review:'+event.id,loopId:event.loopId,at:event.at,title:'Your clinician reviewed your report',label:item.label,timezone:item.timezone});
+  }
+ }
+ for(const item of (state.intake || []).filter(isHelpRequest)){
+  for(const reply of helpThread(state,item).replies){
+   if(!['help_reply','help_resolve'].includes(reply.action))continue;
+   rows.push({id:'help:'+reply.id,threadId:item.id,at:reply.created_at,title:reply.action==='help_reply'?'Your care team replied':'Your help request was resolved',label:item.label.slice(14),timezone:state.patient?.timezone});
   }
  }
  return rows.sort((a,b)=>Date.parse(b.at)-Date.parse(a.at)).slice(0,100);
