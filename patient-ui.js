@@ -34,11 +34,19 @@ export function patientPlan(state){
  const changeSummary=changes===null?'':`<section class="card"><h2>What changed</h2><p>Compared with your previous confirmed plan. Check the current instructions and schedules below.</p>${changes.length?`<ul>${changes.map(c=>`<li><strong>${esc(domains[c.domain])}</strong>: ${!c.before.length?'Added':!c.after.length?'Removed':'Instructions or schedule updated'}. ${c.details.map(d=>`<p><strong>${esc(d.period)}</strong> · ${esc(d.label)}${d.instruction?' · '+esc(d.instruction):''}${d.schedule?' · '+esc(d.schedule):''}</p>`).join('')}</li>`).join('')}</ul>`:'<p>No instruction or schedule differences found in the loaded plans.</p>'}</section>`;
  return `<section class="card"><p class="eyebrow">CONFIRMED BY YOUR CLINICIAN</p><h2>Your current care plan</h2><p>Follow these agreed instructions. Your clinician manages changes to this plan.</p><p class="mini">Confirmed ${when(p.confirmed_at||p.created_at,p.timezone)} · ${esc(p.timezone)}</p><details><summary>Original instruction note</summary><p class="source">${esc(p.source_note)}</p></details></section>${changeSummary}${sections}`;
 }
-export function patientJourney(state,domain='',page=0,status='open'){
- const all=journeyOccurrences(state.occurrences??[...state.items,...state.upcoming],domain,status);
+const journeyRanges={all:'Any date',last7:'Last 7 days',last14:'Last 14 days (fortnight)',last30:'Last 30 days',next7:'Next 7 days',next14:'Next 14 days',next30:'Next 30 days'};
+export function patientJourney(state,domain='',page=0,status='open',range='all',now=Date.now()){
+ const all=journeyOccurrences(state.occurrences??[...state.items,...state.upcoming],domain,status,now);
  const groups=new Map();
  for(const activity of all){
   const day=dayKey(activity.dueAt,activity.timezone);
+  if(range!=='all'&&Object.hasOwn(journeyRanges,range)){
+   const today=dayKey(now,activity.timezone);
+   const offset=(Date.parse(day)-Date.parse(today))/86400000;
+   const length=Number(range.slice(4));
+   const within=range.startsWith('last')?offset<=0&&offset>-length:offset>=0&&offset<length;
+   if(!within)continue;
+  }
   if(!groups.has(day))groups.set(day,[]);
   groups.get(day).push(activity);
  }
@@ -51,7 +59,7 @@ export function patientJourney(state,domain='',page=0,status='open'){
   const title=day?formatDate.format(new Date(day+'T00:00:00Z')):'Date unavailable';
   return `<section class="patient-section"><h2>${esc(title)}</h2>${list(groups.get(day),'')}</section>`;
  }).join('');
- return `<div class="patient-links">${go('plans','My care plan')}${go('reports','Documents')}${go('help','Help requests')}${go('trends','30-day trends')}${go('context','Health history')}${go('account','Care circle & preferences')}</div><section class="card"><h2>Track your activities</h2><div class="patient-actions"><label>Status <select id="journey-status">${Object.entries({open:'Open',review:'Waiting for review',completed:'Completed',upcoming:'Upcoming',all:'All activity'}).map(([v,t])=>`<option value="${v}" ${status===v?'selected':''}>${t}</option>`).join('')}</select></label><label>Care dimension <select id="journey-domain"><option value="">All dimensions</option>${Object.entries(domains).map(([v,t])=>`<option value="${v}" ${domain===v?'selected':''}>${t}</option>`).join('')}</select></label></div><p class="mini">${all.length} matching activities · open and upcoming show the current plan.</p></section>${datedActivities||list([],'No activities match these filters.')}${pages>1?`<div class="patient-actions"><button class="quiet" id="journey-prev" ${page===0?'disabled':''}>Previous</button><span>Page ${page+1} of ${pages}</span><button class="quiet" id="journey-next" ${page===pages-1?'disabled':''}>Next</button></div>`:''}`;
+ return `<div class="patient-links">${go('plans','My care plan')}${go('reports','Documents')}${go('help','Help requests')}${go('trends','30-day trends')}${go('context','Health history')}${go('account','Care circle & preferences')}</div><section class="card"><h2>Track your activities</h2><div class="patient-actions"><label>Status <select id="journey-status">${Object.entries({open:'Open',review:'Waiting for review',completed:'Completed',upcoming:'Upcoming',all:'All activity'}).map(([v,t])=>`<option value="${v}" ${status===v?'selected':''}>${t}</option>`).join('')}</select></label><label>Date range <select id="journey-range">${Object.entries(journeyRanges).map(([value,label])=>`<option value="${value}" ${range===value?'selected':''}>${label}</option>`).join('')}</select></label><label>Care dimension <select id="journey-domain"><option value="">All dimensions</option>${Object.entries(domains).map(([v,t])=>`<option value="${v}" ${domain===v?'selected':''}>${t}</option>`).join('')}</select></label></div><p class="mini">${[...groups.values()].reduce((count,items)=>count+items.length,0)} matching activities · date ranges include today and use each activity’s scheduled date.</p></section>${datedActivities||list([],'No activities match these filters.')}${pages>1?`<div class="patient-actions"><button class="quiet" id="journey-prev" ${page===0?'disabled':''}>Previous</button><span>Page ${page+1} of ${pages}</span><button class="quiet" id="journey-next" ${page===pages-1?'disabled':''}>Next</button></div>`:''}`;
 }
 export function patientReports(state,category='all',reportStatus='all'){
  const evidence=state.rawEvidence||[],intake=(state.intake||[]).filter(i=>i.source_path&&!evidence.some(e=>e.storage_path===i.source_path));
