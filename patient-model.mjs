@@ -135,7 +135,7 @@ export function journeyOccurrences(occurrences,domain='',status='open',now=Date.
  return occurrences.filter(matches).sort((a,b)=>status==='open'||status==='upcoming'?Date.parse(a.dueAt)-Date.parse(b.dueAt):Date.parse(b.dueAt)-Date.parse(a.dueAt));
 }
 
-export function planChanges(current,plans,items,schedules){
+export function planChanges(current,plans,items,schedules,{includeDetails=false}={}){
  const date=p=>Date.parse(p.confirmed_at||p.created_at);
  const previous=plans.filter(p=>p.status==='confirmed'&&p.id!==current.id&&date(p)<date(current)).sort((a,b)=>date(b)-date(a))[0];
  if(!previous)return null;
@@ -143,6 +143,17 @@ export function planChanges(current,plans,items,schedules){
  return ['medication','meals','glucose','test'].flatMap(domain=>{
   const before=items.filter(i=>i.plan_id===previous.id&&i.domain===domain),after=items.filter(i=>i.plan_id===current.id&&i.domain===domain);
   if(JSON.stringify(before.map(signature).sort())===JSON.stringify(after.map(signature).sort()))return [];
-  return [{domain,before:before.map(i=>i.label),after:after.map(i=>i.label)}];
+  const change={domain,before:before.map(i=>i.label),after:after.map(i=>i.label)};
+  if(includeDetails){
+   const describe=(item,period)=>{
+    const schedule=schedules.find(row=>row.item_id===item.id);
+    return {period,label:item.label,instruction:item.source_excerpt,schedule:[item.cadence,schedule?.start_date,schedule?.end_date,schedule?.times?.join(', '),schedule?.weekdays?.map(day=>['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][day]??day).join(', ')].filter(Boolean).join(' · ')};
+   };
+   change.details=[
+    ...before.filter(i=>!after.some(j=>signature(i)===signature(j))).map(i=>describe(i,'Previous')),
+    ...after.filter(i=>!before.some(j=>signature(i)===signature(j))).map(i=>describe(i,'Current'))
+   ];
+  }
+  return [change];
  });
 }
