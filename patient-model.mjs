@@ -58,7 +58,9 @@ export function trendSample(now=Date.now()){
 
 // Only recognize explicit first-person reports about this dose. Other wording needs review.
 export function medicationOutcomeFromTranscript(text){
- const value=String(text??'').normalize('NFKC').trim().toLowerCase().replace(/[.!।]+$/u,'').trim();
+ const value=String(text??'').normalize('NFKC').replace(/[‘’]/gu,"'").trim().toLowerCase().replace(/[.!।]+$/u,'').trim();
+ const explicitTaken=/^(?:i took|i(?:'ve| have) taken|took) (?:it|(?:my|the) (?:dose|medication|medicine))(?:,? (on time|late))?$/u.exec(value);
+ if(explicitTaken)return explicitTaken[1]==='late'?'delayed':'taken';
  if(/^(?:i )?(?:took (?:it|my (?:dose|medication)|the (?:dose|medication))|(?:मैंने )?(?:दवा|खुराक) ली)$/u.test(value))return 'taken';
  if(/^(?:i )?(?:missed (?:it|my (?:dose|medication)|the (?:dose|medication))|did not take (?:it|my (?:dose|medication)|the (?:dose|medication))|(?:मैंने )?(?:दवा|खुराक) नहीं ली)$/u.test(value))return 'missed';
  if(/^(?:i )?(?:took (?:it|my (?:dose|medication)|the (?:dose|medication)) late|(?:मैंने )?(?:दवा|खुराक) देर से ली)$/u.test(value))return 'delayed';

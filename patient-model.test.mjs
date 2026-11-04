@@ -43,6 +43,9 @@ test('voice outcome suggestions accept explicit reports and abstain on ambiguous
  const {medicationOutcomeFromTranscript:outcome}=await import('./patient-model.mjs');
  assert.equal(outcome('I took my medication.'),'taken');
  assert.equal(outcome('I took it late.'),'delayed');
+ assert.equal(outcome("I've taken my medication on time."),'taken');
+ assert.equal(outcome('I’ve taken my medicine late.'),'delayed');
+ assert.equal(outcome("I haven't taken my medication on time yet."),null);
  assert.equal(outcome('मैंने दवा नहीं ली।'),'missed');
  assert.equal(outcome('I skipped my dose as my doctor instructed.'),'skipped_by_instruction');
  for(const phrase of ['I will take my medication','I might have missed my dose','I took it but missed yesterday','I skipped my dose','I did not take it yet'])assert.equal(outcome(phrase),null);
