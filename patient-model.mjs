@@ -157,3 +157,29 @@ export function planChanges(current,plans,items,schedules,{includeDetails=false}
   return [change];
  });
 }
+
+export function visitFacts(days){
+ const covered=days.filter(day=>day.readings.length);
+ const delayed=days.filter(day=>day.medication.some(event=>event.status==='delayed'));
+ const pairs=covered.flatMap(day=>{
+  const meals=day.events.filter(event=>event.domain==='meals'&&event.status==='meal_logged');
+  if(meals.length!==1)return [];
+  const meal=Date.parse(meals[0].occurred_at);
+  const before=day.readings.filter(reading=>Date.parse(reading.observed_at)<meal&&meal-Date.parse(reading.observed_at)<=7200000).at(-1);
+  const after=day.readings.find(reading=>Date.parse(reading.observed_at)>meal&&Date.parse(reading.observed_at)-meal<=7200000);
+  return before&&after?[{date:day.date,higher:Number(after.value)>Number(before.value)}]:[];
+ });
+ return [
+  {text:`Glucose readings were recorded on ${covered.length} of ${days.length} days.`,dates:covered.map(day=>day.date)},
+  ...(delayed.length?[{text:`I recorded delayed medication on ${delayed.length} days.`,dates:delayed.map(day=>day.date)}]:[]),
+  {text:pairs.length>=3?`On ${pairs.filter(pair=>pair.higher).length} of ${pairs.length} comparable days, the reading after the logged meal was higher. Each comparison uses the closest reading within two hours on either side of a single logged meal.`:'There were too few days with comparable readings before and after a single logged meal to describe a pattern.',dates:pairs.map(pair=>pair.date)}
+ ];
+}
+
+export function visitNotes(state,days,timezone,now){
+ const dates=new Set(days.map(day=>day.date));
+ return (state.events||[]).filter(event=>state.profile?.id&&event.actor_id===state.profile.id&&
+  typeof event.details?.note==='string'&&event.details.note.trim()&&Date.parse(event.occurred_at)<=now&&dates.has(dayKey(event.occurred_at,timezone)))
+  .sort((a,b)=>Date.parse(b.occurred_at)-Date.parse(a.occurred_at))
+  .map(event=>({id:event.id,date:dayKey(event.occurred_at,timezone),text:event.details.note.trim()}));
+}
