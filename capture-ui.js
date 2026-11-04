@@ -23,11 +23,15 @@ function bindVoiceRecorder(dialog,onChange){
  const formats=['audio/webm;codecs=opus','audio/webm','audio/mp4'];
  const mime=globalThis.MediaRecorder&&formats.find(type=>MediaRecorder.isTypeSupported(type));
  let stream,recorder,timer,ticker,url,file,audioContext,frame,closed=false,pending=false,locked=false;
+ let peaks=[];
+ // SVG does not reflect the HTMLElement.hidden property.
+ const showWave=visible=>wave.toggleAttribute('hidden',!visible);
+ const drawPeaks=values=>{const count=Math.min(120,values.length),points=[];for(let i=0;i<count;i++){const from=Math.floor(i*values.length/count),to=Math.floor((i+1)*values.length/count);let peak=0;for(let j=from;j<to;j++)peak=Math.max(peak,values[j]);const x=(i+.5)*240/count,y=Math.min(18,peak*54);points.push(x+','+(20-y),x+','+(20+y),x+',20');}line.setAttribute('points',points.join(' '));showWave(count>0);};
  const busy=()=>pending||!!recorder;
  const sync=()=>{const recording=recorder?.state==='recording';start.dataset.recording=String(recording);action.textContent=recording?'Stop recording':pending?'Waiting for microphone…':recorder?'Preparing playback…':file?'Record again':'Start recording';start.disabled=!recording&&(!mime||!navigator.mediaDevices?.getUserMedia||busy()||locked);discard.hidden=!file;discard.disabled=busy()||locked;input.disabled=busy()||locked;transcribe.disabled=!file||busy()||locked;};
- const release=()=>{clearTimeout(timer);clearInterval(ticker);cancelAnimationFrame(frame);if(audioContext){void audioContext.close().catch(()=>{});audioContext=null;}wave.hidden=true;stream?.getTracks().forEach(t=>t.stop());stream=null;};
+ const release=()=>{clearTimeout(timer);clearInterval(ticker);cancelAnimationFrame(frame);if(audioContext){void audioContext.close().catch(()=>{});audioContext=null;}showWave(false);stream?.getTracks().forEach(t=>t.stop());stream=null;};
  const stopRecording=()=>{if(recorder?.state==='recording'){recorder.stop();release();sync();}};
- const preview=next=>{player.pause();player.removeAttribute('src');if(url)URL.revokeObjectURL(url);file=next;onChange();url=file?URL.createObjectURL(file):null;if(url)player.src=url;player.hidden=!url;sync();};
+ const preview=next=>{player.pause();player.removeAttribute('src');if(url)URL.revokeObjectURL(url);file=next;showWave(false);onChange();url=file?URL.createObjectURL(file):null;if(url)player.src=url;player.hidden=!url;sync();};
  const cleanup=()=>{closed=true;observer.disconnect();if(recorder?.state==='recording')recorder.stop();release();preview(null);};
  const observer=new MutationObserver(()=>{if(!dialog.open||!dialog.contains(start))cleanup();});
  observer.observe(dialog,{attributes:true,attributeFilter:['open'],childList:true,subtree:true});
@@ -41,10 +45,10 @@ function bindVoiceRecorder(dialog,onChange){
    const acquired=await navigator.mediaDevices.getUserMedia({audio:true});
    if(closed||!dialog.open){acquired.getTracks().forEach(t=>t.stop());return;}
    stream=acquired;const current=new MediaRecorder(stream,{mimeType:mime,audioBitsPerSecond:64000});recorder=current;
-   const chunks=[];let failed=false;
+   const chunks=[];peaks=[];let failed=false;
    current.ondataavailable=e=>{if(e.data.size)chunks.push(e.data);};
    current.onerror=()=>{failed=true;release();status.textContent='Recording failed. Try again or choose a file.';};
-   current.onstop=()=>{release();recorder=null;if(closed)return;if(!failed){const type=mime.split(';')[0],clip=new File(chunks,type==='audio/mp4'?'voice-note.m4a':'voice-note.webm',{type});if(clip.size&&clip.size<=8*1024*1024){input.value='';preview(clip);status.textContent='Recording ready. Play it back before transcribing.';}else status.textContent='No usable recording was captured. Try a shorter clip.';}sync();};
+   current.onstop=()=>{release();recorder=null;if(closed)return;if(!failed){const type=mime.split(';')[0],clip=new File(chunks,type==='audio/mp4'?'voice-note.m4a':'voice-note.webm',{type});if(clip.size&&clip.size<=8*1024*1024){input.value='';preview(clip);drawPeaks(peaks);status.textContent='Recording ready. Play it back before transcribing.';}else status.textContent='No usable recording was captured. Try a shorter clip.';}sync();};
    current.start();
    try{
     if(audioContext){
@@ -54,14 +58,15 @@ function bindVoiceRecorder(dialog,onChange){
      const samples=new Float32Array(analyser.fftSize);
      const draw=()=>{
       if(recorder!==current||current.state!=='recording')return;
-      wave.hidden=context.state!=='running';
+      showWave(context.state==='running');
       analyser.getFloatTimeDomainData(samples);
+      if(context.state==='running')peaks.push(samples.reduce((peak,v)=>Math.max(peak,Math.abs(v)),0));
       line.setAttribute('points',samples.reduce((points,v,i)=>points+(i?' ':'')+(i*240/255).toFixed(1)+','+(20-Math.max(-1,Math.min(1,v*3))*18).toFixed(1),''));
       frame=requestAnimationFrame(draw);
      };
      draw();
     }
-   }catch{wave.hidden=true;}
+   }catch{showWave(false);}
    const began=performance.now();const tick=()=>{const seconds=Math.floor((performance.now()-began)/1000);elapsed.textContent=[Math.floor(seconds/60),seconds%60].map(n=>String(n).padStart(2,'0')).join(':');};tick();ticker=setInterval(tick,250);timer=setTimeout(stopRecording,120000);status.textContent='Recording… Tap again to stop. Maximum two minutes.';
   }catch{release();recorder=null;if(!closed)status.textContent='Could not start the microphone. Check permission or choose a file.';}
   finally{pending=false;sync();}
