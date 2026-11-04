@@ -1,4 +1,4 @@
-import {todayGroups,loopMeaning,trendOverview,journeyOccurrences,planChanges,isHelpRequest,helpThread} from './patient-model.mjs';
+import {todayGroups,loopMeaning,trendOverview,journeyOccurrences,planChanges,dayKey,isHelpRequest,helpThread} from './patient-model.mjs';
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const domains={medication:'Medication',meals:'Meals',glucose:'Monitoring',test:'Investigations'};
 export const when=(value,tz='Asia/Kolkata')=>{if(!value||!Number.isFinite(Date.parse(value)))return 'Not recorded';try{return new Intl.DateTimeFormat('en-IN',{timeZone:tz,dateStyle:'medium',timeStyle:'short'}).format(new Date(value));}catch{return when(value,'UTC');}};
@@ -36,8 +36,22 @@ export function patientPlan(state){
 }
 export function patientJourney(state,domain='',page=0,status='open'){
  const all=journeyOccurrences(state.occurrences??[...state.items,...state.upcoming],domain,status);
- const pages=Math.max(1,Math.ceil(all.length/12));page=Math.max(0,Math.min(page,pages-1));
- return `<div class="patient-links">${go('plans','My care plan')}${go('reports','Documents')}${go('help','Help requests')}${go('trends','30-day trends')}${go('context','Health history')}${go('account','Care circle & preferences')}</div><section class="card"><h2>Track your activities</h2><div class="patient-actions"><label>Status <select id="journey-status">${Object.entries({open:'Open',review:'Waiting for review',completed:'Completed',upcoming:'Upcoming',all:'All activity'}).map(([v,t])=>`<option value="${v}" ${status===v?'selected':''}>${t}</option>`).join('')}</select></label><label>Care dimension <select id="journey-domain"><option value="">All dimensions</option>${Object.entries(domains).map(([v,t])=>`<option value="${v}" ${domain===v?'selected':''}>${t}</option>`).join('')}</select></label></div><p class="mini">${all.length} matching activities · open and upcoming show the current plan.</p></section>${list(all.slice(page*12,page*12+12),'No activities match these filters.')}${pages>1?`<div class="patient-actions"><button class="quiet" id="journey-prev" ${page===0?'disabled':''}>Previous</button><span>Page ${page+1} of ${pages}</span><button class="quiet" id="journey-next" ${page===pages-1?'disabled':''}>Next</button></div>`:''}`;
+ const groups=new Map();
+ for(const activity of all){
+  const day=dayKey(activity.dueAt,activity.timezone);
+  if(!groups.has(day))groups.set(day,[]);
+  groups.get(day).push(activity);
+ }
+ const ascending=status==='open'||status==='upcoming';
+ const dates=[...groups.keys()].sort((a,b)=>ascending?a.localeCompare(b):b.localeCompare(a));
+ const datesPerPage=7;
+ const pages=Math.max(1,Math.ceil(dates.length/datesPerPage));page=Math.max(0,Math.min(page,pages-1));
+ const formatDate=new Intl.DateTimeFormat('en-IN',{dateStyle:'full',timeZone:'UTC'});
+ const datedActivities=dates.slice(page*datesPerPage,(page+1)*datesPerPage).map(day=>{
+  const title=day?formatDate.format(new Date(day+'T00:00:00Z')):'Date unavailable';
+  return `<section class="patient-section"><h2>${esc(title)}</h2>${list(groups.get(day),'')}</section>`;
+ }).join('');
+ return `<div class="patient-links">${go('plans','My care plan')}${go('reports','Documents')}${go('help','Help requests')}${go('trends','30-day trends')}${go('context','Health history')}${go('account','Care circle & preferences')}</div><section class="card"><h2>Track your activities</h2><div class="patient-actions"><label>Status <select id="journey-status">${Object.entries({open:'Open',review:'Waiting for review',completed:'Completed',upcoming:'Upcoming',all:'All activity'}).map(([v,t])=>`<option value="${v}" ${status===v?'selected':''}>${t}</option>`).join('')}</select></label><label>Care dimension <select id="journey-domain"><option value="">All dimensions</option>${Object.entries(domains).map(([v,t])=>`<option value="${v}" ${domain===v?'selected':''}>${t}</option>`).join('')}</select></label></div><p class="mini">${all.length} matching activities · open and upcoming show the current plan.</p></section>${datedActivities||list([],'No activities match these filters.')}${pages>1?`<div class="patient-actions"><button class="quiet" id="journey-prev" ${page===0?'disabled':''}>Previous</button><span>Page ${page+1} of ${pages}</span><button class="quiet" id="journey-next" ${page===pages-1?'disabled':''}>Next</button></div>`:''}`;
 }
 export function patientReports(state,category='all',reportStatus='all'){
  const evidence=state.rawEvidence||[],intake=(state.intake||[]).filter(i=>i.source_path&&!evidence.some(e=>e.storage_path===i.source_path));
