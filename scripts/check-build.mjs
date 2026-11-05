@@ -26,6 +26,7 @@ const allowed = [
   "patient-model.mjs",
   "patient-ui.js",
   "plan-ui.js",
+  "prescription-crop.js",
   "style.css",
   "supabase/functions/_shared/ai-privacy.mjs",
   "workflow.mjs"
