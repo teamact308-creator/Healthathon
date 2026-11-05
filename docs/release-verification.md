@@ -1,5 +1,7 @@
 # WholeCare MVP increment - verification, 2 November 2026
 
+**6 November follow-up:** see [the six-item delivery and remaining acceptance boundaries](AUTONOMOUS_FOLLOWUP.md). Only live WhatsApp/SMS is on hold; other remaining dependencies are explicitly identified.
+
 ## Current verified increment — 6 November 2026
 
 Implementation commit 82ac32a205f24ddcfa5c6391c454388265807e41 passed GitHub verify and database-rebuild checks and Vercel production deployment dpl_EYKrmcNJiBHBAHXWVDTcbCCpaYRj is READY. The latest local suite passes 149 tests and explicit build-output validation. Two retained API journeys passed 39 checks each. Hosted report review/notification, help claim/reply/resolution, explicit internal-proposal confirmation and unsaved-dialog preservation were verified. Incoming fixtures were internal synthetic records; no live webhook, worker, phone enrollment or channel was enabled. Both gates were checked false after confirmation.

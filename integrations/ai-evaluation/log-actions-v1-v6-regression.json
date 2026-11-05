@@ -1,0 +1,139 @@
+{
+  "date": "2026-11-06",
+  "corpus_sha256": "050e51c790f5a97fad332eb0a6e7a012d17746d717c6b3c5fe80d1bf695d61f0",
+  "no_care_writes": true,
+  "results": [
+    {
+      "id": "self-two-actions",
+      "expected": [
+        [
+          "meal",
+          "meal_logged",
+          "activity"
+        ],
+        [
+          "med",
+          "taken",
+          "activity"
+        ]
+      ],
+      "observed": [
+        [
+          "meal",
+          "meal_logged",
+          "activity"
+        ],
+        [
+          "med",
+          "taken",
+          "activity"
+        ]
+      ],
+      "passed": true,
+      "http": 200,
+      "version": "2026-11-06-action-evidence-v6"
+    },
+    {
+      "id": "other-actor",
+      "expected": [
+        [
+          "med",
+          "unknown",
+          "clarify"
+        ]
+      ],
+      "observed": [
+        [
+          "med",
+          "unknown",
+          "clarify"
+        ]
+      ],
+      "passed": true,
+      "http": 200,
+      "version": "2026-11-06-action-evidence-v6"
+    },
+    {
+      "id": "future-action",
+      "expected": [
+        [
+          "med",
+          "unknown",
+          "planned"
+        ]
+      ],
+      "observed": [
+        [
+          "med",
+          "unknown",
+          "planned"
+        ]
+      ],
+      "passed": true,
+      "http": 200,
+      "version": "2026-11-06-action-evidence-v6"
+    },
+    {
+      "id": "self-skip-no-order",
+      "expected": [
+        [
+          "med",
+          "unknown",
+          "clarify"
+        ]
+      ],
+      "observed": [
+        [
+          "med",
+          "unknown",
+          "clarify"
+        ]
+      ],
+      "passed": true,
+      "http": 200,
+      "version": "2026-11-06-action-evidence-v6"
+    },
+    {
+      "id": "hi-taken",
+      "expected": [
+        [
+          "med",
+          "taken",
+          "activity"
+        ]
+      ],
+      "observed": [
+        [
+          "med",
+          "taken",
+          "activity"
+        ]
+      ],
+      "passed": true,
+      "http": 200,
+      "version": "2026-11-06-action-evidence-v6"
+    },
+    {
+      "id": "mixed-pending",
+      "expected": [
+        [
+          "med",
+          "unknown",
+          "planned"
+        ]
+      ],
+      "observed": [
+        [
+          "med",
+          "unknown",
+          "planned"
+        ]
+      ],
+      "passed": true,
+      "http": 200,
+      "version": "2026-11-06-action-evidence-v6"
+    }
+  ],
+  "passed": 6,
+  "total": 6
+}

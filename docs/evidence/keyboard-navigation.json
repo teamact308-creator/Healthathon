@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-06",
+  "host": "https://healthathon.vercel.app/",
+  "checks": [
+    "Skip link Enter focuses main heading",
+    "Task details opens with Enter",
+    "Escape closes dialog",
+    "Focus returns to the opening task button"
+  ],
+  "mobile_viewport": {
+    "requested": 390,
+    "observed": 1280,
+    "verified": false,
+    "override_reset": true
+  },
+  "limits": [
+    "Not a screen-reader certification or physical mobile acceptance"
+  ]
+}

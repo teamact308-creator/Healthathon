@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-06",
+  "synthetic": true,
+  "before": {
+    "route_http": 502,
+    "provider_http": 400,
+    "container": "WAV",
+    "filename": "recording.webm"
+  },
+  "after": {
+    "route_http": 200,
+    "original_transcript": true,
+    "english_transcript": true,
+    "requires_confirmation": true,
+    "filename_follows_container": true
+  },
+  "care_activity_written_by_transcription": false
+}

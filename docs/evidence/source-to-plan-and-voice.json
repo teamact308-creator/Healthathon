@@ -1,0 +1,66 @@
+{
+  "date": "2026-11-06",
+  "synthetic": true,
+  "patient_id": "cf1ae817-0ea3-426c-88f4-0fc2c35c32a4",
+  "scope": "Hosted API boundary acceptance; not a complete browser-only or clinical acceptance test",
+  "checks": [
+    {
+      "check": "private clinician instruction PDF uploaded",
+      "passed": true
+    },
+    {
+      "check": "source structurally prepared before use",
+      "passed": true
+    },
+    {
+      "check": "patient cannot extract a clinician plan",
+      "passed": true
+    },
+    {
+      "check": "PDF extraction returned retained proposal",
+      "passed": true
+    },
+    {
+      "check": "AI extraction did not activate any care task",
+      "passed": true
+    },
+    {
+      "check": "four expected dimensions extracted",
+      "passed": true
+    },
+    {
+      "check": "reviewed proposal saved as draft",
+      "passed": true
+    },
+    {
+      "check": "missing source review blocks activation",
+      "passed": true
+    },
+    {
+      "check": "explicit reviewed confirmation activates four tasks",
+      "passed": true
+    },
+    {
+      "check": "patient sees four scheduled tasks",
+      "passed": true
+    },
+    {
+      "check": "synthetic recorded source uploaded privately",
+      "passed": true
+    },
+    {
+      "check": "audio returns original and English transcription for review",
+      "passed": true
+    },
+    {
+      "check": "transcription did not record any activity",
+      "passed": true
+    },
+    {
+      "check": "missing recording fails explicitly for manual fallback",
+      "passed": true
+    }
+  ],
+  "transcript_nonempty": true,
+  "provider_care_writes": false
+}

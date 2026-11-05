@@ -58,3 +58,11 @@ test('chosen patient survives reload selection, is user scoped and rejects revok
  await assert.rejects(()=>choosePatient('other','clinician'),/no longer assigned/);
  await signOut();assert.equal(memory.has('wholecare-patient-selection'),false);
 });
+
+
+test('invalid refresh is an authentication denial while a transient provider outage preserves retryable session',async()=>{
+ for(const code of [400,503]){
+ globalThis.fetch=async url=>url.includes('grant_type=password')?response({access_token:'expired',refresh_token:'fixture-refresh',expires_at:1}):response({message:'Refresh unavailable'},code);
+ await signIn('fixture','fixture');await assert.rejects(()=>loadWorkspace(),error=>error.status===(code===400?401:503));assert.equal(hasSession(),code===503);
+ }await signOut();
+});

@@ -19,7 +19,7 @@ test('explicit not-swallowed future intent cannot ask a timing-only question',as
 });
 test('structured medication evidence rejects other people, uncertainty, future doses and invented quotes',async()=>{
  const {verifiedMedicationOutcome}=await import('./supabase/functions/voice-transcribe/interpret.mjs');
- const source='I took this dose on time.';const good={outcome:'taken',actor:'self',certainty:'explicit',phase:'reported_outcome',multiple_occurrences:false,evidence:source};
+ const source='I took this dose on time.';const good={outcome:'taken',reported_action:'taken',actor:'self',certainty:'explicit',phase:'reported_outcome',multiple_occurrences:false,evidence:source};
  assert.equal(verifiedMedicationOutcome(good,source),'taken');
  for(const patch of [{actor:'other'},{certainty:'uncertain'},{phase:'pending_or_future'},{multiple_occurrences:true},{evidence:''}])assert.equal(verifiedMedicationOutcome({...good,...patch},source),'unclear_taken');
  assert.equal(verifiedMedicationOutcome({...good,evidence:'invented'},source),null);
@@ -28,8 +28,22 @@ test('structured medication evidence rejects other people, uncertainty, future d
 
 test('a self-decided skip cannot become clinician instruction without a source clause',async()=>{
  const {verifiedMedicationOutcome}=await import('./supabase/functions/voice-transcribe/interpret.mjs');
- const base={outcome:'skipped_by_instruction',actor:'self',certainty:'explicit',phase:'reported_outcome',multiple_occurrences:false,evidence:'I skipped it',clinician_instruction:'absent',instruction_evidence:''};
+ const base={outcome:'skipped_by_instruction',reported_action:'skipped',actor:'self',certainty:'explicit',phase:'reported_outcome',multiple_occurrences:false,evidence:'I skipped it',clinician_instruction:'absent',instruction_evidence:''};
  assert.equal(verifiedMedicationOutcome(base,'I skipped it'),'unclear_skip');
  assert.equal(verifiedMedicationOutcome({...base,clinician_instruction:'explicitly_reported',instruction_evidence:'doctor said skip'},'I skipped it'),'unclear_skip');
  assert.equal(verifiedMedicationOutcome({...base,clinician_instruction:'explicitly_reported',instruction_evidence:'doctor said skip'},'I skipped it; doctor said skip'),'skipped_by_instruction');
+});
+
+
+test('explicit skipped action clarifies instruction independently from whether the action happened',async()=>{
+ const {verifiedMedicationOutcome}=await import('./supabase/functions/voice-transcribe/interpret.mjs');
+ const text='I decided to skip it because I was busy.';
+ assert.equal(verifiedMedicationOutcome({outcome:'unclear_taken',actor:'self',certainty:'explicit',phase:'reported_outcome',reported_action:'skipped',multiple_occurrences:false,clinician_instruction:'absent',instruction_evidence:'',evidence:text},text),'unclear_skip');
+});
+
+
+test('explicit pending refusal guard handles English, Hindi and Hinglish without claiming an outcome',async()=>{
+ const {pendingDose}=await import('./supabase/functions/voice-transcribe/interpret.mjs');
+ for(const text of ['I have not taken the dose yet.','अभी दवा नहीं ली है।','Abhi tak goli nahi khayi. Thodi der baad lene ka plan hai.'])assert.equal(pendingDose(text),true);
+ for(const text of ['I took it late.','I skipped it yesterday.','मैंने दवा ले ली है।'])assert.equal(pendingDose(text),false);
 });

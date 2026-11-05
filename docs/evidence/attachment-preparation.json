@@ -1,0 +1,55 @@
+{
+  "date": "2026-11-06",
+  "synthetic": true,
+  "provider_transfer": false,
+  "checks": [
+    {
+      "check": "private upload",
+      "passed": true
+    },
+    {
+      "check": "unassociated report remains unreadable under existing policies",
+      "passed": true
+    },
+    {
+      "check": "source enters association queue without care completion",
+      "passed": true
+    },
+    {
+      "check": "patient preparation reads only currently authorized source",
+      "passed": true
+    },
+    {
+      "check": "clinician preparation reads only currently authorized source",
+      "passed": true
+    },
+    {
+      "check": "coordinator preparation reads only currently authorized source",
+      "passed": true
+    },
+    {
+      "check": "caregiver cannot prepare clinical source",
+      "passed": true
+    },
+    {
+      "check": "anonymous request denied",
+      "passed": true
+    },
+    {
+      "check": "cross patient path denied",
+      "passed": true
+    },
+    {
+      "check": "disguised document rejected",
+      "passed": true
+    },
+    {
+      "check": "missing source is explicit failure",
+      "passed": true
+    },
+    {
+      "check": "preparation never records care",
+      "passed": true
+    }
+  ]
+}

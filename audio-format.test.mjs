@@ -1,0 +1,3 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {audioFormat} from './supabase/functions/_shared/audio-format.mjs';
+test('provider filename follows WAV bytes, not a default WebM extension',()=>{assert.deepEqual(audioFormat(new TextEncoder().encode('RIFF0000WAVEdata0000')),{mime:'audio/wav',extension:'wav'});assert.equal(audioFormat(new Uint8Array([26,69,223,163,0,0,0,0,0,0,0,0])).extension,'webm');assert.equal(audioFormat(new TextEncoder().encode('0000ftypM4A 0000')).extension,'m4a');});
+test('truncated or unrecognized containers are rejected before provider transfer',()=>{assert.throws(()=>audioFormat(new Uint8Array(3)));assert.throws(()=>audioFormat(new TextEncoder().encode('not an audio container')));});

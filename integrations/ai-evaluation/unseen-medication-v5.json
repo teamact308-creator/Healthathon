@@ -1,0 +1,10 @@
+[
+ {"id":"new-hi-uncertain","text":"याद नहीं है कि गोली ली थी या नहीं, बस खाली पत्ता दिख रहा है।","expected":["unclear","unclear_taken"],"reason":"An empty packet is not proof of ingestion"},
+ {"id":"new-en-negated-command","text":"Please don't mark it taken; I haven't swallowed it yet.","expected":["unclear","unclear_taken"],"reason":"Negated command with pending action"},
+ {"id":"new-mixed-late","text":"Lunch ke baad apni tablet kha chuka hoon, scheduled time se teen ghante der se.","expected":["delayed"],"reason":"Completed late dose"},
+ {"id":"new-en-relative-plan","text":"My daughter plans to take her medicine after dinner. I am just helping her.","expected":["unclear","unclear_taken"],"reason":"Another person's future plan"},
+ {"id":"new-hi-self-skip","text":"डॉक्टर का निर्देश नहीं था। मैंने खुद कल वाली गोली छोड़ दी थी।","expected":["unclear_skip","missed"],"reason":"Self-decided completed skip without clinician instruction"},
+ {"id":"new-en-completed","text":"My own scheduled tablet is swallowed; I took it at the planned time.","expected":["taken"],"reason":"Explicit ingestion"},
+ {"id":"new-mixed-unsure","text":"Shayad subah goli li thi, pakka yaad nahi hai.","expected":["unclear","unclear_taken"],"reason":"Hinglish uncertainty"},
+ {"id":"new-en-two-dates","text":"Yesterday's dose was taken but today's dose is still pending.","expected":["unclear","unclear_taken"],"reason":"Two distinct occurrences cannot fill a single task"}
+]

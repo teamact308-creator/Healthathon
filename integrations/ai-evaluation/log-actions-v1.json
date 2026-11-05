@@ -1,0 +1,8 @@
+[
+ {"id":"self-two-actions","text":"I took my tablet on time and I logged my lunch.","expected":[["med","taken","activity"],["meal","meal_logged","activity"]]},
+ {"id":"other-actor","text":"My father took his tablet this morning.","expected":[["med","unknown","clarify"]]},
+ {"id":"future-action","text":"I will take my tablet later tonight.","expected":[["med","unknown","planned"]]},
+ {"id":"self-skip-no-order","text":"I skipped my own tablet because I was busy. No doctor told me to skip it.","expected":[["med","unknown","clarify"]]},
+ {"id":"hi-taken","text":"मैंने अपनी गोली समय पर ले ली है।","expected":[["med","taken","activity"]]},
+ {"id":"mixed-pending","text":"Abhi tak goli nahi khayi. Baad mein lunga.","expected":[["med","unknown","planned"]]}
+]

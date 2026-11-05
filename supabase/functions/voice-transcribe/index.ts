@@ -1,3 +1,4 @@
+import {audioFormat} from '../_shared/audio-format.mjs';
 import {scopedObjectPath} from '../_shared/file-safety.mjs';
 import {minimizeText} from '../_shared/ai-privacy.mjs';
 import {authorizeTransfer} from '../_shared/ai-transfer.mjs';
@@ -26,12 +27,12 @@ Deno.serve(async(req: Request) => {
  if(Object.hasOwn(input,'activity_note')){
   const note=typeof input.activity_note==='string'?minimizeText(input.activity_note,names).text.trim():'';
   if(!note||note.length>2000)return json({error:'Enter a note of up to 2,000 characters.'},400);
-  return json({actions:await suggestLogActions(note,key),requires_confirmation:true});
+  return json({actions:await suggestLogActions(note,key),interpretation_version:'2026-11-06-action-evidence-v6',requires_confirmation:true});
  }
  if(Object.hasOwn(input,'typed_note')){
   const note=typeof input.typed_note==='string'?minimizeText(input.typed_note,names).text.trim():'';
   if(!note||note.length>2000)return json({error:'Enter a note of up to 2,000 characters.'},400);
-  return json({interpretation:await interpretMedication(note,key),interpretation_version:'2026-11-06-evidence-v3',requires_confirmation:true});
+  return json({interpretation:await interpretMedication(note,key),interpretation_version:'2026-11-06-action-evidence-v6',requires_confirmation:true});
  }
 
  const path=input.source_path;
@@ -40,7 +41,8 @@ Deno.serve(async(req: Request) => {
  const file=await fetch(`${url}/storage/v1/object/authenticated/voice-notes/${path}`,{headers,signal:AbortSignal.timeout(15000)});
  if(!file.ok)return json({error:'Recording not accessible'},400);
  const bytes=await file.arrayBuffer();if(bytes.byteLength>8388608)return json({error:'Recording exceeds 8 MB'},413);
- const form=new FormData();form.append('file',new Blob([bytes],{type:file.headers.get('content-type')||'audio/webm'}),'recording.'+(file.headers.get('content-type')?.includes('mp4')?'m4a':'webm'));form.append('model',model);form.append('language',input.language);if(input.language==='hi')form.append('prompt','हिंदी भाषण को देवनागरी में लिखें। अंग्रेज़ी शब्द मूल रूप में रखें।');form.append('response_format','json');
+ const format=audioFormat(bytes);
+ const form=new FormData();form.append('file',new Blob([bytes],{type:format.mime}),'recording.'+format.extension);form.append('model',model);form.append('language',input.language);if(input.language==='hi')form.append('prompt','हिंदी भाषण को देवनागरी में लिखें। अंग्रेज़ी शब्द मूल रूप में रखें।');form.append('response_format','json');
  const response=await fetch('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:{Authorization:`Bearer ${key}`},body:form,signal:AbortSignal.timeout(90000)});
  if(!response.ok)return json({error:'Transcription unavailable. You can type the activity instead.',provider_status:response.status},502);
  const result=await response.json();

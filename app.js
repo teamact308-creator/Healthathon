@@ -235,3 +235,7 @@ const updates=updateCheck({read:()=>workspaceRevision(view==='caseload'),canChec
   else{let notice=document.querySelector('#new-updates');if(!notice){notice=document.createElement('p');notice.id='new-updates';notice.className='notice';notice.setAttribute('role','status');notice.textContent='New care updates are available. Finish your entry, then use Refresh to load them.';document.querySelector('#content').before(notice);}}
  },onDenied:()=>{epoch++;showLogin('Your care access changed. Sign in again to continue.');}});
 window.addEventListener('pagehide',()=>updates.stop());
+
+// Reconcile on reconnect/return through the same serialized, draft-preserving poller.
+window.addEventListener('online',()=>updates.tick());
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)updates.tick();});

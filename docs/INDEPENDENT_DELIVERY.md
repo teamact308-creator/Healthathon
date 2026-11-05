@@ -1,5 +1,7 @@
 # Independent delivery ledger — 6 November 2026
 
+**Current follow-up:** [AUTONOMOUS_FOLLOWUP.md](AUTONOMOUS_FOLLOWUP.md) records the subsequent six-item delivery, including the real WAV fix, broader AI checks, association-first source preparation and reconnect/session handling. Historical evaluation/version statements below describe the earlier increment. Only live WhatsApp/SMS is on hold.
+
 This records execution against the user's 25-item autonomous work list. It supplements, rather than replaces, D01–D07 and J01–J07 in mvp-and-product-review.md. A local test, an installed backend change, a hosted acceptance test and production readiness are different claims. All test records are synthetic. The project is still a development demo.
 
 ## 1. Four-persona end-to-end journey (D01)

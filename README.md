@@ -1,5 +1,7 @@
 # WholeCare Diabetes — Team Act / Healthathon
 
+**6 November follow-up:** see [the six-item delivery and remaining acceptance boundaries](docs/AUTONOMOUS_FOLLOWUP.md). Only live WhatsApp/SMS is on hold; other remaining dependencies are explicitly identified.
+
 **6 November delivery:** independent work and remaining gates are tracked item by item in [the execution ledger](docs/INDEPENDENT_DELIVERY.md), with [operations/access procedures](docs/OPERATIONS_AND_ACCESS_GATES.md). Two isolated live four-persona API rehearsals passed, hosted report review and notification passed, and separate Ravi/Farah synthetic logins are verified. All data remains fictional; full release acceptance and production readiness are not claimed.
 
 **5 November update:** clinician and coordinator accounts now have an assigned-patient list, operational caseload counts and safe patient switching across Anita Sen, Ravi Mehta and Farah Khan. See [multi-patient delivery, access rules, verification and remaining scope](docs/MULTI_PATIENT_MANAGEMENT.md). Ravi and Farah now have generated patient logins; credentials are kept only in private local manifests and must be shared through an approved channel.
