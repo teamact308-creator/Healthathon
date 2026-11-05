@@ -7,9 +7,11 @@
     "Draft text stayed unchanged after a separate backend proposal insertion",
     "Revision polling displayed new care updates notice",
     "No automatic replacement while dialog open",
-    "Tester deliberately cancelled draft and requested Refresh"
+    "Tester deliberately cancelled draft and requested Refresh",
+    "Idle Today screen picked up a separately inserted proposal without clicking Refresh; unread count rose from 3 to 4",
+    "Both refresh-only fixtures were discarded without a care activity"
   ],
   "limits": [
-    "Clean-view automatic refresh and hidden-tab timing not covered by this observation"
+    "Hidden-tab timing and real-device behavior are not covered"
   ]
 }

@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-06",
+  "synthetic": true,
+  "hosted_download": true,
+  "correct_patient": true,
+  "activities": 4,
+  "reports": 1,
+  "excluded_auth_private_paths_signed_links": true,
+  "partial_coverage_declared": true
+}

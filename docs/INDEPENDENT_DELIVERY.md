@@ -20,7 +20,7 @@ Frozen synthetic corpora and all initial failures are retained in integrations/a
 
 ## 5. Freshness and draft safety (D05)
 
-Scoped revision RPCs and serialized 30-second polling are installed. Hidden/busy/dialog/dirty-entry views are not replaced; updates are surfaced for explicit refresh. Caseload has its own revision. Revoked assignment clears the selected workspace rather than substituting another patient. Own-save refresh resets the revision to avoid false new-update alerts. Unit/role tests pass. On hosted commit 82ac32a, a separate backend change raised the new-updates notice while the unsaved help dialog and its exact draft stayed intact; explicit refresh then loaded the update. Clean-view automatic refresh and hidden-tab behavior still need broader acceptance.
+Scoped revision RPCs and serialized 30-second polling are installed. Hidden/busy/dialog/dirty-entry views are not replaced; updates are surfaced for explicit refresh. Caseload has its own revision. Revoked assignment clears the selected workspace rather than substituting another patient. Own-save refresh resets the revision to avoid false new-update alerts. Unit/role tests pass. On hosted commit 82ac32a, a separate backend change raised the new-updates notice while the unsaved help dialog and its exact draft stayed intact; explicit refresh then loaded the update. An idle Today screen also picked up a separate internal fixture automatically, increasing the notification count without a refresh click. Hidden-tab timing and real-device behavior remain broader acceptance scope.
 
 ## 6. Document continuity and file safety (D06)
 
@@ -44,7 +44,7 @@ Installed assigned-only bounded search/filter/paging with max page 50. Totals re
 
 ## 11. Safe automatic refresh
 
-Implemented with item 5, including dirty state, serialized requests, hidden-tab pause and session/assignment failure handling. No background overwrite of patient entries is intended. Hosted unsaved-dialog acceptance passed; the remaining browser scope is listed above.
+Implemented with item 5, including dirty state, serialized requests, hidden-tab pause and session/assignment failure handling. No background overwrite of patient entries is intended. Hosted unsaved-dialog and idle-screen refresh acceptance passed; the remaining browser scope is listed above.
 
 ## 12. Reviewed multi-action capture
 
