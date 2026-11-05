@@ -1,0 +1,28 @@
+begin;
+do $$declare patient uuid;pu uuid;cg uuid;plan uuid;item uuid;occurrence uuid;provider text:='SM'||replace(gen_random_uuid()::text,'-','');result jsonb;proposal_id uuid;event uuid:=gen_random_uuid();begin
+ select p.id,p.user_id into patient,pu from public.patients p where synthetic and user_id is not null order by created_at limit 1;
+ select user_id into cg from private.memberships where patient_id=patient and role='caregiver' limit 1;
+ select id into plan from public.care_plans where patient_id=patient and active and status='confirmed' limit 1;
+ insert into public.care_plan_items(plan_id,patient_id,domain,label) values(plan,patient,'medication','Disposable inbound fixture') returning id into item;
+ insert into public.care_loops(item_id,patient_id,due_at,scheduled_for) values(item,patient,now()-interval '1 hour',now()-interval '1 hour') returning id into occurrence;
+ perform set_config('request.jwt.claims','{"role":"authenticated"}',true);
+ begin perform public.stage_inbound_proposal('whatsapp','whatsapp:+15550000000',provider,'TAKEN','{"kind":"activity","domain":"medication","status":"taken"}');raise exception 'Unverified client staged message';exception when insufficient_privilege then null;end;
+ perform set_config('request.jwt.claims','{"role":"service_role"}',true);
+ begin perform public.stage_inbound_proposal('whatsapp','whatsapp:+15550000000',provider,'TAKEN','{"kind":"activity","domain":"medication","status":"taken"}');raise exception 'Unenrolled sender accepted';exception when insufficient_privilege then null;end;
+ insert into private.channel_enrollments(patient_id,channel,recipient_reference,consented,verified_at) values(patient,'whatsapp','whatsapp:+15550000000',true,now()) on conflict(patient_id,channel) do update set recipient_reference=excluded.recipient_reference,consented=true,verified_at=now();
+ update private.channel_gates set enabled=true where channel='whatsapp';
+ result:=public.stage_inbound_proposal('whatsapp','whatsapp:+15550000000',provider,'TAKEN','{"kind":"activity","domain":"medication","status":"taken"}');proposal_id:=(result->>'proposal_id')::uuid;
+ if (select state from public.care_loops where id=occurrence)<>'DUE' then raise exception 'Inbound auto-completed care';end if;
+ result:=public.stage_inbound_proposal('whatsapp','whatsapp:+15550000000',provider,'TAKEN','{"kind":"activity","domain":"medication","status":"taken"}');if result->>'duplicate'<>'true' then raise exception 'Provider replay not deduped';end if;
+ perform set_config('request.jwt.claim.sub',cg::text,true);perform set_config('request.jwt.claims',jsonb_build_object('sub',cg,'role','authenticated')::text,true);
+ execute 'set local role authenticated';
+ if exists(select 1 from public.message_proposals where id=proposal_id) then raise exception 'Caregiver read raw inbound text';end if;
+ execute 'reset role';
+ begin perform public.review_message_proposal(proposal_id,'confirm',occurrence,'taken','Reviewed synthetic message',event);raise exception 'Caregiver confirmed activity';exception when insufficient_privilege then null;end;
+ perform set_config('request.jwt.claim.sub',pu::text,true);perform set_config('request.jwt.claims',jsonb_build_object('sub',pu,'role','authenticated')::text,true);
+ perform public.review_message_proposal(proposal_id,'confirm',occurrence,'taken','Reviewed synthetic message',event);perform public.review_message_proposal(proposal_id,'confirm',occurrence,'taken','Reviewed synthetic message',event);
+ if (select count(*) from public.care_events where loop_id=occurrence)<>1 then raise exception 'Confirmation duplicated care activity';end if;
+ update private.channel_gates set enabled=false where channel='whatsapp';perform set_config('request.jwt.claims','{"role":"service_role"}',true);
+ perform public.stage_inbound_proposal('whatsapp','whatsapp:+15550000000',provider,'STOP','{"kind":"clarify"}');if exists(select 1 from private.channel_enrollments where patient_id=patient and channel='whatsapp' and consented) then raise exception 'STOP did not revoke consent while gate off';end if;
+end$$;
+rollback;

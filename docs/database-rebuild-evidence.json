@@ -27,7 +27,8 @@
     "20261105122434_wholecare_multi_patient_caseload.sql",
     "20261105185558_wholecare_demo_provisioning.sql",
     "20261105190015_wholecare_workspace_updates.sql",
-    "20261105191833_wholecare_operational_controls.sql"
+    "20261105191833_wholecare_operational_controls.sql",
+    "20261105210450_wholecare_inbound_proposals.sql"
   ],
   "checks": [
     "pg_net extension DDL uses a documented offline platform fixture; all application DDL replayed",
@@ -38,6 +39,7 @@
     "clean rebuild: verify-demo-journey.sql",
     "clean rebuild: verify-demo-provision.sql",
     "clean rebuild: verify-operational-controls.sql",
+    "clean rebuild: verify-inbound-proposals.sql",
     "multi-patient caseload, patient isolation and immediate assignment revocation",
     "restored database: verify-capture.sql",
     "restored database: verify-operations.sql",
@@ -46,6 +48,7 @@
     "restored database: verify-demo-journey.sql",
     "restored database: verify-demo-provision.sql",
     "restored database: verify-operational-controls.sql",
+    "restored database: verify-inbound-proposals.sql",
     "dump/restore preserves schema, grants and synthetic fixture counts"
   ],
   "platform_scope": "Minimal Auth/Storage/Vault SQL contracts and a fail-closed offline pg_net fixture; real PostgreSQL and pg_cron. No GoTrue, object bytes, vault encryption, Edge Functions or HTTP delivery restored.",

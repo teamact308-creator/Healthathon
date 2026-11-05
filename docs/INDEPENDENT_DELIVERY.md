@@ -78,9 +78,9 @@ README, this ledger, release evidence and operations/access gates are reconciled
 
 Service-only delivery repository RPC is installed with no channel activation capability. Worker/retry/status callback adapters and disabled-network fixture tests are prepared locally. No sending worker or callback was activated or scheduled. Live WhatsApp/SMS remains on hold. Provider credentials/account recovery, exact webhook setup and enrollment require separate approval.
 
-## 20. Incoming-message proposals — approval blocked
+## 20. Incoming-message proposals — disabled infrastructure approved
 
-A locally tested schema and patient confirmation prototype are staged under integrations/messaging/staged, excluded from normal migrations and frontend queries. Automatic approval review rejected persistent production installation because messaging is on hold. No message_proposals table is installed by this work. The staged design deduplicates, binds only an unambiguous enrolled sender, honors STOP, and requires patient confirmation before care mutation. Media download/attachment processing and live endpoint acceptance are still unimplemented. Do not deploy dependent UI or enable channels without explicit approval.
+After the initial automatic approval rejection, the user explicitly approved disabled infrastructure only. The versioned message_proposals schema is now installed; both channel gates were verified false and no webhook/worker was registered or activated. Caregiver reads and confirmation are denied. Service staging deduplicates, requires an unambiguous verified sender and current gate/consent, honors STOP, and never changes a care task. Patient confirmation uses the checked activity RPC. Proposal changes participate in scoped revision checks. Pending review UI and notifications are included. Local clean/restore tests passed, including caregiver raw-text denial and idempotent confirmation. The initial staged copy is historical only; the canonical version is the migration. A disabled, fixture-tested media retrieval adapter is prepared with strict provider URL construction, redirect refusal and byte/type screening; it is not wired to a live endpoint or private upload. Full media processing and live channel acceptance remain pending.
 
 ## 21. Onboarding and assignment administration
 
@@ -96,7 +96,7 @@ Added a patient JSON download of explicitly selected loaded authorized records, 
 
 ## 24. Monitoring and recovery
 
-Operational health, processing events, platform advisories, migration replay and isolated dump/restore checks are available. Added incident triage, retry, access and recovery procedures. Latest normal rebuild/restore passed with held inbound schema excluded. Full Auth/Storage/Vault/Edge recovery and staffed external alerts need platform/owner setup. Do not confuse local application database recovery with full disaster recovery.
+Operational health, processing events, platform advisories, migration replay and isolated dump/restore checks are available. Added incident triage, retry, access and recovery procedures. Latest rebuild/restore passed with the explicitly approved disabled proposal infrastructure included. Full Auth/Storage/Vault/Edge recovery and staffed external alerts need platform/owner setup. Do not confuse local application database recovery with full disaster recovery.
 
 ## 25. CARE and Filly
 

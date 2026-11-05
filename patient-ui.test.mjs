@@ -20,3 +20,10 @@ test('report status is shared between patient cards, detail and document library
  assert.ok(loopDetail({events:[],audit:[],rawEvidence:[]},loop,'Clinician').includes('Review original and record decision'));
  assert.equal(loopMeaning({...loop,state:'CLOSED',owner:'None'}).nextOwner,'None');
 });
+
+
+test('incoming proposals stay explicit review forms and escape untrusted source text',async()=>{
+ const {messageProposalPanel}=await import('./patient-ui.js');
+ const html=messageProposalPanel({items:[{loopId:'due',label:'Dose',state:'DUE',dueAt:'2026-11-05T00:00:00Z'}],messageProposals:[{id:'p',state:'pending',source_text:'<img onerror=bad>',proposal:{kind:'activity',status:'taken'}}]});
+ assert.match(html,/Confirm reviewed activity/);assert.match(html,/Choose the activity explicitly/);assert.match(html,/I checked the activity/);assert.doesNotMatch(html,/<img/);assert.match(html,/&lt;img/);
+});

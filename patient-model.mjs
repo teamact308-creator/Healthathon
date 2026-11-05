@@ -82,6 +82,7 @@ export function helpThread(state, item) {
 export function patientNotifications(state){
  const occurrences=new Map((state.occurrences||[]).map(item=>[item.loopId,item]));
  const rows=[];
+ for(const proposal of state.messageProposals||[]){if(proposal.state==='pending')rows.push({id:'proposal:'+proposal.id,proposalId:proposal.id,at:proposal.created_at,title:'Check an incoming activity message',label:'Review the activity and wording before saving',timezone:state.patient?.timezone});}
  for(const m of state.messages||[]){
   const item=occurrences.get(m.loopId);
   if(m.id&&m.to==='Patient'&&item&&item.planActive!==false&&['DUE','UNCONFIRMED'].includes(item.state)){
