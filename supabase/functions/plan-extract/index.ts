@@ -1,3 +1,4 @@
+import {inspectDocument,scopedObjectPath} from '../_shared/file-safety.mjs';
 import {minimizeText} from '../_shared/ai-privacy.mjs';
 import {authorizeTransfer} from '../_shared/ai-transfer.mjs';
 const origins = new Set(['https://healthathon.vercel.app','http://localhost:4173']);
@@ -22,10 +23,11 @@ Deno.serve(async(req: Request) => {
  const path=input.source_path||null,text=minimizeText(String(input.text||''),names).text.trim();if(text.length>20000)return json({error:'Source note is too long'},400);
  const content:Record<string,unknown>[]=[{type:'input_text',text:`Extract only explicit care tasks from this fictional source. Source text:\n${text||'(uploaded file)'}`}];
  if(path){
- if(typeof path!=='string'||!path.startsWith(input.patient_id+'/')||path.includes('..'))return json({error:'Invalid source path'},400);
+ if(!scopedObjectPath(input.patient_id,path))return json({error:'Invalid source path'},400);
  const file=await fetch(`${url}/storage/v1/object/authenticated/plan-documents/${path}`,{headers:{apikey:pub,Authorization:auth},signal:AbortSignal.timeout(15000)});
  if(!file.ok)return json({error:'Unable to read the private source document'},400);
  const bytes=new Uint8Array(await file.arrayBuffer());if(bytes.length>8388608)return json({error:'File exceeds 8 MB'},413);
+ const screen=inspectDocument(bytes,file.headers.get('content-type')||'');if(!screen.ok)return json({error:screen.reason},415);
  const pdf=new TextDecoder().decode(bytes.slice(0,5))==='%PDF-';const png=bytes[0]===137&&bytes[1]===80&&bytes[2]===78&&bytes[3]===71;const jpeg=bytes[0]===255&&bytes[1]===216&&bytes[2]===255;
  if(!pdf&&!png&&!jpeg)return json({error:'Use a valid PDF, PNG or JPEG source'},415);
  let binary='';for(let i=0;i<bytes.length;i+=8192)binary+=String.fromCharCode(...bytes.slice(i,i+8192));

@@ -1,4 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import vm from 'node:vm';import {readFile} from 'node:fs/promises';import {stripTypeScriptTypes} from 'node:module';
+import {inspectDocument,scopedObjectPath} from './supabase/functions/_shared/file-safety.mjs';
 import {minimizeText} from './supabase/functions/_shared/ai-privacy.mjs';
 import {authorizeTransfer} from './supabase/functions/_shared/ai-transfer.mjs';
 import {extractionSchema,extractionContract,validateProposal} from './supabase/functions/_shared/vcpi.mjs';
@@ -16,7 +17,7 @@ async function run({body={patient_id:patient,synthetic_only:true,privacy_version
  else if(url.endsWith('/plan_extractions')){status=save;data={};}
  else throw Error('Unexpected request');
  return new Response(JSON.stringify(data),{status});};
- vm.runInNewContext(source,{Deno:{env:{get:n=>({SUPABASE_URL:'https://synthetic.test',SUPABASE_ANON_KEY:'fixture-public',SUPABASE_SERVICE_ROLE_KEY:'fixture-server',OPENAI_API_KEY:'fixture-provider'}[n])},serve:h=>handler=h},fetch,minimizeText,authorizeTransfer:args=>authorizeTransfer(args,fetch),extractionSchema,extractionContract,validateProposal,Request,Response,AbortSignal,crypto,TextEncoder,TextDecoder,Uint8Array,btoa,Date,Set});
+ vm.runInNewContext(source,{Deno:{env:{get:n=>({SUPABASE_URL:'https://synthetic.test',SUPABASE_ANON_KEY:'fixture-public',SUPABASE_SERVICE_ROLE_KEY:'fixture-server',OPENAI_API_KEY:'fixture-provider'}[n])},serve:h=>handler=h},fetch,inspectDocument,scopedObjectPath,minimizeText,authorizeTransfer:args=>authorizeTransfer(args,fetch),extractionSchema,extractionContract,validateProposal,Request,Response,AbortSignal,crypto,TextEncoder,TextDecoder,Uint8Array,btoa,Date,Set});
  const headers={'content-type':'application/json'};if(authorization)headers.authorization=authorization;
  const response=await handler(new Request('https://synthetic.test/plan-extract-vcpi',{method:'POST',headers,body:JSON.stringify(body)}));return {status:response.status,data:await response.json(),calls};
 }

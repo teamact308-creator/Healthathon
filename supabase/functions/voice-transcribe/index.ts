@@ -1,3 +1,4 @@
+import {scopedObjectPath} from '../_shared/file-safety.mjs';
 import {minimizeText} from '../_shared/ai-privacy.mjs';
 import {authorizeTransfer} from '../_shared/ai-transfer.mjs';
 import {interpretMedication,translateVoiceText,suggestLogActions} from './interpret.mjs';
@@ -30,11 +31,11 @@ Deno.serve(async(req: Request) => {
  if(Object.hasOwn(input,'typed_note')){
   const note=typeof input.typed_note==='string'?minimizeText(input.typed_note,names).text.trim():'';
   if(!note||note.length>2000)return json({error:'Enter a note of up to 2,000 characters.'},400);
-  return json({interpretation:await interpretMedication(note,key),requires_confirmation:true});
+  return json({interpretation:await interpretMedication(note,key),interpretation_version:'2026-11-06-multidose-guard',requires_confirmation:true});
  }
 
  const path=input.source_path;
- if(typeof path!=='string'||!path.startsWith(input.patient_id+'/')||path.includes('..'))return json({error:'Invalid recording path'},400);
+ if(!scopedObjectPath(input.patient_id,path))return json({error:'Invalid recording path'},400);
  if(!['en','hi'].includes(input.language))return json({error:'Choose English or Hindi'},400);
  const file=await fetch(`${url}/storage/v1/object/authenticated/voice-notes/${path}`,{headers,signal:AbortSignal.timeout(15000)});
  if(!file.ok)return json({error:'Recording not accessible'},400);

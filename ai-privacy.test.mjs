@@ -43,3 +43,7 @@ test('known names with regular-expression characters are matched literally',()=>
  assert.match(result.text,/\[name removed\] said no dose was taken/);
  assert.match(result.text,/A Test is an unrelated string/);
 });
+test('identity minimization preserves clinical text after a semicolon on the same line',()=>{
+ const source='Patient name: Anita Sen; Took metformin 500 mg at 08:00, not late.';
+ const result=minimizeText(source,['Anita Sen']);assert.ok(!result.text.includes('Anita'));assert.ok(result.text.includes('Took metformin 500 mg at 08:00, not late.'));
+});

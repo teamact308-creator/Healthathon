@@ -1,0 +1,10 @@
+[
+ {"id":"new-en-time","text":"The alarm rang and I took this dose straight away, at the planned time.","expected":["taken"],"reason":"Explicit completed on time"},
+ {"id":"new-hi-late","text":"आज की दवा समय पर नहीं ले पाया, पर दो घंटे बाद ले ली।","expected":["delayed"],"reason":"Explicit completed late"},
+ {"id":"new-mixed-unsure","text":"Maybe goli li thi, pakka yaad nahi aa raha.","expected":["unclear","unclear_taken"],"reason":"Uncertain Hinglish"},
+ {"id":"new-en-future","text":"I have the tablet beside me, but have not swallowed it. I plan to do that later.","expected":["unclear","unclear_taken"],"reason":"Not yet complete"},
+ {"id":"new-hi-other","text":"मेरी माँ ने दवा ली है। अपनी गोली के बारे में मुझे नहीं पता।","expected":["unclear","unclear_taken"],"reason":"Other person's activity"},
+ {"id":"new-en-skip","text":"I skipped today's dose on the explicit instruction my clinician gave me yesterday.","expected":["skipped_by_instruction"],"reason":"Instructed completed skip"},
+ {"id":"new-mixed-missed","text":"Kal wali dose miss ho gayi thi, li hi nahi.","expected":["missed"],"reason":"Explicit past missed dose"},
+ {"id":"new-en-two","text":"The morning pill was taken on schedule; the night pill was never taken.","expected":["unclear","unclear_taken"],"reason":"Different scheduled occurrences"}
+]

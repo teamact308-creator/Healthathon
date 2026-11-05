@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-06",
+  "scope": "Two isolated four-persona database journeys, repeated in clean rebuild and restored PostgreSQL",
+  "result": "passed",
+  "coverage": [
+    "manual care-plan confirmation",
+    "taken activity and retry",
+    "private report receipt and retry",
+    "clinician review",
+    "help claim/reply/follow-up/resolution",
+    "non-owner denial",
+    "consent routing and revocation",
+    "wrong-patient denial"
+  ],
+  "excluded": [
+    "real sign-in",
+    "actual Storage file bytes",
+    "hosted browser transitions",
+    "external model/provider calls"
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "date": "2026-11-06",
+  "corpus_sha256": "e68283b3160d1af986a9b3fde2741f74500e8e653d144b3a850ba0847a55474a",
+  "model": "gpt-4.1-mini-2025-04-14",
+  "production_prompt_unchanged": true,
+  "multi_dose_guard": false,
+  "no_activity_writes": true,
+  "results": [
+    {
+      "id": "new-en-time",
+      "expected": [
+        "taken"
+      ],
+      "observed": "taken",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "new-hi-late",
+      "expected": [
+        "delayed"
+      ],
+      "observed": "delayed",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "new-mixed-unsure",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "unclear_taken",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "new-en-future",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "unclear_timing",
+      "http": 200,
+      "passed": false
+    },
+    {
+      "id": "new-hi-other",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "unclear_taken",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "new-en-skip",
+      "expected": [
+        "skipped_by_instruction"
+      ],
+      "observed": "skipped_by_instruction",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "new-mixed-missed",
+      "expected": [
+        "missed"
+      ],
+      "observed": "missed",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "new-en-two",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "missed",
+      "http": 200,
+      "passed": false
+    }
+  ],
+  "passed": 6,
+  "total": 8,
+  "note": "Captured before guard deployment succeeded; retained as baseline."
+}

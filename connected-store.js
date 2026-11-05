@@ -1,3 +1,4 @@
+import {inspectDocument,scopedObjectPath} from './supabase/functions/_shared/file-safety.mjs';
 import {selectMembership} from './caseload-model.mjs';
 import {reviewAITransfer,clearAITransfers} from './ai-privacy-ui.js';
 import {SUPABASE_URL,SUPABASE_KEY} from './db-config.js';
@@ -11,7 +12,7 @@ async function refresh(){if(refreshing)return refreshing;refreshing=(async()=>{i
 export const hasSession=()=>!!session?.refresh_token;
 export async function signIn(email,password){save(null);const {response,value}=await raw('/auth/v1/token?grant_type=password','POST',{email,password});if(!response.ok)throw error(value);save(value);}
 export async function signOut(){const token=session?.access_token;save(null);if(token)try{await raw('/auth/v1/logout?scope=local','POST',{},token);}catch{}}
-async function baseRequest(path,method='GET',body){if(!session)throw Error('Please sign in.');if(!session.expires_at||session.expires_at*1000<Date.now()+30000)await refresh();let r=await raw(path,method,body,session.access_token);if(r.response.status===401){await refresh();r=await raw(path,method,body,session.access_token);}if(!r.response.ok)throw error(r.value);return r.value;}
+async function baseRequest(path,method='GET',body){if(!session)throw Error('Please sign in.');if(!session.expires_at||session.expires_at*1000<Date.now()+30000)await refresh();let r=await raw(path,method,body,session.access_token);if(r.response.status===401){await refresh();r=await raw(path,method,body,session.access_token);}if(!r.response.ok){const failure=error(r.value);failure.status=r.response.status;throw failure;}return r.value;}
 async function request(path,method='GET',body){
  try{return await baseRequest(path,method,body);}catch(e){
   if(!path.includes('record_processing_failure')&&path.startsWith('/functions/'))await recordFailure(path.includes('plan-extract')?'extraction':path.includes('voice-transcribe')?'transcription':'report',e.name==='TimeoutError'?'timeout':e instanceof TypeError?'network':'rejected');
@@ -46,12 +47,12 @@ export async function reminderPreference(enabled){return rpc('set_reminder_prefe
 export async function uploadPrivate(bucket,file){
  if(!session)throw Error('Please sign in.');if(session.expires_at*1000<Date.now()+30000)await refresh();
  const ext={'application/pdf':'pdf','image/png':'png','image/jpeg':'jpg','audio/webm':'webm','audio/mpeg':'mp3','audio/wav':'wav','audio/mp4':'m4a'}[file.type];
- if(!ext||file.size>8388608)throw Error('Use a supported file of up to 8 MB.');
+ if(!ext||file.size>8388608)throw Error('Use a supported file of up to 8 MB.');if(['care-evidence','plan-documents','meal-photos'].includes(bucket)){const checked=inspectDocument(await file.arrayBuffer(),file.type);if(!checked.ok)throw Error(checked.reason);}
  const path=membership.patient_id+'/'+crypto.randomUUID()+'.'+ext;
  const response=await fetch(`${SUPABASE_URL}/storage/v1/object/${bucket}/${path}`,{method:'POST',headers:{apikey:SUPABASE_KEY,Authorization:'Bearer '+session.access_token,'Content-Type':file.type,'x-upsert':'false'},body:file,signal:AbortSignal.timeout(60000)});
  if(!response.ok)throw Error('Private upload failed. Check your role, file type and size.');return path;
 }
-export async function privateFile(bucket,path){const result=await request(`/storage/v1/object/sign/${bucket}/${path}`,'POST',{expiresIn:120});return SUPABASE_URL+'/storage/v1'+result.signedURL;}
+export async function privateFile(bucket,path){if(!scopedObjectPath(membership?.patient_id,path))throw Error('The file does not belong to the current patient.');const result=await request(`/storage/v1/object/sign/${bucket}/${path}`,'POST',{expiresIn:120});return SUPABASE_URL+'/storage/v1'+result.signedURL;}
 export async function extractPlan(data){const input=await approveAITransfer({patient_id:membership.patient_id,...data},{file:!!data.source_path});const result=await request('/functions/v1/plan-extract-vcpi','POST',input);return {...result,source_path:input.source_path||null,source_text:input.text||''};}
 export async function logActivity(loop,status,details,event){return rpc('log_care_activity',{p_loop:loop,p_status:status,p_details:details,p_event:event});}
 export async function submitReport(loop,path,label,event){return request('/functions/v1/report-submit','POST',{patient_id:membership.patient_id,loop_id:loop,source_path:path,label,event_key:event});}
@@ -133,7 +134,8 @@ export const setupVoiceRetention=()=>request('/functions/v1/voice-retention','PO
 
 
 // Switching always performs a document reload: no patient drafts or async UI survive.
-export const assignedCaseload=()=>rpc('assigned_caseload');
+export const assignedCaseload=({search='',filter='all',page=0}={})=>rpc('search_assigned_caseload',{p_search:search,p_filter:filter,p_offset:page*12,p_limit:12});
+export const workspaceRevision=()=>rpc('workspace_revision',{p_patient:membership.patient_id});
 export async function choosePatient(patient_id,role){
  const context=await rpc('my_context');
  if(context.user_id!==workspaceUser)throw Error('Your session changed. Sign in again.');

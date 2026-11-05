@@ -12,3 +12,11 @@ test('review pending detail explains the handoff without patient upload or closu
 test('future task card offers details without an actionable completion path',()=>{
  const html=patientTask({loopId:'future',id:'med',domain:'Medication',state:'DUE',label:'Future',dueAt:'2099-01-01T00:00:00Z',timezone:'UTC',owner:'Patient'});assert.ok(html.includes('data-open-loop'));assert.ok(!html.includes('data-action="capture"'));
 });
+test('report status is shared between patient cards, detail and document library',async()=>{
+ const {loopMeaning}=await import('./patient-model.mjs');
+ const loop={loopId:'review',id:'test',domain:'Tests',state:'REVIEW_PENDING',label:'Report',dueAt:'2026-11-01T00:00:00Z',owner:'Clinician',timezone:'UTC'};
+ const label=loopMeaning(loop).label;
+ assert.ok(patientTask(loop).includes(label));assert.ok(loopDetail({events:[],audit:[],rawEvidence:[]},loop,'Patient').includes(label));
+ assert.ok(loopDetail({events:[],audit:[],rawEvidence:[]},loop,'Clinician').includes('Review original and record decision'));
+ assert.equal(loopMeaning({...loop,state:'CLOSED',owner:'None'}).nextOwner,'None');
+});

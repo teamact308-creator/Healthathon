@@ -24,11 +24,11 @@ export function loopMeaning(loop,now=Date.now()){
  const recordable=['DUE','UNCONFIRMED'].includes(loop.state)&&loop.planActive!==false&&Date.parse(loop.dueAt)<=now;
  if(loop.state==='CANCELLED')return {label:'Cancelled',next:'This occurrence was cancelled by your care team.',recordable:false,steps:[]};
  if(loop.planActive===false&&!closed&&!waiting)return {label:'Previous plan',next:'This instruction is no longer active. Follow your current confirmed plan.',recordable:false,steps:[]};
- const label=closed?(test?'Follow-up complete':'Activity recorded'):waiting?'With your clinician':loop.state==='UNCONFIRMED'?'Follow-up needed':recordable?(Date.parse(loop.dueAt)<now?'Needs attention':'Ready to record'):'Coming up';
+ const label=closed?(test?'Review complete':'Activity recorded'):waiting?'Waiting for clinician review':loop.state==='UNCONFIRMED'?'Follow-up needed':recordable?(Date.parse(loop.dueAt)<now?'Needs attention':'Ready to record'):'Coming up';
  const next=closed?(test?'Your clinician completed the operational review. This does not describe the medical result.':'Your activity has been recorded. Other scheduled activities remain separate.'):waiting?'Your report is received. Your clinician acts next; this submission is waiting for review.':loop.state==='UNCONFIRMED'?'The reported outcome remains open for follow-up. It is not counted as successful completion.':!recordable?'This is a future scheduled activity. You can review its instructions now.':test?'Upload the report for this investigation. Your clinician will review it before this follow-up is complete.':'Record what happened for this scheduled activity. Check the details before saving.';
  const names=test?['Scheduled','Report submitted','Clinician review','Follow-up complete']:['Scheduled','Record activity','Activity recorded'];
  const current=closed?names.length:waiting?2:recordable||loop.state==='UNCONFIRMED'?1:0;
- return {label,next,recordable,steps:names.map((text,index)=>({text,state:index<current?'complete':index===current?'current':'pending'}))};
+ return {label,next,recordable,nextOwner:closed||loop.state==='CANCELLED'||loop.planActive===false&&!waiting?'None':waiting?'Clinician':loop.owner||'Patient',steps:names.map((text,index)=>({text,state:index<current?'complete':index===current?'current':'pending'}))};
 }
 
 export function trendDays(observations,events,timezone,now=Date.now()){

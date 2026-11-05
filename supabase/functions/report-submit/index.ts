@@ -1,3 +1,4 @@
+import {inspectDocument,scopedObjectPath} from '../_shared/file-safety.mjs';
 const origins = new Set(['https://healthathon.vercel.app','http://localhost:4173']);
 const model = 'gpt-4o-mini-transcribe';
 Deno.serve(async(req: Request) => {
@@ -16,13 +17,14 @@ Deno.serve(async(req: Request) => {
  const c=await fetch(`${url}/rest/v1/rpc/my_context`,{method:'POST',headers,body:'{}',signal:AbortSignal.timeout(10000)});const context=await c.json();
  if(!c.ok||!context.memberships?.some((m:{patient_id:string;role:string})=>m.patient_id===input.patient_id&&m.role==='patient'))return json({error:'Assigned patient required'},403);
  const path=input.source_path;
- if(typeof path!=='string'||!path.startsWith(input.patient_id+'/')||path.includes('..')||typeof input.loop_id!=='string'||!input.event_key)return json({error:'Invalid report request'},400);
+ if(!scopedObjectPath(input.patient_id,path)||typeof input.loop_id!=='string'||!input.event_key)return json({error:'Invalid report request'},400);
  const loops=await fetch(`${url}/rest/v1/care_loops?id=eq.${encodeURIComponent(input.loop_id)}&patient_id=eq.${input.patient_id}&select=id`,{headers,signal:AbortSignal.timeout(5000)});
  if(!loops.ok||!(await loops.json()).length)return json({error:'Task not accessible'},403);
  const file=await fetch(`${url}/storage/v1/object/authenticated/care-evidence/${path}`,{headers:{apikey:service,Authorization:`Bearer ${service}`},signal:AbortSignal.timeout(15000)});
  if(!file.ok)return json({error:'Private report not found'},400);
  const bytes=new Uint8Array(await file.arrayBuffer());
  if(bytes.length>8388608||bytes.length<5)return json({error:'Invalid report size'},400);
+ const screen=inspectDocument(bytes,file.headers.get('content-type')||'');if(!screen.ok)return json({error:screen.reason},415);
  const pdf=new TextDecoder().decode(bytes.slice(0,5))==='%PDF-',png=bytes[0]===137&&bytes[1]===80&&bytes[2]===78&&bytes[3]===71,jpeg=bytes[0]===255&&bytes[1]===216&&bytes[2]===255;
  if(!pdf&&!png&&!jpeg)return json({error:'Report must contain a valid PDF, PNG or JPEG file'},415);
  const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(b=>b.toString(16).padStart(2,'0')).join('');
