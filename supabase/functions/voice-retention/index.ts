@@ -37,8 +37,7 @@ Deno.serve(async request=>{
   if(!patient.ok||!(await patient.json()).length)return reply(403,{error:'Demo workspace required'});
   const bytes=crypto.getRandomValues(new Uint8Array(48));
   const token=Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
-  if(!service.startsWith('eyJ'))return reply(503,{error:'A JWT scheduler credential must be configured before cleanup can be enabled.'});
-  const installed=await rpc('install_voice_retention_worker',{p_token:token,p_url:url,p_anon:service});
+  const installed=await rpc('install_voice_retention_worker',{p_token:token,p_url:url,p_anon:pub});
   return installed.ok?reply(200,{scheduled:true}):reply(503,{error:'Retention scheduler unavailable'});
  }catch{return reply(503,{error:'Retention operation could not be completed'});}
 });
