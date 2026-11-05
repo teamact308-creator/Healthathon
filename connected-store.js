@@ -50,7 +50,7 @@ export async function uploadPrivate(bucket,file){
  if(!response.ok)throw Error('Private upload failed. Check your role, file type and size.');return path;
 }
 export async function privateFile(bucket,path){const result=await request(`/storage/v1/object/sign/${bucket}/${path}`,'POST',{expiresIn:120});return SUPABASE_URL+'/storage/v1'+result.signedURL;}
-export async function extractPlan(data){const input=await approveAITransfer({patient_id:membership.patient_id,...data},{file:!!data.source_path});return request('/functions/v1/plan-extract','POST',input);}
+export async function extractPlan(data){const input=await approveAITransfer({patient_id:membership.patient_id,...data},{file:!!data.source_path});const result=await request('/functions/v1/plan-extract-vcpi','POST',input);return {...result,source_path:input.source_path||null,source_text:input.text||''};}
 export async function logActivity(loop,status,details,event){return rpc('log_care_activity',{p_loop:loop,p_status:status,p_details:details,p_event:event});}
 export async function submitReport(loop,path,label,event){return request('/functions/v1/report-submit','POST',{patient_id:membership.patient_id,loop_id:loop,source_path:path,label,event_key:event});}
 export async function transcribeVoice(path,language,interpretMedication=false){return request('/functions/v1/voice-transcribe','POST',await approveAITransfer({patient_id:membership.patient_id,source_path:path,language,interpret_medication:interpretMedication},{audio:true}));}
@@ -128,3 +128,4 @@ export const previewVoiceRetention=(days,existing=false)=>rpc('voice_retention_p
 export const saveVoiceRetention=(days,existing=false)=>rpc('set_voice_retention',{p_patient:membership.patient_id,p_days:days,p_existing:existing});
 
 export const setupVoiceRetention=()=>request('/functions/v1/voice-retention','POST',{operation:'install',patient_id:membership.patient_id});
+
