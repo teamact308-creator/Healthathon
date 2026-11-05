@@ -30,3 +30,16 @@ test('privacy authorization sends metadata only and fails closed on denial',asyn
  assert.deepEqual(Object.keys(sent).sort(),['p_kind','p_operation','p_patient','p_request','p_version']);
  assert.equal(JSON.stringify(sent).includes('private text'),false);
 });
+
+test('Hindi identity labels and digits are removed while clinical wording stays intact',()=>{
+ const source='रोगी का नाम: अनिता सेन\nपता: परीक्षण पता\nमैंने ०.५ मिलीग्राम दवा नहीं ली। फोन ९८७६५४३२१०';
+ const result=minimizeText(source,['अनिता सेन']);
+ assert.doesNotMatch(result.text,/अनिता सेन|परीक्षण पता|९८७६५४३२१०/);
+ assert.match(result.text,/मैंने ०.५ मिलीग्राम दवा नहीं ली।/);
+});
+test('known names with regular-expression characters are matched literally',()=>{
+ const source='A. Test said no dose was taken. A Test is an unrelated string.';
+ const result=minimizeText(source,['A. Test']);
+ assert.match(result.text,/\[name removed\] said no dose was taken/);
+ assert.match(result.text,/A Test is an unrelated string/);
+});

@@ -11,7 +11,9 @@ export function minimizeText(value, names = []) {
  replace(/(?:\+91[ -]?)?[6-9]\d{4}[ -]?\d{5}\b/g,'phone');
  replace(/\+\d{1,3}[ -]?(?:\d[ -]?){8,13}\d\b/g,'phone');
  replace(/\b(?:\d{4}[ -]){2}\d{4}\b/g,'identifier');
- replace(/(?:^|\n)[ \t]*(?:patient name|patient id|uhid|abha|aadhaar|address|phone|mobile|email)\s*[:=][^\n]*/gi,'identity field');
+ replace(/[६-९][०-९]{9}/gu,'phone');
+ replace(/[२-९][०-९]{3}[ -][०-९]{4}[ -][०-९]{4}/gu,'identifier');
+ replace(/(?:^|\n)[ \t]*(?:patient name|patient id|uhid|abha|aadhaar|address|phone|mobile|email|मरीज का नाम|रोगी का नाम|पता|मोबाइल|फोन|ईमेल|आधार)\s*[:=][^\n]*/gi,'identity field');
  for(const name of names){
   if(typeof name!=='string'||name.trim().length<5)continue;
   const escaped=name.trim().replace(/[.*+?^${}()|[\]\\]/g,'\\$&');

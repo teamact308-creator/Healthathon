@@ -26,11 +26,11 @@ Raw recordings and prescription originals in Storage are readable by the assigne
 
 Patient Account and clinician Care plans expose a recording manager. It lists up to the 100 most recent voice files uploaded by that caller. Removal requires a second button action and is limited to unused files. A database reservation checks uploader ownership and existing activity references before permitting Storage deletion. Referencing activity inserts and updates take the same advisory lock and reject reserved files, preventing a deletion/save race.
 
-The reservation is retained if physical deletion fails so removal can be retried safely. The manager permits retry. A successful Storage deletion removes the live stored object. This does not recall data previously sent to an AI provider or delete provider records or backups. Linked audio and confirmed source documents require an agreed clinical record-retention policy. Automatic age-based purging is not enabled.
+The reservation is retained if physical deletion fails so removal can be retried safely. The manager permits retry. A successful Storage deletion removes the live stored object. This does not recall data previously sent to an AI provider or delete provider records or backups. Linked audio and confirmed source documents require an agreed clinical record-retention policy. Per-uploader retention preferences now support Off, 1, 7 or 30 days. A preview precedes saving. New uploads are the default scope; including older unused audio requires an explicit selection. The worker retains JWT verification and a private scheduler token. Worker installation/live validation remains pending because the automatic approval service reached its usage limit. The UI checks readiness and prevents saving an automatic preference while the worker is unavailable. Manual removal remains available.
 
 ## Verification
 
-114 automated tests passed, including identifier preservation, absence of text in approval metadata, denial before networking without approval, and synthetic Filly checker regressions. The browser-asset build passed.
+116 automated tests passed, including identifier preservation, absence of text in approval metadata, denial before networking without approval, and synthetic Filly checker regressions. The browser-asset build passed.
 
 Live HTTP checks using the existing synthetic accounts verified approved interpretation, denial without approval, denial of coordinator AI access, own recording listing, coordinator recording denial and owner reservation/retry/removal of a newly uploaded fictional test file. The test file was removed. A browser check with the synthetic patient verified name/email minimization in the preview, agreement required before Continue, and cancellation back to the unchanged note-entry form.
 
@@ -44,3 +44,11 @@ Database checks of patient/clinician/coordinator/caregiver authorization and rec
 - Expand de-identification evaluation across formats and languages without losing medication names, doses, timing, negation or uncertainty.
 - Complete multi-patient, consent withdrawal, cross-tab/session and access-revocation browser checks with a pilot owner.
 - Use the pinned candidate and comparison harness in integrations/filly for a controlled synthetic provider trial. No live Filly accuracy result is claimed.
+
+## Additional pending-item work, 5 November 2026
+
+The clinician editor includes optional on-device image cropping before upload. The selected area is re-encoded as PNG, removing source image metadata. Include every medication instruction, dose, timing and hold/stop note in the selection. A PDF remains a complete file upload. The cropped selection is the source supplied to WholeCare; the full original stays on the user device unless independently uploaded. Cropping does not guarantee identifier removal.
+
+The official pinned Filly app passed local mock session, upload-token, chunk-order, result and unauthenticated-read checks with provider network calls blocked. See integrations/filly/mock-verification.json. The owner selected Sarvam for the live trial and is adding its backend secret. See PROVIDER_DATA_HANDLING.md for verified configuration and the remaining vendor/account evidence.
+
+Retention database tests passed for new-upload scoping, uploader ownership, protection of linked audio, disabling a policy and service-only worker claims. All test database writes were rolled back and no existing files were deleted. The worker deployment keeps verify_jwt=true. A rejected verify_jwt=false attempt was not applied. A subsequent live installation check was blocked by an automatic approval service usage-limit failure, so scheduler readiness remains unverified.

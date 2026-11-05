@@ -1,6 +1,6 @@
 import {minimizeText} from './supabase/functions/_shared/ai-privacy.mjs';
 
-export function clearAITransfers(){globalThis.document?.querySelector('#ai-privacy-cancel')?.click();}
+export function clearAITransfers(){globalThis.document?.querySelector('#ai-privacy-cancel')?.click();globalThis.document?.querySelector('[data-crop-cancel]')?.click();}
 
 export function reviewAITransfer({text='',names=[],file=false,audio=false,notes=null,maxLength=2000}){
  return new Promise((resolve,reject)=>{
@@ -49,11 +49,59 @@ export function reviewAITransfer({text='',names=[],file=false,audio=false,notes=
  });
 }
 
-export const recordingPrivacyPanel=()=>'<section class="card"><h2>Stored voice recordings</h2><p>Review recordings you uploaded to this workspace. You can permanently remove unused audio. Audio attached to saved activity is protected.</p><button type="button" class="quiet" id="voice-storage-load">Review my recordings</button><div id="voice-storage-list"></div><p id="voice-storage-status" role="status"></p></section>';
+export const recordingPrivacyPanel=()=>'<section class="card"><h2>Stored voice recordings</h2><p>Review recordings you uploaded to this workspace. You can permanently remove unused audio. Audio attached to saved activity is protected.</p><button type="button" class="quiet" id="voice-storage-load">Review my recordings</button><div id="voice-storage-list"></div><p id="voice-storage-status" role="status"></p><h3>Automatic cleanup</h3><p class="mini">Choose when your unused audio can be removed. Saved activity recordings are protected. Daily cleanup applies to new uploads unless you include existing unused audio.</p><label>Remove unused audio after<select id="voice-retention-days" disabled><option value="">Off</option><option value="1">1 day</option><option value="7">7 days</option><option value="30">30 days</option></select></label><label class="consent"><input type="checkbox" id="voice-retention-existing"> Include my existing unused recordings</label><button type="button" class="quiet" id="voice-retention-preview" disabled>Preview cleanup</button><button type="button" class="quiet" id="voice-retention-save" disabled>Save cleanup preference</button><p id="voice-retention-status" role="status"></p></section>';
 
-export function bindRecordingPrivacy(root,{list,remove}){
+export function bindRecordingPrivacy(root,{list,remove,previewRetention,saveRetention,setupRetention}){
  const load=root.querySelector('#voice-storage-load');
  if(!load)return;
+ const days=root.querySelector('#voice-retention-days'),existing=root.querySelector('#voice-retention-existing'),preview=root.querySelector('#voice-retention-preview'),save=root.querySelector('#voice-retention-save'),retentionStatus=root.querySelector('#voice-retention-status');
+ let previewed=false,scheduled=false;
+ const invalidate=()=>{previewed=false;save.disabled=true;retentionStatus.textContent='Preview the cleanup before saving.';};
+ days.onchange=invalidate;existing.onchange=invalidate;
+ preview.onclick=async()=>{
+  preview.disabled=true;save.disabled=true;
+  const chosen=days.value,include=existing.checked;
+  try{
+   const result=await previewRetention(chosen?Number(chosen):null,include);
+   if(!preview.isConnected)return;
+   if(chosen!==days.value||include!==existing.checked)return;
+   previewed=true;save.disabled=!result.worker_scheduled;
+   if(!result.worker_scheduled){retentionStatus.textContent='Automatic cleanup setup is pending. Manual recording removal is available.';return;}
+   retentionStatus.textContent=chosen?result.eligible+' existing unused recordings currently qualify. New unused audio will also qualify after '+chosen+' days.':'Automatic cleanup will be turned off. A removal already in progress may finish.';
+  }catch(error){if(preview.isConnected)retentionStatus.textContent=error.message;}
+  finally{preview.disabled=false;}
+ };
+ save.onclick=async()=>{
+  if(!previewed)return;
+  save.disabled=true;
+  try{
+   await saveRetention(days.value?Number(days.value):null,existing.checked);
+   if(save.isConnected){previewed=false;retentionStatus.textContent='Cleanup preference saved. The daily worker checks enabled preferences.';}
+  }catch(error){if(save.isConnected){save.disabled=false;retentionStatus.textContent=error.message;}}
+ };
+ const setup=document.createElement('button');
+ setup.type='button';setup.className='quiet';setup.textContent='Enable daily cleanup service';setup.hidden=true;
+ retentionStatus.before(setup);
+ const loadPreference=async()=>{
+  try{
+   const result=await previewRetention(null,false);
+   if(!days.isConnected)return;
+   scheduled=!!result.worker_scheduled;
+   days.value=result.policy_days==null?'':String(result.policy_days);
+   days.disabled=false;preview.disabled=false;
+   setup.hidden=scheduled||!setupRetention;
+   retentionStatus.textContent=!scheduled?'Automatic cleanup setup is pending. Manual removal is available.':result.policy_days?'Your current cleanup period is '+result.policy_days+' days.':'Automatic cleanup is off. Preview and save a preference to enable it.';
+  }catch(error){if(days.isConnected)retentionStatus.textContent=error.message;}
+ };
+ setup.onclick=async()=>{
+  setup.disabled=true;
+  try{
+   await setupRetention();
+   await loadPreference();
+  }catch(error){if(setup.isConnected)retentionStatus.textContent=error.message;}
+  finally{setup.disabled=false;}
+ };
+ if(previewRetention)void loadPreference();
  const box=root.querySelector('#voice-storage-list'),status=root.querySelector('#voice-storage-status');
  load.onclick=async()=>{
   load.disabled=true;

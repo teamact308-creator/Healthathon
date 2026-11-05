@@ -123,3 +123,8 @@ async function approveAITransfer(input,{audio=false,file=false,notes=null}={}){
 
 export const listVoiceRecordings=()=>rpc('unused_voice_recordings',{p_patient:membership.patient_id});
 export async function removeVoiceRecording(path){const patient=membership.patient_id;await rpc('prepare_voice_removal',{p_patient:patient,p_path:path});await request('/storage/v1/object/voice-notes','DELETE',{prefixes:[path]});}
+
+export const previewVoiceRetention=(days,existing=false)=>rpc('voice_retention_preview',{p_patient:membership.patient_id,p_days:days,p_existing:existing});
+export const saveVoiceRetention=(days,existing=false)=>rpc('set_voice_retention',{p_patient:membership.patient_id,p_days:days,p_existing:existing});
+
+export const setupVoiceRetention=()=>request('/functions/v1/voice-retention','POST',{operation:'install',patient_id:membership.patient_id});

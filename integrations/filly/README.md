@@ -35,3 +35,7 @@ The protocol has create session, audio upload, end session and poll endpoints. I
 ## Adoption decision
 
 Proceed to a synthetic provider trial after credential and provider choices. Require preservation of consequential source details, denial of unrelated patient/facility access, clinician review, verified retention behavior and a record of provider/version/fixture used. Adopt only if results improve on the current WholeCare workflow.
+
+## Executed mock workflow, 5 November 2026
+
+The pinned official FastAPI app passed an in-process HTTP test with provider networking disabled. Checks covered unauthenticated session denial, sessions without patient details, invalid upload capability rejection, out-of-order audio chunk assembly, template output and denial of unauthenticated session reads. Run mock-smoke.py with --source pointing to the pinned checkout and --synthetic-only. The test requires the upstream standalone dependencies. This checks the protocol and auth behavior in mock mode; it does not measure transcription or extraction accuracy. The standalone shared-token limitation still requires a CARE permission bridge before deployment.

@@ -1,0 +1,13 @@
+{
+  "mode": "official Filly mock, no accuracy claim",
+  "revision": "33a76c95325bfe72f4f20dbe53007e7993e36b68",
+  "checks": {
+    "unauthenticated_session_denied": true,
+    "session_without_patient_identifiers": true,
+    "invalid_upload_capability_denied": true,
+    "chunks_assembled_in_order": true,
+    "template_result_received": true,
+    "unauthenticated_session_read_denied": true,
+    "provider_network_disabled": true
+  }
+}
