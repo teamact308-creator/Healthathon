@@ -1,5 +1,7 @@
 # Isolated CARE runtime and recovery
 
+**5 November upgrade:** The Compose template now supports a separate mode-0700 writable encrypted-session directory and a mode-0600 read-only key. Set WHOLECARE_SESSIONS_HOST_DIR and WHOLECARE_SESSION_KEY_HOST_FILE; keep both across restarts. Use the CARE Connect screen instead of the legacy link-renewal helper in this mode. See [current setup and behavior](../ACCOUNT_AND_REPORTS.md).
+
 This records the actual tested local environment on 3 November 2026. The GitHub repository contains our plugin source, not cloned CARE core, Docker images/volumes, generated environments or account links. The development machine's ignored `.local/care-setup/care_scaffold` holds those runtime dependencies. This is an actual local integration, not the public Vercel deployment.
 
 ## Revisions and boundaries

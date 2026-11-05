@@ -9,6 +9,8 @@ services:
       DJANGO_ALLOWED_HOSTS: '["localhost","127.0.0.1","backend"]'
       WHOLECARE_BROWSER_ORIGINS: '["http://localhost:47417", "http://localhost:47418"]'
       WHOLECARE_LINKS_FILE: /run/wholecare/links.json
+      WHOLECARE_SESSION_DIR: /run/wholecare/sessions
+      WHOLECARE_SESSION_KEY_FILE: /run/wholecare/session.key
     volumes:
       - &plugin_mount
         type: bind
@@ -20,6 +22,17 @@ services:
         type: bind
         source: ${WHOLECARE_LINKS_HOST_FILE:?Set WHOLECARE_LINKS_HOST_FILE}
         target: /run/wholecare/links.json
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${WHOLECARE_SESSIONS_HOST_DIR:?Set WHOLECARE_SESSIONS_HOST_DIR}
+        target: /run/wholecare/sessions
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${WHOLECARE_SESSION_KEY_HOST_FILE:?Set WHOLECARE_SESSION_KEY_HOST_FILE}
+        target: /run/wholecare/session.key
         read_only: true
         bind:
           create_host_path: false

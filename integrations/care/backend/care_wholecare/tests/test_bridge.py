@@ -1,4 +1,5 @@
 """Pure bridge regression tests: run without a live CARE or Supabase database."""
+import hashlib
 import json
 import tempfile
 import time
@@ -6,8 +7,10 @@ import unittest
 from pathlib import Path
 from uuid import uuid4
 from care_wholecare.bridge import BridgeError, PROJECT_URL, SupabaseDelegate, load_link
+from care_wholecare.reports import report_receipt, valid_receipt
 
-P, U, C, F, I, L, PLAN = [str(uuid4()) for _ in range(7)]
+P, U, C, F, I, L, PLAN, E = [str(uuid4()) for _ in range(8)]
+DATA = b"%PDF-1.7\n% synthetic test only"
 
 def link():
     return dict(care_user_id=C, care_patient_id=P, care_facility_id=F, supabase_user_id=U, supabase_patient_id=P, project_url=PROJECT_URL, role='clinician', synthetic_only=True, expires_at=time.time()+300, publishable_key='public-test', access_token='user-test')
@@ -44,7 +47,7 @@ class FakeDelegate(SupabaseDelegate):
         if path.endswith('/patients'):return [{'id':P,'display_name':'Synthetic','synthetic':True}]
         if path.endswith('/care_loops'):return [dict(id=L,item_id=I,state=self.state,next_owner='clinician' if self.state!='CLOSED' else 'none',due_at='2026-01-01T01:00:00Z',review_note='',closed_at=None)]
         if path.endswith('/care_plan_items'):return [dict(id=I,plan_id=PLAN,domain='test',label='Fixture review',source_excerpt='Fictional',requires_human_review=True)]
-        if path.endswith('/evidence'):return [dict(id=str(uuid4()),loop_id=L,label='Synthetic placeholder',is_fixture=self.fixture) for _ in range(self.evidence_rows)]
+        if path.endswith('/evidence'):return [dict(id=E,loop_id=L,label='Synthetic placeholder',is_fixture=self.fixture,storage_path=P+'/synthetic.pdf',content_sha256=hashlib.sha256(DATA).hexdigest()) for _ in range(self.evidence_rows)]
         if path.endswith('/care_plans'):return [dict(id=PLAN,status='confirmed',active=True,source_note='Fictional plan')]
         if path.endswith('/audit_events'):return [self.receipt] if self.receipt else []
         if path.endswith('/care_action'):
@@ -62,6 +65,61 @@ class DelegateTests(unittest.TestCase):
         self.d.fixture=False;self.assertFalse(self.d.workspace(P,'Doctor')['items'][0]['canReview'])
         with self.assertRaises(BridgeError):self.d.review(P,L,self.body(),'Doctor')
         self.assertEqual(self.d.writes,0)
+    def test_original_is_scoped_verified_and_required_before_review(self):
+        self.d.fixture = False
+        self.d.receipt_key = b"synthetic-only-test-key"
+        requests = []
+        class FileResponse:
+            status_code = 200
+            headers = {"Content-Type": "application/pdf"}
+            def __enter__(self): return self
+            def __exit__(self, *args): return False
+            def iter_content(self, _): return [DATA]
+        def get_file(*args, **kwargs):
+            requests.append((args, kwargs))
+            return FileResponse()
+        self.d.transport = get_file
+        body = self.body()
+        self.assertTrue(self.d.workspace(P, "Doctor")["items"][0]["canReview"])
+        with self.assertRaises(BridgeError): self.d.review(P, L, body, "Doctor")
+        self.assertEqual(self.d.writes, 0)
+        with self.assertRaises(BridgeError): self.d.original(str(uuid4()), E)
+        self.assertEqual(requests, [])
+        data, mime, receipt = self.d.original(L, E)
+        self.assertEqual((data, mime), (DATA, "application/pdf"))
+        self.assertFalse(requests[0][1]["allow_redirects"])
+        self.assertTrue(requests[0][0][1].endswith("/authenticated/care-evidence/" + P + "/synthetic.pdf"))
+        self.assertNotIn("storage_path", json.dumps(self.d.workspace(P, "Doctor")))
+        body["reportReceipts"] = {E: receipt[:-1] + ("0" if receipt[-1] != "0" else "1")}
+        with self.assertRaises(BridgeError): self.d.review(P, L, body, "Doctor")
+        body["reportReceipts"] = {E: receipt}
+        closed = self.d.review(P, L, body, "Doctor")
+        self.assertEqual(closed["items"][0]["state"], "CLOSED")
+        self.d.review(P, L, body, "Doctor")
+        self.assertEqual(self.d.writes, 1)
+
+    def test_corrupt_original_never_mints_a_receipt(self):
+        self.d.fixture = False
+        self.d.receipt_key = b"test-key"
+        class Corrupt:
+            status_code = 200
+            headers = {"Content-Type": "application/pdf"}
+            def __enter__(self): return self
+            def __exit__(self, *args): return False
+            def iter_content(self, _): return [b"%PDF-corrupt"]
+        self.d.transport = lambda *args, **kwargs: Corrupt()
+        with self.assertRaises(BridgeError): self.d.original(L, E)
+        self.assertEqual(self.d.writes, 0)
+
+    def test_report_receipts_expire_and_cannot_move_between_links_or_file_versions(self):
+        row = {"id": E, "content_sha256": "a" * 64}
+        key = b"test-key"
+        token = report_receipt(key, ["link1"], L, row, now=100)
+        self.assertTrue(valid_receipt(key, ["link1"], L, row, token, now=101))
+        self.assertFalse(valid_receipt(key, ["link2"], L, row, token, now=101))
+        self.assertFalse(valid_receipt(key, ["link1"], L, {**row, "content_sha256": "b" * 64}, token, now=101))
+        self.assertFalse(valid_receipt(key, ["link1"], L, row, token, now=1300))
+
     def test_capped_evidence_read_disables_review(self):
         self.d.evidence_rows=1000
         self.assertFalse(self.d.workspace(P,'Doctor')['items'][0]['canReview'])
