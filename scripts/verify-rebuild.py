@@ -6,7 +6,7 @@ import argparse,json,os,pathlib,shutil,subprocess,tempfile,time
 root=pathlib.Path(__file__).resolve().parent.parent
 (root/'.local').mkdir(exist_ok=True)
 parser=argparse.ArgumentParser();parser.add_argument('--pg-bin',default='/opt/homebrew/opt/postgresql@17/bin');parser.add_argument('--live-snapshot');args=parser.parse_args()
-pg=pathlib.Path(args.pg_bin);report={'postgres_version':None,'migrations':[],'checks':[],'platform_scope':'Minimal Auth/Storage SQL contracts; real PostgreSQL and pg_cron. No GoTrue, object bytes, Edge Functions or external services restored.'}
+pg=pathlib.Path(args.pg_bin);report={'postgres_version':None,'migrations':[],'checks':[],'platform_scope':'Minimal Auth/Storage/Vault SQL contracts and a fail-closed offline pg_net fixture; real PostgreSQL and pg_cron. No GoTrue, object bytes, vault encryption, Edge Functions or HTTP delivery restored.'}
 for binary in ['initdb','pg_ctl','psql','pg_dump','pg_restore']:
  if not (pg/binary).is_file():raise SystemExit('Missing PostgreSQL tool: '+str(pg/binary))
 work=pathlib.Path(tempfile.mkdtemp(prefix='wholecare-rebuild-'));os.chmod(work,0o700);clusters=[]
@@ -26,13 +26,19 @@ try:
  first=cluster('build');report['postgres_version']=sql(first,'show server_version;').strip()
  sql(first,(root/'scripts/local-platform.sql').read_text())
  for f in sorted((root/'supabase/migrations').glob('*.sql')):
-  sql(first,f.read_text());version,name=f.stem.split('_',1)
+  migration_sql=f.read_text()
+  if f.name=='20261105090053_wholecare_voice_retention.sql':
+   platform_extension='create extension if not exists pg_net with schema extensions;'
+   if migration_sql.count(platform_extension)!=1:raise RuntimeError('Unexpected pg_net migration contract')
+   migration_sql=migration_sql.replace(platform_extension,'-- pg_net supplied by the explicit offline local platform fixture.')
+   report['checks'].append('pg_net extension DDL uses a documented offline platform fixture; all application DDL replayed')
+  sql(first,migration_sql);version,name=f.stem.split('_',1)
   sql(first,"insert into supabase_migrations.schema_migrations(version,name) values('"+version+"','"+name+"');")
   report['migrations'].append(f.name)
  # Fixture identities are local SQL-contract rows, not production onboarding instructions.
  sql(first,"insert into auth.users(id,email) select gen_random_uuid(),email from unnest(array['patient@wholecare.test','clinician@wholecare.test','coordinator@wholecare.test','caregiver@wholecare.test']) email;")
  sql(first,(root/'database/seed.sql').read_text())
- for f in ['verify-capture.sql','verify-operations.sql','verify-bucket-three.sql']:
+ for f in ['verify-capture.sql','verify-operations.sql','verify-bucket-three.sql','verify-vcpi.sql']:
   sql(first,(root/'database'/f).read_text());report['checks'].append('clean rebuild: '+f)
  snapshot=json.loads(sql(first,(root/'scripts/schema-snapshot.sql').read_text()).strip());(work/'rebuilt-schema.json').write_text(json.dumps(snapshot))
  if args.live_snapshot:
@@ -48,7 +54,7 @@ try:
  restored=json.loads(sql(second,(root/'scripts/schema-snapshot.sql').read_text()).strip());(work/'restored-schema.json').write_text(json.dumps(restored))
  diff=subprocess.run(['python3',str(root/'scripts/compare-schema.py'),str(work/'rebuilt-schema.json'),str(work/'restored-schema.json')],capture_output=True,text=True)
  if diff.returncode:raise RuntimeError('Restored schema differs: '+diff.stdout[:3000])
- for f in ['verify-capture.sql','verify-operations.sql','verify-bucket-three.sql']:
+ for f in ['verify-capture.sql','verify-operations.sql','verify-bucket-three.sql','verify-vcpi.sql']:
   sql(second,(root/'database'/f).read_text());report['checks'].append('restored database: '+f)
  before=sql(first,"select (select count(*) from public.care_loops),(select count(*) from public.patients),(select count(*) from public.glucose_observations);")
  after=sql(second,"select (select count(*) from public.care_loops),(select count(*) from public.patients),(select count(*) from public.glucose_observations);")
