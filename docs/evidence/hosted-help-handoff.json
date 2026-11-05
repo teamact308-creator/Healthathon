@@ -8,7 +8,9 @@
     "Coordinator claimed it and displayed named owner",
     "Coordinator reply appeared in patient thread with named owner",
     "Patient unread notifications rose from 1 to 2",
-    "Staff active response queue became empty; thread moved to reply history"
+    "Staff active response queue became empty; thread moved to reply history",
+    "Coordinator marked help resolved; patient saw Resolved and resolution event",
+    "Medication stayed due until a separately reviewed activity proposal was confirmed"
   ],
   "not_tested": [
     "External WhatsApp/SMS",

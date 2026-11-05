@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-06",
+  "implementation_commit": "82ac32a205f24ddcfa5c6391c454388265807e41",
+  "synthetic_internal_fixture": true,
+  "real_provider_ingestion": false,
+  "checks": [
+    "Notification appeared for pending proposal",
+    "Patient Messages displayed Demo message and original text",
+    "Activity selection was initially empty",
+    "Patient explicitly selected medication and checked review acknowledgement",
+    "Patient confirmed through hosted UI",
+    "Proposal disappeared from pending list after persisted response",
+    "Server confirmed proposal state confirmed, status taken and one care event on the linked loop",
+    "Both private channel gates remained false after confirmation"
+  ],
+  "channel_activation": false,
+  "limitations": [
+    "Fixture inserted internally; sender verification and callback acceptance are covered only by isolated contracts, not real provider delivery"
+  ]
+}

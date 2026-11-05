@@ -1,0 +1,15 @@
+{
+  "date": "2026-11-06",
+  "commit": "82ac32a205f24ddcfa5c6391c454388265807e41",
+  "synthetic": true,
+  "checks": [
+    "Unsubmitted help dialog remained open",
+    "Draft text stayed unchanged after a separate backend proposal insertion",
+    "Revision polling displayed new care updates notice",
+    "No automatic replacement while dialog open",
+    "Tester deliberately cancelled draft and requested Refresh"
+  ],
+  "limits": [
+    "Clean-view automatic refresh and hidden-tab timing not covered by this observation"
+  ]
+}

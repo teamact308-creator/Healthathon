@@ -1,5 +1,11 @@
 # WholeCare MVP increment - verification, 2 November 2026
 
+## Current verified increment — 6 November 2026
+
+Implementation commit 82ac32a205f24ddcfa5c6391c454388265807e41 passed GitHub verify and database-rebuild checks and Vercel production deployment dpl_EYKrmcNJiBHBAHXWVDTcbCCpaYRj is READY. The latest local suite passes 149 tests and explicit build-output validation. Two retained API journeys passed 39 checks each. Hosted report review/notification, help claim/reply/resolution, explicit internal-proposal confirmation and unsaved-dialog preservation were verified. Incoming fixtures were internal synthetic records; no live webhook, worker, phone enrollment or channel was enabled. Both gates were checked false after confirmation.
+
+AI evidence-v3 remains imperfect: v1 15/16 (one safe but less-specific clarification), v2 8/8; earlier tuned/holdout failures are preserved. Narrow mobile acceptance is unverified because the tool did not apply the requested viewport. Leaked-password protection remains disabled according to the provider advisory. Broader recording/extraction failure acceptance, real-provider messaging, real onboarding, retention policy, malware scanning and full-platform recovery remain gates. See INDEPENDENT_DELIVERY for item-level scope.
+
 **6 November reconciliation:** read [INDEPENDENT_DELIVERY.md](INDEPENDENT_DELIVERY.md) for the current 25-item execution record and [OPERATIONS_AND_ACCESS_GATES.md](OPERATIONS_AND_ACCESS_GATES.md) for access, export, messaging hold and recovery boundaries. Older dated implementation notes below are historical and do not override this evidence. D01–D07 remain release gates where hosted acceptance is incomplete.
 
 ## Verified live against development

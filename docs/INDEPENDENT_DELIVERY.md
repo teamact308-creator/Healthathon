@@ -20,7 +20,7 @@ Frozen synthetic corpora and all initial failures are retained in integrations/a
 
 ## 5. Freshness and draft safety (D05)
 
-Scoped revision RPCs and serialized 30-second polling are installed. Hidden/busy/dialog/dirty-entry views are not replaced; updates are surfaced for explicit refresh. Caseload has its own revision. Revoked assignment clears the selected workspace rather than substituting another patient. Own-save refresh resets the revision to avoid false new-update alerts. Unit/role tests pass; hosted two-session background/dirty-form acceptance is still required.
+Scoped revision RPCs and serialized 30-second polling are installed. Hidden/busy/dialog/dirty-entry views are not replaced; updates are surfaced for explicit refresh. Caseload has its own revision. Revoked assignment clears the selected workspace rather than substituting another patient. Own-save refresh resets the revision to avoid false new-update alerts. Unit/role tests pass. On hosted commit 82ac32a, a separate backend change raised the new-updates notice while the unsaved help dialog and its exact draft stayed intact; explicit refresh then loaded the update. Clean-view automatic refresh and hidden-tab behavior still need broader acceptance.
 
 ## 6. Document continuity and file safety (D06)
 
@@ -44,7 +44,7 @@ Installed assigned-only bounded search/filter/paging with max page 50. Totals re
 
 ## 11. Safe automatic refresh
 
-Implemented with item 5, including dirty state, serialized requests, hidden-tab pause and session/assignment failure handling. No background overwrite of patient entries is intended. Complete browser acceptance remains listed above.
+Implemented with item 5, including dirty state, serialized requests, hidden-tab pause and session/assignment failure handling. No background overwrite of patient entries is intended. Hosted unsaved-dialog acceptance passed; the remaining browser scope is listed above.
 
 ## 12. Reviewed multi-action capture
 
@@ -72,7 +72,7 @@ Could not verify enabled. Supabase's UI says Pro is required and its security ad
 
 ## 18. Repository and team Drive handoff
 
-README, this ledger, release evidence and operations/access gates are reconciled for this increment. Historical sections retain dates and provenance. The existing team Drive master is the intended publication target; do not create duplicate handoffs or use personal Drive. Publication/readback is recorded at release completion.
+README, this ledger, release evidence and operations/access gates are reconciled for this increment. Historical sections retain dates and provenance. The existing team Drive master is the intended publication target; do not create duplicate handoffs or use personal Drive. The existing team master was updated in place and metadata readback confirmed its unchanged file ID and requirements folder. Historical CARE acceptance was preserved; the current section supersedes the historical pg_net failure for this tested release.
 
 ## 19. Delivery worker preparation — on hold
 
@@ -80,7 +80,7 @@ Service-only delivery repository RPC is installed with no channel activation cap
 
 ## 20. Incoming-message proposals — disabled infrastructure approved
 
-After the initial automatic approval rejection, the user explicitly approved disabled infrastructure only. The versioned message_proposals schema is now installed; both channel gates were verified false and no webhook/worker was registered or activated. Caregiver reads and confirmation are denied. Service staging deduplicates, requires an unambiguous verified sender and current gate/consent, honors STOP, and never changes a care task. Patient confirmation uses the checked activity RPC. Proposal changes participate in scoped revision checks. Pending review UI and notifications are included. Local clean/restore tests passed, including caregiver raw-text denial and idempotent confirmation. The initial staged copy is historical only; the canonical version is the migration. A disabled, fixture-tested media retrieval adapter is prepared with strict provider URL construction, redirect refusal and byte/type screening; it is not wired to a live endpoint or private upload. Full media processing and live channel acceptance remain pending.
+After the initial automatic approval rejection, the user explicitly approved disabled infrastructure only. The versioned message_proposals schema is now installed; both channel gates were verified false and no webhook/worker was registered or activated. Caregiver reads and confirmation are denied. Service staging deduplicates, requires an unambiguous verified sender and current gate/consent, honors STOP, and never changes a care task. Patient confirmation uses the checked activity RPC. Proposal changes participate in scoped revision checks. Pending review UI and notifications are included. Hosted internal-fixture confirmation passed: no preselected task, explicit patient selection/acknowledgement, one persisted care event and a confirmed proposal. This did not test real provider ingestion. Local clean/restore tests passed, including caregiver raw-text denial and idempotent confirmation. The initial staged copy is historical only; the canonical version is the migration. A disabled, fixture-tested media retrieval adapter is prepared with strict provider URL construction, redirect refusal and byte/type screening; it is not wired to a live endpoint or private upload. Full media processing and live channel acceptance remain pending.
 
 ## 21. Onboarding and assignment administration
 
