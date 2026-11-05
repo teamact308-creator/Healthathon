@@ -56,3 +56,10 @@ Retention database tests passed for new-upload scoping, uploader ownership, prot
 ## Sarvam key and synthetic connectivity
 
 The team key is confirmed available server-side. The connection checker accepts only two immutable synthetic WAV hashes and requires an assigned clinician, synthetic workspace and per-request approval. Both English and Hindi requests returned HTTP 200 and nonempty transcripts using saaras:v3 in transcribe mode. Temporary recordings were removed. The provider key is never returned. This verifies connection and original-language output; it does not establish clinical accuracy or automatically replace WholeCare’s current transcription path.
+
+
+## Synthetic Filly/Sarvam comparison, 5 November 2026
+
+Completed the fixed ten-clip controlled trial through Sarvam and OpenAI with common Filly extraction: revised contract 20/20 checks; initial contract 16/20 (unsupported status labels rejected). Full method, captured outputs, limitations and reproduction are in integrations/filly/COMPARISON.md. Production provider choice is unchanged. No real patient material was used; temporary source uploads were removed.
+
+Actual Sarvam account retention remains unverified: the team dashboard did not expose the documented owner control, and the documented deep link returned Home. No retention setting was changed. Model API documentation permits 0 days for future requests but warns of indefinite retention until configured. Verify this account setting, past content treatment, logs/metadata, region and applicable provider agreement before real patient use. WholeCare source deletion does not prove provider-side deletion.

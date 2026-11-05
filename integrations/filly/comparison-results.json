@@ -1,0 +1,528 @@
+[
+  {
+    "fixture": "taken-en",
+    "script_id": "taken-en",
+    "condition": "clean",
+    "expected_script": "I took my medicine at 08:00.",
+    "filly_client_verified": true,
+    "fixture_hash": "d5c5fabc441f0ded85a5bea4f8d9e3691c39f96d913b86e12f327da895ca44b2",
+    "provider": "sarvam",
+    "asr_model": "saaras:v3",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "I took my medicine at 8 o'clock.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "I took my medicine at 8 o'clock.",
+      "reported_status": "taken",
+      "needs_clarification": false,
+      "recommendations": [],
+      "medication_details": [
+        "took my medicine at 8 o'clock"
+      ]
+    },
+    "asr_ms": 221,
+    "extraction_ms": 1261,
+    "trial_only": true
+  },
+  {
+    "fixture": "taken-en",
+    "script_id": "taken-en",
+    "condition": "clean",
+    "expected_script": "I took my medicine at 08:00.",
+    "filly_client_verified": true,
+    "fixture_hash": "d5c5fabc441f0ded85a5bea4f8d9e3691c39f96d913b86e12f327da895ca44b2",
+    "provider": "openai",
+    "asr_model": "gpt-4o-mini-transcribe",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "I took my medicine at eight o'clock.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "I took my medicine at eight o'clock.",
+      "reported_status": "taken",
+      "needs_clarification": false,
+      "recommendations": [],
+      "medication_details": [
+        "took my medicine at eight o'clock"
+      ]
+    },
+    "asr_ms": 755,
+    "extraction_ms": 1257,
+    "trial_only": true
+  },
+  {
+    "fixture": "taken-en-noise",
+    "script_id": "taken-en",
+    "condition": "synthetic white noise, nominal 10 dB SNR",
+    "expected_script": "I took my medicine at 08:00.",
+    "filly_client_verified": true,
+    "fixture_hash": "e9fc4c07e515bdb898791bb8e64f99a19357fc0fe168568ff71bff438da03a27",
+    "provider": "sarvam",
+    "asr_model": "saaras:v3",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "I took my medicine at 8 o'clock.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "I took my medicine at 8 o'clock.",
+      "reported_status": "taken",
+      "needs_clarification": false,
+      "recommendations": [],
+      "medication_details": [
+        "took my medicine at 8 o'clock"
+      ]
+    },
+    "asr_ms": 162,
+    "extraction_ms": 1297,
+    "trial_only": true
+  },
+  {
+    "fixture": "taken-en-noise",
+    "script_id": "taken-en",
+    "condition": "synthetic white noise, nominal 10 dB SNR",
+    "expected_script": "I took my medicine at 08:00.",
+    "filly_client_verified": true,
+    "fixture_hash": "e9fc4c07e515bdb898791bb8e64f99a19357fc0fe168568ff71bff438da03a27",
+    "provider": "openai",
+    "asr_model": "gpt-4o-mini-transcribe",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "I took my medicine at eight o'clock.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "I took my medicine at eight o'clock.",
+      "reported_status": "taken",
+      "needs_clarification": false,
+      "recommendations": [],
+      "medication_details": [
+        "took my medicine at eight o'clock"
+      ]
+    },
+    "asr_ms": 910,
+    "extraction_ms": 958,
+    "trial_only": true
+  },
+  {
+    "fixture": "uncertain-en",
+    "script_id": "uncertain-en",
+    "condition": "clean",
+    "expected_script": "I think I took my medicine. I am not sure.",
+    "filly_client_verified": true,
+    "fixture_hash": "665cfbae0bb557f02f42812b9ed3815305bb7f630ea2a4b04f445a302d962090",
+    "provider": "sarvam",
+    "asr_model": "saaras:v3",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "I think I took my medicine. I am not sure.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "I think I took my medicine. I am not sure.",
+      "reported_status": "unclear",
+      "needs_clarification": true,
+      "recommendations": [],
+      "medication_details": []
+    },
+    "asr_ms": 180,
+    "extraction_ms": 1026,
+    "trial_only": true
+  },
+  {
+    "fixture": "uncertain-en",
+    "script_id": "uncertain-en",
+    "condition": "clean",
+    "expected_script": "I think I took my medicine. I am not sure.",
+    "filly_client_verified": true,
+    "fixture_hash": "665cfbae0bb557f02f42812b9ed3815305bb7f630ea2a4b04f445a302d962090",
+    "provider": "openai",
+    "asr_model": "gpt-4o-mini-transcribe",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "I think I took my medicine. I am not sure.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "I think I took my medicine. I am not sure.",
+      "reported_status": "unclear",
+      "needs_clarification": true,
+      "recommendations": [],
+      "medication_details": []
+    },
+    "asr_ms": 1055,
+    "extraction_ms": 880,
+    "trial_only": true
+  },
+  {
+    "fixture": "uncertain-en-noise",
+    "script_id": "uncertain-en",
+    "condition": "synthetic white noise, nominal 10 dB SNR",
+    "expected_script": "I think I took my medicine. I am not sure.",
+    "filly_client_verified": true,
+    "fixture_hash": "f898f90b260689a8e354f2eb9c8032211eec321e7394bd830573928264b9234a",
+    "provider": "sarvam",
+    "asr_model": "saaras:v3",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "I think I took my medicine. I am not sure.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "I think I took my medicine. I am not sure.",
+      "reported_status": "unclear",
+      "needs_clarification": true,
+      "recommendations": [],
+      "medication_details": []
+    },
+    "asr_ms": 521,
+    "extraction_ms": 873,
+    "trial_only": true
+  },
+  {
+    "fixture": "uncertain-en-noise",
+    "script_id": "uncertain-en",
+    "condition": "synthetic white noise, nominal 10 dB SNR",
+    "expected_script": "I think I took my medicine. I am not sure.",
+    "filly_client_verified": true,
+    "fixture_hash": "f898f90b260689a8e354f2eb9c8032211eec321e7394bd830573928264b9234a",
+    "provider": "openai",
+    "asr_model": "gpt-4o-mini-transcribe",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "I think I took my medicine. I am not sure.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "I think I took my medicine. I am not sure.",
+      "reported_status": "unclear",
+      "needs_clarification": true,
+      "recommendations": [],
+      "medication_details": []
+    },
+    "asr_ms": 736,
+    "extraction_ms": 1067,
+    "trial_only": true
+  },
+  {
+    "fixture": "negated-hi",
+    "script_id": "negated-hi",
+    "condition": "clean",
+    "expected_script": "मैंने दवा नहीं ली।",
+    "filly_client_verified": true,
+    "fixture_hash": "6b424bd728860022806910f25863b5a3f8bd1c39a734e2f08a2f4436af0e6848",
+    "provider": "sarvam",
+    "asr_model": "saaras:v3",
+    "mode": "transcribe",
+    "language": "hi",
+    "transcript": "मैंने दवा नहीं ली।",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "मैंने दवा नहीं ली।",
+      "reported_status": "missed",
+      "needs_clarification": false,
+      "recommendations": [],
+      "medication_details": []
+    },
+    "asr_ms": 202,
+    "extraction_ms": 1058,
+    "trial_only": true
+  },
+  {
+    "fixture": "negated-hi",
+    "script_id": "negated-hi",
+    "condition": "clean",
+    "expected_script": "मैंने दवा नहीं ली।",
+    "filly_client_verified": true,
+    "fixture_hash": "6b424bd728860022806910f25863b5a3f8bd1c39a734e2f08a2f4436af0e6848",
+    "provider": "openai",
+    "asr_model": "gpt-4o-mini-transcribe",
+    "mode": "transcribe",
+    "language": "hi",
+    "transcript": "मैंने दवा नहीं ली।",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "मैंने दवा नहीं ली।",
+      "reported_status": "missed",
+      "needs_clarification": false,
+      "recommendations": [],
+      "medication_details": []
+    },
+    "asr_ms": 2187,
+    "extraction_ms": 807,
+    "trial_only": true
+  },
+  {
+    "fixture": "negated-hi-noise",
+    "script_id": "negated-hi",
+    "condition": "synthetic white noise, nominal 10 dB SNR",
+    "expected_script": "मैंने दवा नहीं ली।",
+    "filly_client_verified": true,
+    "fixture_hash": "d25cc066a1ba54cf1b67dd3fdf7ae4bb338d19b790eefb34efa584c8ad379d6d",
+    "provider": "sarvam",
+    "asr_model": "saaras:v3",
+    "mode": "transcribe",
+    "language": "hi",
+    "transcript": "मैंने दवा नहीं ली।",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "मैंने दवा नहीं ली।",
+      "reported_status": "missed",
+      "needs_clarification": false,
+      "recommendations": [],
+      "medication_details": []
+    },
+    "asr_ms": 123,
+    "extraction_ms": 1027,
+    "trial_only": true
+  },
+  {
+    "fixture": "negated-hi-noise",
+    "script_id": "negated-hi",
+    "condition": "synthetic white noise, nominal 10 dB SNR",
+    "expected_script": "मैंने दवा नहीं ली।",
+    "filly_client_verified": true,
+    "fixture_hash": "d25cc066a1ba54cf1b67dd3fdf7ae4bb338d19b790eefb34efa584c8ad379d6d",
+    "provider": "openai",
+    "asr_model": "gpt-4o-mini-transcribe",
+    "mode": "transcribe",
+    "language": "hi",
+    "transcript": "मैंने दवा नहीं ली।",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "मैंने दवा नहीं ली।",
+      "reported_status": "missed",
+      "needs_clarification": false,
+      "recommendations": [],
+      "medication_details": []
+    },
+    "asr_ms": 1001,
+    "extraction_ms": 1306,
+    "trial_only": true
+  },
+  {
+    "fixture": "future-en",
+    "script_id": "future-en",
+    "condition": "clean",
+    "expected_script": "I will take my medicine tomorrow.",
+    "filly_client_verified": true,
+    "fixture_hash": "228b91bf0f0c286bee43fb8391294caacd44e26a3aeb33331faefb7844ef6326",
+    "provider": "sarvam",
+    "asr_model": "saaras:v3",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "I will take my medicine tomorrow.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "I will take my medicine tomorrow.",
+      "reported_status": "unclear",
+      "needs_clarification": true,
+      "recommendations": [],
+      "medication_details": [
+        "take my medicine tomorrow"
+      ]
+    },
+    "asr_ms": 535,
+    "extraction_ms": 870,
+    "trial_only": true
+  },
+  {
+    "fixture": "future-en",
+    "script_id": "future-en",
+    "condition": "clean",
+    "expected_script": "I will take my medicine tomorrow.",
+    "filly_client_verified": true,
+    "fixture_hash": "228b91bf0f0c286bee43fb8391294caacd44e26a3aeb33331faefb7844ef6326",
+    "provider": "openai",
+    "asr_model": "gpt-4o-mini-transcribe",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "I will take my medicine tomorrow.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "I will take my medicine tomorrow.",
+      "reported_status": "unclear",
+      "needs_clarification": true,
+      "recommendations": [],
+      "medication_details": []
+    },
+    "asr_ms": 1096,
+    "extraction_ms": 1213,
+    "trial_only": true
+  },
+  {
+    "fixture": "future-en-noise",
+    "script_id": "future-en",
+    "condition": "synthetic white noise, nominal 10 dB SNR",
+    "expected_script": "I will take my medicine tomorrow.",
+    "filly_client_verified": true,
+    "fixture_hash": "98d28653987e6187d4a9642162ff2c986239f9aa052a8ba2785f6f45aec3a7ba",
+    "provider": "sarvam",
+    "asr_model": "saaras:v3",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "I will take my medicine tomorrow.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "I will take my medicine tomorrow.",
+      "reported_status": "unclear",
+      "needs_clarification": true,
+      "recommendations": [],
+      "medication_details": [
+        "take my medicine tomorrow"
+      ]
+    },
+    "asr_ms": 243,
+    "extraction_ms": 1047,
+    "trial_only": true
+  },
+  {
+    "fixture": "future-en-noise",
+    "script_id": "future-en",
+    "condition": "synthetic white noise, nominal 10 dB SNR",
+    "expected_script": "I will take my medicine tomorrow.",
+    "filly_client_verified": true,
+    "fixture_hash": "98d28653987e6187d4a9642162ff2c986239f9aa052a8ba2785f6f45aec3a7ba",
+    "provider": "openai",
+    "asr_model": "gpt-4o-mini-transcribe",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "I will take my medicine tomorrow.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "I will take my medicine tomorrow.",
+      "reported_status": "unclear",
+      "needs_clarification": true,
+      "recommendations": [],
+      "medication_details": [
+        "I will take my medicine tomorrow."
+      ]
+    },
+    "asr_ms": 737,
+    "extraction_ms": 1052,
+    "trial_only": true
+  },
+  {
+    "fixture": "fraction-and-hold",
+    "script_id": "fraction-and-hold",
+    "condition": "clean",
+    "expected_script": "Medicine A 0.5 tablet Monday at 08:00. Hold Medicine B until review.",
+    "filly_client_verified": true,
+    "fixture_hash": "c917ab3b5ce0ce444ba0f64f852a7725172d25aabdac14df64afc4443b791986",
+    "provider": "sarvam",
+    "asr_model": "saaras:v3",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "Medicine A 0.5 tablet Monday at 8 o'clock. Hold medicine B until review.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "Medicine A 0.5 tablet Monday at 8 o'clock. Hold medicine B until review.",
+      "reported_status": "unclear",
+      "needs_clarification": true,
+      "recommendations": [],
+      "medication_details": [
+        "Medicine A 0.5 tablet Monday at 8 o'clock",
+        "Hold medicine B until review"
+      ]
+    },
+    "asr_ms": 227,
+    "extraction_ms": 1019,
+    "trial_only": true
+  },
+  {
+    "fixture": "fraction-and-hold",
+    "script_id": "fraction-and-hold",
+    "condition": "clean",
+    "expected_script": "Medicine A 0.5 tablet Monday at 08:00. Hold Medicine B until review.",
+    "filly_client_verified": true,
+    "fixture_hash": "c917ab3b5ce0ce444ba0f64f852a7725172d25aabdac14df64afc4443b791986",
+    "provider": "openai",
+    "asr_model": "gpt-4o-mini-transcribe",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "Medicine A 0.5 tablet Monday at 8 o'clock. Hold Medicine B until review.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "Medicine A 0.5 tablet Monday at 8 o'clock. Hold Medicine B until review.",
+      "reported_status": "unclear",
+      "needs_clarification": true,
+      "recommendations": [],
+      "medication_details": [
+        "Medicine A 0.5 tablet Monday at 8 o'clock",
+        "Hold Medicine B until review"
+      ]
+    },
+    "asr_ms": 889,
+    "extraction_ms": 1113,
+    "trial_only": true
+  },
+  {
+    "fixture": "fraction-and-hold-noise",
+    "script_id": "fraction-and-hold",
+    "condition": "synthetic white noise, nominal 10 dB SNR",
+    "expected_script": "Medicine A 0.5 tablet Monday at 08:00. Hold Medicine B until review.",
+    "filly_client_verified": true,
+    "fixture_hash": "de42279f401f3a84ec68868aa0398dc356a84787ebca681cc5b3483fc58c4873",
+    "provider": "sarvam",
+    "asr_model": "saaras:v3",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "Medicine A 0.5 tablet Monday at 8 o'clock. Hold medicine B until review.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "Medicine A 0.5 tablet Monday at 8 o'clock. Hold medicine B until review.",
+      "reported_status": "unclear",
+      "needs_clarification": true,
+      "recommendations": [],
+      "medication_details": [
+        "Medicine A 0.5 tablet Monday at 8 o'clock",
+        "Hold medicine B until review"
+      ]
+    },
+    "asr_ms": 322,
+    "extraction_ms": 1075,
+    "trial_only": true
+  },
+  {
+    "fixture": "fraction-and-hold-noise",
+    "script_id": "fraction-and-hold",
+    "condition": "synthetic white noise, nominal 10 dB SNR",
+    "expected_script": "Medicine A 0.5 tablet Monday at 08:00. Hold Medicine B until review.",
+    "filly_client_verified": true,
+    "fixture_hash": "de42279f401f3a84ec68868aa0398dc356a84787ebca681cc5b3483fc58c4873",
+    "provider": "openai",
+    "asr_model": "gpt-4o-mini-transcribe",
+    "mode": "transcribe",
+    "language": "en",
+    "transcript": "Medicine A 0.5 tablet Monday at eight o'clock. Hold medicine B until review.",
+    "extraction_model": "gpt-4.1-mini-2025-04-14",
+    "extraction_valid": true,
+    "data": {
+      "source_excerpt": "Medicine A 0.5 tablet Monday at eight o'clock. Hold medicine B until review.",
+      "reported_status": "unclear",
+      "needs_clarification": true,
+      "recommendations": [],
+      "medication_details": [
+        "Medicine A 0.5 tablet Monday at eight o'clock",
+        "Hold medicine B until review"
+      ]
+    },
+    "asr_ms": 797,
+    "extraction_ms": 1130,
+    "trial_only": true
+  }
+]

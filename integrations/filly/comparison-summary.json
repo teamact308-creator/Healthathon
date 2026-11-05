@@ -1,0 +1,201 @@
+{
+  "date": "2026-11-05",
+  "fixtures": 10,
+  "calls": 20,
+  "passed": 20,
+  "checks": [
+    {
+      "fixture": "taken-en",
+      "provider": "sarvam",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "taken-en",
+      "provider": "openai",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "taken-en-noise",
+      "provider": "sarvam",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "taken-en-noise",
+      "provider": "openai",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "uncertain-en",
+      "provider": "sarvam",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "uncertain-en",
+      "provider": "openai",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "uncertain-en-noise",
+      "provider": "sarvam",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "uncertain-en-noise",
+      "provider": "openai",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "negated-hi",
+      "provider": "sarvam",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "negated-hi",
+      "provider": "openai",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "negated-hi-noise",
+      "provider": "sarvam",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "negated-hi-noise",
+      "provider": "openai",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "future-en",
+      "provider": "sarvam",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "future-en",
+      "provider": "openai",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "future-en-noise",
+      "provider": "sarvam",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "future-en-noise",
+      "provider": "openai",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "fraction-and-hold",
+      "provider": "sarvam",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "fraction-and-hold",
+      "provider": "openai",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "fraction-and-hold-noise",
+      "provider": "sarvam",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    },
+    {
+      "fixture": "fraction-and-hold-noise",
+      "provider": "openai",
+      "hash": true,
+      "contract": true,
+      "outcome": true,
+      "critical_concepts": true,
+      "dose_and_hold": true
+    }
+  ],
+  "providers": {
+    "sarvam": {
+      "calls": 10,
+      "passed": 10,
+      "median_asr_ms": 224
+    },
+    "openai": {
+      "calls": 10,
+      "passed": 10,
+      "median_asr_ms": 899.5
+    }
+  },
+  "limitation": "Ten short TTS clips; one run per provider/condition, no human speech or clinical validation. Eight oclock does not establish AM/PM."
+}

@@ -3,7 +3,7 @@
 Reviewed upstream revision 33a76c95325bfe72f4f20dbe53007e7993e36b68.
 Source https://github.com/ohcnetwork/care_filly/tree/33a76c95325bfe72f4f20dbe53007e7993e36b68
 
-Filly is a candidate for clinician documentation. WholeCare continues to use its existing provider integration. This directory supplies an offline synthetic comparison harness. A live Filly accuracy result requires captured provider outputs.
+Filly is a candidate for clinician documentation. WholeCare continues to use its existing provider integration. This directory supplies offline checks and a completed controlled synthetic provider comparison. See COMPARISON.md for measured results and limitations.
 
 ## Reproduce the harness
 
@@ -30,7 +30,7 @@ The protocol has create session, audio upload, end session and poll endpoints. I
 - History includes transcripts, structured content and optional audio. Soft deletion retains row and audio. Agree and implement a purge schedule and backup handling before real data.
 - Standalone bearer-token access can return complete sessions. Use per-user delegation and session ownership checks.
 - Pin dependencies and disable content-bearing logs. Review failure handling, source references, short-lived tokens, recording permission, deletion and revocation in the target CARE deployment.
-- Approved provider credentials, terms, retention and region remain prerequisites for live comparison.
+- Provider credentials were used for the synthetic trial. Terms, actual account retention and region remain prerequisites for real patient use.
 
 ## Adoption decision
 
@@ -42,4 +42,8 @@ The pinned official FastAPI app passed an in-process HTTP test with provider net
 
 ## Sarvam connectivity verified
 
-The team key is stored in Supabase Edge Function secrets. An assigned-clinician-only connection checker verified two frozen synthetic WAV hashes, called saaras:v3 in transcribe mode, and returned English and Hindi transcripts. See sarvam-connectivity.json. Test uploads were removed. This checks connectivity and original-language output. A full Filly live workflow and independent accuracy benchmark are still pending.
+The team key is stored in Supabase Edge Function secrets. An assigned-clinician-only connection checker verified two frozen synthetic WAV hashes, called saaras:v3 in transcribe mode, and returned English and Hindi transcripts. See sarvam-connectivity.json. Test uploads were removed. This checks connectivity and original-language output. The subsequent controlled live provider comparison is recorded in COMPARISON.md. A hosted CARE integration and independent human-speech benchmark remain pending.
+
+## Completed controlled comparison
+
+See [COMPARISON.md](COMPARISON.md), comparison-results.json, comparison-baseline.json and comparison-summary.json. Recompute checks with `node integrations/filly/analyze-comparison.mjs`. Production provider selection is unchanged.
