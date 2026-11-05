@@ -41,3 +41,19 @@ test('authenticated password change re-verifies the account and clears its local
  globalThis.fetch=async(url,opts)=>{calls.push({url,method:opts.method});if(url.includes('grant_type=password'))return response({access_token:'fixture',refresh_token:'fixture',expires_at:Date.now()/1000+3600,user:{id:'current'}});return response({id:'current',email:'fixture@example.com'});};
  await signIn('fixture@example.com','fixture');await changeOwnPassword('fixture','memorable-demo-phrase','memorable-demo-phrase');assert.ok(calls.some(x=>x.method==='PUT'));assert.ok(calls.some(x=>x.url.endsWith('logout?scope=global')));assert.equal(hasSession(),false);
 });
+test('chosen patient survives reload selection, is user scoped and rejects revoked access',async()=>{
+ const {choosePatient}=await import('./connected-store.js');
+ let memberships=[{patient_id:'a',role:'clinician'},{patient_id:'b',role:'clinician'}];
+ globalThis.fetch=async url=>{
+  if(url.includes('/auth/'))return response({access_token:'fixture',refresh_token:'fixture',expires_at:Date.now()/1000+3600});
+  if(url.includes('my_context'))return response({user_id:'staff',memberships});
+  if(url.includes('/patients?'))return response([{id:url.includes('eq.b')?'b':'a',display_name:'Fixture'}]);
+  return response([]);
+ };
+ await signIn('fixture','fixture');await loadWorkspace();await choosePatient('b','clinician');
+ assert.equal((await loadWorkspace()).selection.patient_id,'b');
+ memberships=[{patient_id:'a',role:'clinician'}];
+ await assert.rejects(()=>loadWorkspace(),/no longer assigned/);
+ await assert.rejects(()=>choosePatient('other','clinician'),/no longer assigned/);
+ await signOut();assert.equal(memory.has('wholecare-patient-selection'),false);
+});

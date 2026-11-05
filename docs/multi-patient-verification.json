@@ -1,0 +1,23 @@
+{
+  "checks": [
+    "patient caseload role scope",
+    "clinician caseload role scope",
+    "coordinator caseload role scope",
+    "caregiver caseload role scope",
+    "anonymous caseload denied",
+    "separate operational scenarios",
+    "patient patient row isolation",
+    "clinician patient row isolation",
+    "coordinator patient row isolation",
+    "second patient history",
+    "patient cannot read another history",
+    "patient cannot act on another record",
+    "assigned clinician private upload",
+    "patient cannot read other raw voice",
+    "caregiver cannot read other raw voice",
+    "coordinator cannot read other raw voice",
+    "temporary source removed"
+  ],
+  "passed": 17,
+  "patient_count": 3
+}

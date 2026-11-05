@@ -1,9 +1,10 @@
+import {selectMembership} from './caseload-model.mjs';
 import {reviewAITransfer,clearAITransfers} from './ai-privacy-ui.js';
 import {SUPABASE_URL,SUPABASE_KEY} from './db-config.js';
 import {normalizeWorkspace} from './connected-model.mjs';
 const sessionKey='wholecare-auth-session';let session=null,refreshing=null;
 try{session=JSON.parse(sessionStorage.getItem(sessionKey));}catch{}
-function save(s){session=s;if(!s){clearAITransfers();membership=null;historyLimits={audit:100,events:200,observations:2000,planActivity:100,extractions:100,failures:100,delivery:100};}try{s?sessionStorage.setItem(sessionKey,JSON.stringify(s)):sessionStorage.removeItem(sessionKey);}catch{}}
+function save(s){session=s;if(!s){clearAITransfers();membership=null;workspaceUser=null;try{sessionStorage.removeItem('wholecare-patient-selection');}catch{}historyLimits={audit:100,events:200,observations:2000,planActivity:100,extractions:100,failures:100,delivery:100};}try{s?sessionStorage.setItem(sessionKey,JSON.stringify(s)):sessionStorage.removeItem(sessionKey);}catch{}}
 async function raw(path,method='GET',body,token){const response=await fetch(SUPABASE_URL+path,{method,headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},...(body!==undefined?{body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(path.startsWith('/functions/')?100000:20000)});const text=await response.text();let value;try{value=text?JSON.parse(text):null;}catch{throw Error('The database returned an unreadable response. Please retry.');}return {response,value};}
 function error(value){return Error(value?.message||value?.error||value?.msg||value?.error_description||'Unable to connect to the database.');}
 async function refresh(){if(refreshing)return refreshing;refreshing=(async()=>{if(!session?.refresh_token)throw Error('Please sign in.');const {response,value}=await raw('/auth/v1/token?grant_type=refresh_token','POST',{refresh_token:session.refresh_token});if(!response.ok){save(null);throw error(value);}save(value);})().finally(()=>refreshing=null);return refreshing;}
@@ -23,6 +24,7 @@ async function allRows(table,query=''){
  const out=[];for(let offset=0;offset<50000;offset+=500){const page=await rows(table,query+'&limit=500&offset='+offset);out.push(...page);if(page.length<500)return out;}
  throw Error('Workspace exceeds the current loading limit. Narrow the data scope before continuing.');
 }
+let workspaceUser=null;
 let membership=null,historyLimits={audit:100,events:200,observations:2000,planActivity:100,extractions:100,failures:100,delivery:100};
 async function historyRows(table,filter,time,limit){
  const result=[];let cursor='';
@@ -30,11 +32,11 @@ async function historyRows(table,filter,time,limit){
  return result;
 }
 export function expandHistory(kind){if(!Object.hasOwn(historyLimits,kind))throw Error('Unknown history view');if(historyLimits[kind]>=50000)throw Error('Export or narrow this history before loading more than 50,000 records.');historyLimits[kind]=Math.min(50000,historyLimits[kind]+(kind==='observations'?2000:200));}
-export async function loadWorkspace(){const context=await rpc('my_context');membership=context?.memberships?.[0];if(!membership)throw Error('Your account has no assigned care workspace.');const profile=(await rows('profiles'))[0]??{};const patient=membership.patient_id;const filter='&patient_id=eq.'+encodeURIComponent(patient);
- if(membership.role==='caregiver'){const support=await rows('support_tasks',filter+'&order=created_at.desc');return {role:'Caregiver',state:normalizeWorkspace({items:[],loops:[],support,profile})};}
+export async function loadWorkspace(){const context=await rpc('my_context');let selected=null;try{const stored=JSON.parse(sessionStorage.getItem('wholecare-patient-selection'));if(stored?.user_id===context.user_id)selected=stored;}catch{}membership=selectMembership(context,selected);workspaceUser=context.user_id;const profile=(await rows('profiles'))[0]??{};const patient=membership.patient_id;const filter='&patient_id=eq.'+encodeURIComponent(patient);
+ if(membership.role==='caregiver'){const support=await rows('support_tasks',filter+'&order=created_at.desc');return {role:'Caregiver',selection:membership,state:normalizeWorkspace({items:[],loops:[],support,profile})};}
  const [items,loops,evidence,audit,messages,observations,plans,patients,caregivers,schedules,planActivity,events,extractions,intake,intakeActivity,failures,delivery,health,contextEntries,policies,corrections]=await Promise.all([
  allRows('care_plan_items',filter+'&order=id.asc'),allRows('care_loops',filter+'&order=due_at.asc,id.asc'),allRows('evidence',filter+'&order=created_at.desc,id.asc'),historyRows('audit_events',filter,'created_at',historyLimits.audit),allRows('message_outbox',filter+'&order=created_at.asc,id.asc'),historyRows('glucose_observations',filter,'observed_at',historyLimits.observations),allRows('care_plans',filter+'&order=id.asc'),rows('patients','&id=eq.'+patient),rpc('caregiver_support_context',{p_patient:patient}),allRows('plan_schedules',filter+'&order=item_id.asc'),historyRows('plan_activity',filter,'created_at',historyLimits.planActivity),historyRows('care_events',filter,'occurred_at',historyLimits.events),historyRows('plan_extractions',filter,'created_at',historyLimits.extractions),allRows('intake_items',filter+'&order=created_at.desc,id.asc'),allRows('intake_activity',filter+'&order=created_at.asc,id.asc'),historyRows('processing_events',filter,'created_at',historyLimits.failures),historyRows('delivery_jobs',filter,'created_at',historyLimits.delivery),['clinician','coordinator'].includes(membership.role)?rpc('operational_health',{p_patient:patient}):Promise.resolve(null),allRows('patient_context_entries',filter+'&order=observed_at.desc,id.asc'),allRows('workflow_policy_versions',filter+'&order=created_at.desc,id.desc'),allRows('activity_corrections',filter+'&order=created_at.desc,id.asc')]);
- return {role:membership.role[0].toUpperCase()+membership.role.slice(1),state:normalizeWorkspace({items,loops,evidence,audit,messages,observations,plans,patients,caregivers,profile,schedules,planActivity,rawItems:items,events,rawEvidence:evidence,extractions,intake,intakeActivity,failures,delivery,health,contextEntries,policies,corrections,historyLimits:{...historyLimits}})};
+ return {selection:membership,role:membership.role[0].toUpperCase()+membership.role.slice(1),state:normalizeWorkspace({items,loops,evidence,audit,messages,observations,plans,patients,caregivers,profile,schedules,planActivity,rawItems:items,events,rawEvidence:evidence,extractions,intake,intakeActivity,failures,delivery,health,contextEntries,policies,corrections,historyLimits:{...historyLimits}})};
 }
 export async function careAction(loop,action,note='',event=crypto.randomUUID()){return rpc('care_action',{p_loop:loop,p_action:action,p_note:note,p_event_key:event});}
 export async function setConsent(caregiver,granted){return rpc('set_caregiver_consent',{p_patient:membership.patient_id,p_caregiver:caregiver,p_granted:granted,p_event_key:crypto.randomUUID()});}
@@ -129,3 +131,15 @@ export const saveVoiceRetention=(days,existing=false)=>rpc('set_voice_retention'
 
 export const setupVoiceRetention=()=>request('/functions/v1/voice-retention','POST',{operation:'install',patient_id:membership.patient_id});
 
+
+// Switching always performs a document reload: no patient drafts or async UI survive.
+export const assignedCaseload=()=>rpc('assigned_caseload');
+export async function choosePatient(patient_id,role){
+ const context=await rpc('my_context');
+ if(context.user_id!==workspaceUser)throw Error('Your session changed. Sign in again.');
+ const selected=selectMembership(context,{patient_id,role});
+ if(!['clinician','coordinator'].includes(selected.role))throw Error('Care-team access required.');
+ sessionStorage.setItem('wholecare-patient-selection',JSON.stringify({user_id:workspaceUser,...selected}));
+ clearAITransfers();
+ return selected;
+}

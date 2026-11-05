@@ -87,3 +87,8 @@ Patient secondary screens (Log, Messages, Health history and preferences) are po
 ## AI privacy implementation, 5 November 2026
 
 See [AI privacy controls](AI_PRIVACY_CONTROLS.md) for transfer previews, text minimization, approval receipts, source-file access and unused-recording removal. See [Filly candidate](../integrations/filly/README.md) for the pinned source review and synthetic comparison harness. Verify deployment status and endpoint versions before continuing. Provider contracts, automated retention policy and live Filly quality evaluation remain open.
+
+
+## Multi-patient increment — 5 November 2026
+
+Read MULTI_PATIENT_MANAGEMENT.md before changing workspace loading or patient selection. Staff now have three assigned synthetic patients. Selection is validated against my_context and switching reloads the document. Do not reintroduce memberships[0] or retain drafts across an in-place switch. New fixtures have no patient login/caregiver consent. The existing RLS boundary remains patient-specific.

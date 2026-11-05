@@ -40,6 +40,8 @@ try:
  sql(first,(root/'database/seed.sql').read_text())
  for f in ['verify-capture.sql','verify-operations.sql','verify-bucket-three.sql','verify-vcpi.sql']:
   sql(first,(root/'database'/f).read_text());report['checks'].append('clean rebuild: '+f)
+ sql(first,'begin;\n'+(root/'database/demo-multiple-patients.sql').read_text()+'\n'+(root/'database/verify-multi-patient.sql').read_text()+'\nrollback;')
+ report['checks'].append('multi-patient caseload, patient isolation and immediate assignment revocation')
  snapshot=json.loads(sql(first,(root/'scripts/schema-snapshot.sql').read_text()).strip());(work/'rebuilt-schema.json').write_text(json.dumps(snapshot))
  if args.live_snapshot:
   result=subprocess.run(['python3',str(root/'scripts/compare-schema.py'),args.live_snapshot,str(work/'rebuilt-schema.json')],capture_output=True,text=True)

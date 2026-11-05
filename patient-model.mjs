@@ -1,5 +1,5 @@
 const patientViews=['today','journey','capture','messages','plans','context','account','trends','notifications','reports','help','rehearsal'];
-export function allowedViews(role){return role==='Patient'?patientViews:role==='Caregiver'?['today']:['Clinician','Coordinator'].includes(role)?['today','journey','capture','messages','plans','context','queue','operations','inbox','audit',...(role==='Clinician'?['trends']:[])]:[];}
+export function allowedViews(role){return role==='Patient'?patientViews:role==='Caregiver'?['today']:['Clinician','Coordinator'].includes(role)?['caseload','today','journey','capture','messages','plans','context','queue','operations','inbox','audit',...(role==='Clinician'?['trends']:[])]:[];}
 export const defaultView=role=>['Clinician','Coordinator'].includes(role)?'queue':'today';
 export function safeView(role,view){return allowedViews(role).includes(view)?view:defaultView(role);}
 export function dayKey(value,timezone='Asia/Kolkata'){
