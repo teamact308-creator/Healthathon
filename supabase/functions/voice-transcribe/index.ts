@@ -31,7 +31,7 @@ Deno.serve(async(req: Request) => {
  if(Object.hasOwn(input,'typed_note')){
   const note=typeof input.typed_note==='string'?minimizeText(input.typed_note,names).text.trim():'';
   if(!note||note.length>2000)return json({error:'Enter a note of up to 2,000 characters.'},400);
-  return json({interpretation:await interpretMedication(note,key),interpretation_version:'2026-11-06-multidose-guard',requires_confirmation:true});
+  return json({interpretation:await interpretMedication(note,key),interpretation_version:'2026-11-06-evidence-v3',requires_confirmation:true});
  }
 
  const path=input.source_path;

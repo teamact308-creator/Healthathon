@@ -1,5 +1,7 @@
 # AI privacy controls
 
+**6 November reconciliation:** read [INDEPENDENT_DELIVERY.md](INDEPENDENT_DELIVERY.md) for the current 25-item execution record and [OPERATIONS_AND_ACCESS_GATES.md](OPERATIONS_AND_ACCESS_GATES.md) for access, export, messaging hold and recovery boundaries. Older dated implementation notes below are historical and do not override this evidence. D01–D07 remain release gates where hosted acceptance is incomplete.
+
 Implemented 5 November 2026 for the existing synthetic demo. This is an implementation record, not a certification for clinical use.
 
 ## What the user controls

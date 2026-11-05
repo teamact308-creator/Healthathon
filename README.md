@@ -1,6 +1,8 @@
 # WholeCare Diabetes — Team Act / Healthathon
 
-**5 November update:** clinician and coordinator accounts now have an assigned-patient list, operational caseload counts and safe patient switching across Anita Sen, Ravi Mehta and Farah Khan. See [multi-patient delivery, access rules, verification and remaining scope](docs/MULTI_PATIENT_MANAGEMENT.md). New synthetic records have no additional patient logins.
+**6 November delivery:** independent work and remaining gates are tracked item by item in [the execution ledger](docs/INDEPENDENT_DELIVERY.md), with [operations/access procedures](docs/OPERATIONS_AND_ACCESS_GATES.md). Two isolated live four-persona API rehearsals passed, hosted report review and notification passed, and separate Ravi/Farah synthetic logins are verified. All data remains fictional; full release acceptance and production readiness are not claimed.
+
+**5 November update:** clinician and coordinator accounts now have an assigned-patient list, operational caseload counts and safe patient switching across Anita Sen, Ravi Mehta and Farah Khan. See [multi-patient delivery, access rules, verification and remaining scope](docs/MULTI_PATIENT_MANAGEMENT.md). Ravi and Farah now have generated patient logins; credentials are kept only in private local manifests and must be shared through an approved channel.
 
 The patient journey UI now has four primary destinations, a grouped Today screen, a confirmed-only care plan and occurrence details showing who acts next. See [delivery, verification and remaining release gates](docs/PATIENT_UI_DELIVERY.md).
 
@@ -10,7 +12,7 @@ An isolated [CARE clinician integration](integrations/care/README.md) now runs l
 
 **Status: connected, hosted development demo; the full documented MVP and production application are not complete. All patient data is fictional.** A working screen, a provider connection test, an implemented workflow and a production-ready capability are different claims. This documentation distinguishes them.
 
-Documentation snapshot: **3 November 2026, Asia/Kolkata**. Latest increment: [messaging rehearsal and provider recovery](docs/MESSAGING_REHEARSAL.md). Historical implementation baseline: [`8b18bcb`](https://github.com/teamact308-creator/Healthathon/commit/8b18bcbc3bae9f825cfdef24e31bd5e17249d420). Inspect the current branch and deployment before assuming the running service still matches this snapshot. Current main includes subsequent implementation increments; the historical SHA is not the current release.
+Documentation reconciliation: **6 November 2026, Asia/Kolkata**. Older dated sections below preserve historical context. Latest increment: [messaging rehearsal and provider recovery](docs/MESSAGING_REHEARSAL.md). Historical implementation baseline: [`8b18bcb`](https://github.com/teamact308-creator/Healthathon/commit/8b18bcbc3bae9f825cfdef24e31bd5e17249d420). Inspect the current branch and deployment before assuming the running service still matches this snapshot. Current main includes subsequent implementation increments; the historical SHA is not the current release.
 
 ## 1. Essential links and ownership
 

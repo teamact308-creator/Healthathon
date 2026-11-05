@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-06",
+  "results": [
+    {
+      "patient_id": "fa2c9b9b-d60b-449b-a4b1-852370a93f1e",
+      "sign_in": true,
+      "own_identity_only": true,
+      "history_rows": 120,
+      "staff_caseload_denied": true
+    },
+    {
+      "patient_id": "120ef185-05c7-46f6-b1b4-9fa91d6e1517",
+      "sign_in": true,
+      "own_identity_only": true,
+      "history_rows": 120,
+      "staff_caseload_denied": true
+    }
+  ]
+}

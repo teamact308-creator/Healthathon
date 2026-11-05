@@ -1,5 +1,7 @@
 # WholeCare MVP increment - verification, 2 November 2026
 
+**6 November reconciliation:** read [INDEPENDENT_DELIVERY.md](INDEPENDENT_DELIVERY.md) for the current 25-item execution record and [OPERATIONS_AND_ACCESS_GATES.md](OPERATIONS_AND_ACCESS_GATES.md) for access, export, messaging hold and recovery boundaries. Older dated implementation notes below are historical and do not override this evidence. D01–D07 remain release gates where hosted acceptance is incomplete.
+
 ## Verified live against development
 
 - Clinician-only plan creation. Patient create attempt denied. Proposed plans create no tasks. Confirmation generates independent occurrences. Revision preserves completed history and pending review, retiring outstanding prior tasks.

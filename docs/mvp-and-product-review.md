@@ -1,5 +1,7 @@
 # WholeCare Diabetes - current MVP and product backlog
 
+**6 November reconciliation:** read [INDEPENDENT_DELIVERY.md](INDEPENDENT_DELIVERY.md) for the current 25-item execution record and [OPERATIONS_AND_ACCESS_GATES.md](OPERATIONS_AND_ACCESS_GATES.md) for access, export, messaging hold and recovery boundaries. Older dated implementation notes below are historical and do not override this evidence. D01–D07 remain release gates where hosted acceptance is incomplete.
+
 Updated 3 November 2026; incorporates the agreed bucket 3 product delivery after reviewing the final Team ACT presentation submitted to the judges (PDF and PPTX). Current implementation status is summarized below and in the linked delivery records. This replaces the earlier fixture-only inventory. Capabilities below distinguish implemented web workflows from transport tests and production readiness. Reuse the existing Supabase identity, tables, RPC workflow, private storage, outbox, GitHub repo and Vercel frontend.
 
 ## Demo readiness priorities — 5 November 2026

@@ -1,7 +1,7 @@
 export function selectMembership(context,selection){
  const memberships=context?.memberships||[];
  if(!memberships.length)throw Error('Your account has no assigned care workspace.');
- if(selection){const found=memberships.find(m=>m.patient_id===selection.patient_id&&m.role===selection.role);if(!found)throw Error('The selected patient is no longer assigned to you. Sign out and sign in to choose an available workspace.');return found;}
+ if(selection){const found=memberships.find(m=>m.patient_id===selection.patient_id&&m.role===selection.role);if(!found)throw Object.assign(Error('The selected patient is no longer assigned to you. Sign out and sign in to choose an available workspace.'),{status:403,code:'WORKSPACE_REVOKED'});return found;}
  return [...memberships].sort((a,b)=>a.patient_id.localeCompare(b.patient_id)||a.role.localeCompare(b.role))[0];
 }
 export function filterCaseload(rows,{search='',filter='all'}={}){

@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-06",
+  "synthetic": true,
+  "patient_id": "f2a76533-03c8-4f14-9e4e-61377964e8c6",
+  "checks": [
+    "Patient task-linked help request persisted",
+    "Coordinator caseload displayed one help request",
+    "Coordinator claimed it and displayed named owner",
+    "Coordinator reply appeared in patient thread with named owner",
+    "Patient unread notifications rose from 1 to 2",
+    "Staff active response queue became empty; thread moved to reply history"
+  ],
+  "not_tested": [
+    "External WhatsApp/SMS",
+    "Complete dirty-form two-session acceptance"
+  ]
+}

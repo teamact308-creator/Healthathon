@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-06",
+  "patient_id": "f2a76533-03c8-4f14-9e4e-61377964e8c6",
+  "synthetic": true,
+  "host": "https://healthathon.vercel.app/",
+  "checks": [
+    "Patient uploaded generated PDF through hosted UI",
+    "Receipt displayed REVIEW_PENDING with one evidence entry",
+    "Clinician recorded review through hosted UI",
+    "Clinician open loops 3, awaiting review 0, closed loops 1",
+    "Patient sees Review complete and no further action",
+    "Patient notification identifies clinician report review"
+  ],
+  "limits": [
+    "Care-plan preparation used checked API confirmation",
+    "Mobile override returned unchanged 1280 viewport; narrow-screen acceptance not established",
+    "No live external care messages sent"
+  ]
+}

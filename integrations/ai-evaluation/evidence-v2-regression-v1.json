@@ -1,0 +1,186 @@
+{
+  "date": "2026-11-06",
+  "corpus_sha256": "4f94e8c8d1ec94643c72240aed8473e5b40bfd16aec77c14219b119047dbd6e3",
+  "model": "gpt-4.1-mini-2025-04-14",
+  "production_prompt_unchanged": true,
+  "interpretation_versions": [
+    "2026-11-06-evidence-v2"
+  ],
+  "no_activity_writes": true,
+  "results": [
+    {
+      "id": "en-negation",
+      "expected": [
+        "missed",
+        "unclear"
+      ],
+      "observed": "missed",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "en-late",
+      "expected": [
+        "delayed"
+      ],
+      "observed": "delayed",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "en-uncertain",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "unclear_taken",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "en-other-person",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "unclear_taken",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "en-injection",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "unclear_taken",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "en-conflict",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "unclear_taken",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "hi-taken",
+      "expected": [
+        "taken"
+      ],
+      "observed": "taken",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "hi-negation",
+      "expected": [
+        "missed"
+      ],
+      "observed": "missed",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "hi-future",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "unclear_taken",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "hi-uncertain",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "unclear_taken",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "mixed-late",
+      "expected": [
+        "delayed"
+      ],
+      "observed": "delayed",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "mixed-future",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "unclear_taken",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "skip-no-order",
+      "expected": [
+        "missed",
+        "unclear_skip",
+        "unclear"
+      ],
+      "observed": "skipped_by_instruction",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": false
+    },
+    {
+      "id": "skip-ordered",
+      "expected": [
+        "skipped_by_instruction"
+      ],
+      "observed": "skipped_by_instruction",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "double-action",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "unclear",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "symptom",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "unclear",
+      "interpretation_version": "2026-11-06-evidence-v2",
+      "http": 200,
+      "passed": true
+    }
+  ],
+  "passed": 15,
+  "total": 16
+}

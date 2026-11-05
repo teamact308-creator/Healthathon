@@ -37,6 +37,7 @@ export async function loadWorkspace(){const context=await rpc('my_context');let 
  if(membership.role==='caregiver'){const support=await rows('support_tasks',filter+'&order=created_at.desc');return {role:'Caregiver',selection:membership,state:normalizeWorkspace({items:[],loops:[],support,profile})};}
  const [items,loops,evidence,audit,messages,observations,plans,patients,caregivers,schedules,planActivity,events,extractions,intake,intakeActivity,failures,delivery,health,contextEntries,policies,corrections]=await Promise.all([
  allRows('care_plan_items',filter+'&order=id.asc'),allRows('care_loops',filter+'&order=due_at.asc,id.asc'),allRows('evidence',filter+'&order=created_at.desc,id.asc'),historyRows('audit_events',filter,'created_at',historyLimits.audit),allRows('message_outbox',filter+'&order=created_at.asc,id.asc'),historyRows('glucose_observations',filter,'observed_at',historyLimits.observations),allRows('care_plans',filter+'&order=id.asc'),rows('patients','&id=eq.'+patient),rpc('caregiver_support_context',{p_patient:patient}),allRows('plan_schedules',filter+'&order=item_id.asc'),historyRows('plan_activity',filter,'created_at',historyLimits.planActivity),historyRows('care_events',filter,'occurred_at',historyLimits.events),historyRows('plan_extractions',filter,'created_at',historyLimits.extractions),allRows('intake_items',filter+'&order=created_at.desc,id.asc'),allRows('intake_activity',filter+'&order=created_at.asc,id.asc'),historyRows('processing_events',filter,'created_at',historyLimits.failures),historyRows('delivery_jobs',filter,'created_at',historyLimits.delivery),['clinician','coordinator'].includes(membership.role)?rpc('operational_health',{p_patient:patient}):Promise.resolve(null),allRows('patient_context_entries',filter+'&order=observed_at.desc,id.asc'),allRows('workflow_policy_versions',filter+'&order=created_at.desc,id.desc'),allRows('activity_corrections',filter+'&order=created_at.desc,id.asc')]);
+ if(!patients[0])throw Object.assign(Error('Your assigned patient access changed.'),{status:403,code:'WORKSPACE_REVOKED'});
  return {selection:membership,role:membership.role[0].toUpperCase()+membership.role.slice(1),state:normalizeWorkspace({items,loops,evidence,audit,messages,observations,plans,patients,caregivers,profile,schedules,planActivity,rawItems:items,events,rawEvidence:evidence,extractions,intake,intakeActivity,failures,delivery,health,contextEntries,policies,corrections,historyLimits:{...historyLimits}})};
 }
 export async function careAction(loop,action,note='',event=crypto.randomUUID()){return rpc('care_action',{p_loop:loop,p_action:action,p_note:note,p_event_key:event});}
@@ -135,7 +136,7 @@ export const setupVoiceRetention=()=>request('/functions/v1/voice-retention','PO
 
 // Switching always performs a document reload: no patient drafts or async UI survive.
 export const assignedCaseload=({search='',filter='all',page=0}={})=>rpc('search_assigned_caseload',{p_search:search,p_filter:filter,p_offset:page*12,p_limit:12});
-export const workspaceRevision=()=>rpc('workspace_revision',{p_patient:membership.patient_id});
+export const workspaceRevision=(caseload=false)=>caseload?rpc('caseload_revision'):rpc('workspace_revision',{p_patient:membership.patient_id});
 export async function choosePatient(patient_id,role){
  const context=await rpc('my_context');
  if(context.user_id!==workspaceUser)throw Error('Your session changed. Sign in again.');
@@ -145,3 +146,4 @@ export async function choosePatient(patient_id,role){
  clearAITransfers();
  return selected;
 }
+

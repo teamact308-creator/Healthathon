@@ -31,12 +31,7 @@ _,events=api.call('/rest/v1/care_events?select=id&loop_id=eq.'+by_domain['medica
 # Invalid original remains unsubmitted, then a valid PNG is uploaded and reviewed.
 invalid=patient+'/'+str(uuid.uuid4())+'.png';api.call('/storage/v1/object/care-evidence/'+invalid,'patient',b'not a valid image',mime='image/png')
 status,_=api.call('/functions/v1/report-submit','patient',{'patient_id':patient,'loop_id':by_domain['test'],'source_path':invalid,'label':'Invalid synthetic upload','event_key':str(uuid.uuid4())});check('invalid report rejected without closure',status>=400)
-def pdf(lines):
- content='BT /F1 14 Tf 30 750 Td '+' Tj 0 -24 Td '.join('('+line.replace('\\','\\\\').replace('(','\\(').replace(')','\\)')+')' for line in lines)+' Tj ET'
- objects=['<< /Type /Catalog /Pages 2 0 R >>','<< /Type /Pages /Kids [3 0 R] /Count 1 >>','<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>','<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>','<< /Length '+str(len(content))+' >>\nstream\n'+content+'\nendstream']
- data=b'%PDF-1.4\n';offsets=[]
- for i,obj in enumerate(objects):offsets.append(len(data));data+=(str(i+1)+' 0 obj\n'+obj+'\nendobj\n').encode('ascii')
- xref=len(data);data+=b'xref\n0 6\n0000000000 65535 f \n'+''.join(f'{offset:010d} 00000 n \n' for offset in offsets).encode();data+=('trailer << /Size 6 /Root 1 0 R >>\nstartxref\n'+str(xref)+'\n%%EOF').encode();return data
+from synthetic_files import pdf
 original=pdf(['SYNTHETIC REHEARSAL REPORT','No laboratory findings. Operational review only.','Run '+api.manifest['request_id']]);path=patient+'/'+str(uuid.uuid4())+'.pdf'
 status,_=api.call('/storage/v1/object/care-evidence/'+path,'patient',original,mime='application/pdf');check('private original uploaded',status==200)
 report={'patient_id':patient,'loop_id':by_domain['test'],'source_path':path,'label':'Synthetic rehearsal original','event_key':str(uuid.uuid4())}

@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-06",
+  "corpus_sha256": "c28b4cd82f15949cbe9f538f9f9a929f20ee15ab6397907a21af5a056de27cbd",
+  "model": "gpt-4.1-mini-2025-04-14",
+  "production_prompt_unchanged": true,
+  "multi_dose_guard": true,
+  "no_activity_writes": true,
+  "results": [
+    {
+      "id": "holdout-half",
+      "expected": [
+        "taken"
+      ],
+      "observed": "taken",
+      "interpretation_version": "2026-11-06-multidose-guard",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "holdout-late",
+      "expected": [
+        "delayed"
+      ],
+      "observed": "delayed",
+      "interpretation_version": "2026-11-06-multidose-guard",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "holdout-hi",
+      "expected": [
+        "taken"
+      ],
+      "observed": "taken",
+      "interpretation_version": "2026-11-06-multidose-guard",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "holdout-mixed",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "unclear_taken",
+      "interpretation_version": "2026-11-06-multidose-guard",
+      "http": 200,
+      "passed": true
+    },
+    {
+      "id": "holdout-other",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "taken",
+      "interpretation_version": "2026-11-06-multidose-guard",
+      "http": 200,
+      "passed": false
+    },
+    {
+      "id": "holdout-unrelated",
+      "expected": [
+        "unclear",
+        "unclear_taken"
+      ],
+      "observed": "unclear",
+      "interpretation_version": "2026-11-06-multidose-guard",
+      "http": 200,
+      "passed": true
+    }
+  ],
+  "passed": 5,
+  "total": 6
+}

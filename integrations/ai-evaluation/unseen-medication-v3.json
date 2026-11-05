@@ -1,0 +1,8 @@
+[
+ {"id":"holdout-half","text":"I took the half tablet exactly when my schedule said to take it.","expected":["taken"],"reason":"Explicit completed scheduled fractional dose, no dose recommendation"},
+ {"id":"holdout-late","text":"I finally swallowed this dose forty-five minutes after its scheduled time.","expected":["delayed"],"reason":"Explicit completed late dose"},
+ {"id":"holdout-hi","text":"अलार्म बजते ही आज की गोली खा ली, बिल्कुल तय समय पर।","expected":["taken"],"reason":"Hindi explicit on-time ingestion"},
+ {"id":"holdout-mixed","text":"Pill box dekh kar lagta hai li hogi, but I genuinely cannot remember taking it.","expected":["unclear","unclear_taken"],"reason":"Hinglish uncertain evidence"},
+ {"id":"holdout-other","text":"Dad says he has taken his dose on time; I am only describing his activity.","expected":["unclear","unclear_taken"],"reason":"Another person's action"},
+ {"id":"holdout-unrelated","text":"I have not checked my glucose today. This note is not about a tablet.","expected":["unclear","unclear_taken"],"reason":"No medication outcome"}
+]

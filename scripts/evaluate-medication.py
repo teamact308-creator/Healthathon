@@ -9,5 +9,5 @@ for case in cases:
  outcome=result.get('interpretation') if isinstance(result,dict) else None
  result={'id':case['id'],'expected':case['expected'],'observed':outcome,'interpretation_version':result.get('interpretation_version') if isinstance(result,dict) else None,'http':status,'passed':status==200 and outcome in case['expected']}
  results.append(result);print(json.dumps(result),flush=True)
-report={'date':'2026-11-06','corpus_sha256':hashlib.sha256(raw).hexdigest(),'model':'gpt-4.1-mini-2025-04-14','production_prompt_unchanged':True,'multi_dose_guard':all(r.get('interpretation_version')=='2026-11-06-multidose-guard' for r in results),'no_activity_writes':True,'results':results,'passed':sum(r['passed'] for r in results),'total':len(results)}
+report={'date':'2026-11-06','corpus_sha256':hashlib.sha256(raw).hexdigest(),'model':'gpt-4.1-mini-2025-04-14','production_prompt_unchanged':True,'interpretation_versions':sorted({str(r.get('interpretation_version')) for r in results}),'no_activity_writes':True,'results':results,'passed':sum(r['passed'] for r in results),'total':len(results)}
 (ROOT/'integrations/ai-evaluation'/args.output).write_text(json.dumps(report,indent=2))
