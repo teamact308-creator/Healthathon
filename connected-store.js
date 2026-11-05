@@ -1,9 +1,9 @@
-import {reviewAITransfer} from './ai-privacy-ui.js';
+import {reviewAITransfer,clearAITransfers} from './ai-privacy-ui.js';
 import {SUPABASE_URL,SUPABASE_KEY} from './db-config.js';
 import {normalizeWorkspace} from './connected-model.mjs';
 const sessionKey='wholecare-auth-session';let session=null,refreshing=null;
 try{session=JSON.parse(sessionStorage.getItem(sessionKey));}catch{}
-function save(s){session=s;if(!s){membership=null;historyLimits={audit:100,events:200,observations:2000,planActivity:100,extractions:100,failures:100,delivery:100};}try{s?sessionStorage.setItem(sessionKey,JSON.stringify(s)):sessionStorage.removeItem(sessionKey);}catch{}}
+function save(s){session=s;if(!s){clearAITransfers();membership=null;historyLimits={audit:100,events:200,observations:2000,planActivity:100,extractions:100,failures:100,delivery:100};}try{s?sessionStorage.setItem(sessionKey,JSON.stringify(s)):sessionStorage.removeItem(sessionKey);}catch{}}
 async function raw(path,method='GET',body,token){const response=await fetch(SUPABASE_URL+path,{method,headers:{apikey:SUPABASE_KEY,'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},...(body!==undefined?{body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(path.startsWith('/functions/')?100000:20000)});const text=await response.text();let value;try{value=text?JSON.parse(text):null;}catch{throw Error('The database returned an unreadable response. Please retry.');}return {response,value};}
 function error(value){return Error(value?.message||value?.error||value?.msg||value?.error_description||'Unable to connect to the database.');}
 async function refresh(){if(refreshing)return refreshing;refreshing=(async()=>{if(!session?.refresh_token)throw Error('Please sign in.');const {response,value}=await raw('/auth/v1/token?grant_type=refresh_token','POST',{refresh_token:session.refresh_token});if(!response.ok){save(null);throw error(value);}save(value);})().finally(()=>refreshing=null);return refreshing;}
@@ -102,7 +102,7 @@ export const suggestActivityNote=async note=>request('/functions/v1/voice-transc
 export const updateHelpThread=(id,action,message,event)=>rpc('update_help_thread',{p_request:id,p_action:action,p_text:message,p_event:event});
 
 export async function suggestVisitNotes(ids){
- const notes=await rows('care_events','&select=id,details&patient_id=eq.'+membership.patient_id+'&id=in.('+ids.join(',')+')');
+ const notes=await baseRequest('/rest/v1/care_events?select=id,details&patient_id=eq.'+membership.patient_id+'&id=in.('+ids.join(',')+')');
  const input=await approveAITransfer({patient_id:membership.patient_id,ids},{notes:notes.map(note=>({id:note.id,text:note.details?.note||''}))});
  return request('/functions/v1/visit-note-picks','POST',input);
 }
@@ -110,9 +110,9 @@ export async function suggestVisitNotes(ids){
 async function approveAITransfer(input,{audio=false,file=false,notes=null}={}){
  const current=membership;
  if(!current||!session)throw Error('Sign in before using AI.');
- const [patients,profiles]=await Promise.all([rows('patients','&select=display_name&id=eq.'+current.patient_id),rows('profiles','&select=display_name')]);
+ const [patients,profiles]=await Promise.all([baseRequest('/rest/v1/patients?select=display_name&id=eq.'+current.patient_id),baseRequest('/rest/v1/profiles?select=display_name')]);
  const names=[patients[0]?.display_name,profiles[0]?.display_name].filter(Boolean);
- const reviewed=await reviewAITransfer({text:input.text||input.typed_note||input.activity_note||'',audio,file,notes,names});
+ const reviewed=await reviewAITransfer({text:input.text||input.typed_note||input.activity_note||'',audio,file,notes,names,maxLength:Object.hasOwn(input,'text')?20000:2000});
  if(membership!==current||!session)throw Error('Your workspace changed. Review the AI transfer again.');
  const approval={privacy_version:reviewed.privacy_version,privacy_request_id:reviewed.privacy_request_id};
  if(audio)return {...input,...approval};

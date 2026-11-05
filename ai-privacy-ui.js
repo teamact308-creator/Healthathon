@@ -1,8 +1,11 @@
 import {minimizeText} from './supabase/functions/_shared/ai-privacy.mjs';
 
-export function reviewAITransfer({text='',names=[],file=false,audio=false,notes=null}){
+export function clearAITransfers(){globalThis.document?.querySelector('#ai-privacy-cancel')?.click();}
+
+export function reviewAITransfer({text='',names=[],file=false,audio=false,notes=null,maxLength=2000}){
  return new Promise((resolve,reject)=>{
   const dialog=document.createElement('dialog');
+  dialog.className='ai-transfer-review';
   dialog.setAttribute('aria-labelledby','ai-privacy-title');
   dialog.innerHTML='<h2 id="ai-privacy-title">Review what you share with AI</h2><p id="ai-privacy-description"></p><div id="ai-privacy-content"></div><p class="mini">Automatic removal can miss identifying details. Check the preview and keep the clinical instructions, dates and uncertainty accurate.</p><label class="consent"><input id="ai-privacy-agree" type="checkbox"> I reviewed this selection and agree to send it to OpenAI for this operation.</label><p id="ai-privacy-error" role="status"></p><div class="dialog-actions"><button type="button" id="ai-privacy-cancel" class="quiet">Cancel</button><button type="button" id="ai-privacy-send" class="primary">Continue</button></div>';
   const content=dialog.querySelector('#ai-privacy-content'),description=dialog.querySelector('#ai-privacy-description');
@@ -12,7 +15,7 @@ export function reviewAITransfer({text='',names=[],file=false,audio=false,notes=
   if(!audio&&!notes){
    const minimized=minimizeText(text,names);
    const label=add('label','Text to send');
-   editor=document.createElement('textarea');editor.rows=7;editor.maxLength=20000;editor.value=minimized.text;label.append(editor);
+   editor=document.createElement('textarea');editor.rows=7;editor.maxLength=maxLength;editor.spellcheck=false;editor.autocomplete='off';editor.setAttribute('data-gramm','false');editor.setAttribute('data-enable-grammarly','false');editor.value=minimized.text;label.append(editor);
    if(minimized.removed.length)add('p','Removed recognizable '+minimized.removed.join(', ')+'.');
   }
   if(file){

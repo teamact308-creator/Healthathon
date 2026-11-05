@@ -83,3 +83,7 @@ Patient navigation, Today cohorts, confirmed-plan presentation, occurrence detai
 
 
 Patient secondary screens (Log, Messages, Health history and preferences) are polished as of 3 November. See PATIENT_UI_DELIVERY.md for exact behavior and verification. Investigation rehearsal, difficult cases, full accessibility checks and judge-demo preparation are deferred to the evening session; do not mark those release gates complete.
+
+## AI privacy implementation, 5 November 2026
+
+See [AI privacy controls](AI_PRIVACY_CONTROLS.md) for transfer previews, text minimization, approval receipts, source-file access and unused-recording removal. See [Filly candidate](../integrations/filly/README.md) for the pinned source review and synthetic comparison harness. Verify deployment status and endpoint versions before continuing. Provider contracts, automated retention policy and live Filly quality evaluation remain open.
