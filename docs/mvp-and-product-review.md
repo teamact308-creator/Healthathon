@@ -2,6 +2,70 @@
 
 Updated 3 November 2026; incorporates the agreed bucket 3 product delivery after reviewing the final Team ACT presentation submitted to the judges (PDF and PPTX). Current implementation status is summarized below and in the linked delivery records. This replaces the earlier fixture-only inventory. Capabilities below distinguish implemented web workflows from transport tests and production readiness. Reuse the existing Supabase identity, tables, RPC workflow, private storage, outbox, GitHub repo and Vercel frontend.
 
+## Demo readiness priorities — 5 November 2026
+
+Added from the judge-facing build review. These are pending verification/polish tasks, not assertions that existing capabilities are absent or that tonight's testing has already passed. Reuse delivered workflows; record evidence before marking complete. WhatsApp/SMS remains on hold and is not a dependency for this in-app batch.
+
+**Order:** D01 full-flow reliability → D02 ownership/status clarity → D03 staff worklist → D07 repeatable demo; complete D04–D06 checks within the same release rehearsal. Cross-references below extend J02/J03/J06 rather than creating parallel implementations.
+
+### D01 — P0 — Complete in-app journey and failure/retry proof
+
+**Status:** pending final release verification; existing paths implemented. Extends J03.
+
+Verify plan confirmation → patient activity → evidence submission → clinician review → patient-visible result, plus practical help and consent-scoped caregiver support across all four personas. Exercise recording, transcription, extraction, upload and save progress/errors, draft preservation where safe, manual fallback and bounded retries.
+
+**Done when:** current hosted release passes one complete journey plus unclear voice input, failed request/retry and wrong-role/wrong-patient attempts. Retry creates no duplicate entry or evidence; no success is shown before persistence. Record tested release, scenarios, observations and unresolved defects in JUDGE_WALKTHROUGH.md/release-verification.md. A help resolution must not silently complete the underlying care activity.
+
+### D02 — P0 — Consistent next action, owner and status
+
+**Status:** existing occurrence details; cross-screen consistency audit and fixes pending. Extends J02/J03.
+
+Show the same operational status, next authorised owner and clear action in Today, Journey, Messages, activity detail and staff queue. Example: “Report submitted · Waiting for clinician review.”
+
+**Done when:** each transition preserves consistent labels and links across roles; report receipt, review and follow-up completion remain distinct. Missing activity is not inferred to be a missed dose. Owner visibility respects caregiver consent and patient permissions.
+
+### D03 — P1 — Actionable staff worklist
+
+**Status:** assigned-patient counts/filters and operational queues exist; polish and verification pending. See MULTI_PATIENT_MANAGEMENT.md. Extends J03/J05.
+
+Distinguish help awaiting response, reports awaiting review and overdue activities. Surface claim/ownership where applicable, time waiting and the next permitted action; reuse the existing caseload and thread workflow.
+
+**Done when:** clinician/coordinator can find and act on each work category without reconstructing history; replied/resolved work leaves the correct queue. Counts remain patient-assignment scoped and operational, never clinical risk scores. Do not imply staff-time savings without measurement.
+
+### D04 — P1 — Unseen AI clarification and correction cases
+
+**Status:** interpretation/clarification exists; independent regression corpus pending. Extends J02/J06.
+
+Test unseen English, Hindi and mixed-language phrasing, negation, future intent, uncertainty and conflicting statements. Ask one focused follow-up when information is missing; preserve original input and require review before save.
+
+**Done when:** publish expected/observed results and failures for a frozen set not used to tune the prompt. Consequential unsupported details do not auto-save; corrections persist with provenance. Keep the existing small synthetic Filly comparison separate from general accuracy claims and real-user validation.
+
+### D05 — P1 — Patient-visible response and notification freshness
+
+**Status:** in-app threads and notification bell exist; delivery-to-screen verification/polish pending. Extends J03.
+
+Ensure a team reply or review appears to the patient with a link to the correct thread/activity. Verify current refresh behaviour before selecting a scoped automatic-refresh approach; no new realtime architecture is assumed.
+
+**Done when:** a reply/review made in another session becomes visible within a documented refresh interval or explicit refresh action, unread/read state is coherent, and notification navigation opens the correct patient-scoped destination. No unexplained reload is required during the rehearsed demo; revoked access fails closed.
+
+### D06 — P1 — Cohesive document-to-review journey
+
+**Status:** document library and investigation review exist; continuity checks/fixes pending. Extends J02/J03.
+
+Link library entries to their investigation and review state, and let authorised clinicians reach the original document and review action directly.
+
+**Done when:** patient sees submission versus review distinctly; clinician can inspect the correct private original; review result/history returns to the patient. Standalone/unassociated documents are labelled accurately rather than assigned an invented investigation. Verify private-link expiry and role denial.
+
+### D07 — P0 — Repeatable isolated demo scenario
+
+**Status:** synthetic scenarios exist; dedicated rehearsal fixture/reset runbook pending. Extends J03.
+
+Prepare an isolated synthetic patient/scenario with a confirmed plan, due activities, one practical help opportunity and one report ready for review. Keep ongoing testers' records separate.
+
+**Done when:** a documented, scoped and repeatable setup produces the expected starting state and the complete demo can be rehearsed twice. Reset only explicitly designated disposable demo data; preserve shared test history, memberships, credentials, audit provenance and unrelated records. Never reset production or shared workspaces as a presentation shortcut.
+
+**Release evidence required:** all seven items retain pending status until current-release evidence is recorded. Testing proves only the tested synthetic scenarios; independent usability, clinical outcomes, provider privacy and real-patient onboarding remain separate gates.
+
 ## Independent engineering delivery update
 
 See [bucket 1 delivery and verification](bucket-1-delivery.md) for this increment and its limits. Implemented: source-linked date-bounded clinician/coordinator review summary, descriptive operational measures, human unmatched-intake queue with audited decisions and atomic confirmed evidence association, sanitized processing issue tracking, disabled-channel delivery reservation/callback foundations, task/audit pagination, session and chart fixes, expanded tests and build checks. Bucket 1 acceptance is complete, including migration reconciliation and isolated application-database rebuild/restore. Live channel setup remains pending.
