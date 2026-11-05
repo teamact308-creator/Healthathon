@@ -14,6 +14,7 @@ requirements = [
     "django-environ",
     "django-filter",
     "requests>=2.32,<3",
+    "cryptography==48.0.0",
 ]
 
 setup(
@@ -37,6 +38,6 @@ setup(
     name="care_wholecare",
     packages=find_packages(include=["care_wholecare", "care_wholecare.*"]),
     url="https://github.com/teamact308-creator/Healthathon/tree/main/integrations/care",
-    version="0.2.0",
+    version="0.3.0",
     zip_safe=False,
 )

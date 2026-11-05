@@ -94,6 +94,8 @@ REQUIRED_SETTINGS: set[str] = set()
 DEFAULTS = {
     "WHOLECARE_ENABLED": True,
     "WHOLECARE_LINKS_FILE": "",
+    "WHOLECARE_SESSION_DIR": "",
+    "WHOLECARE_SESSION_KEY_FILE": "",
 }
 
 plugin_settings = PluginSettings(

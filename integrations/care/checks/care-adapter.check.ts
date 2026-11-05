@@ -30,7 +30,33 @@ test('review sends only frozen command fields and maps stale/auth errors',async(
   let sent:RequestInit|undefined;let status=409;
   const send:typeof fetch=async(_url,init)=>{sent=init;return new Response('{}',{status});};
   const adapter=createCareAdapter({base,token:()=>'staff',fetch:send});
-  await assert.rejects(adapter.reviewEvidence(body),/view or request changed/);
+  await assert.rejects(adapter.reviewEvidence(body),/connection or report changed/);
   assert.deepEqual(JSON.parse(String(sent?.body)),{eventKey:patient,expectedVersion:'v1',note:'Synthetic review'});
   status=401;await assert.rejects(adapter.getWorkspace(patient),/session expired/);
+});
+test('WholeCare password is sent directly to Auth; CARE only gets the session grant', async () => {
+  const calls: Array<{url:string; init?:RequestInit}> = [];
+  const projectUrl = 'https://abcdefghijklmnopqrst.supabase.co';
+  const send: typeof fetch = async (url, init) => {
+    calls.push({url:String(url),init});
+    return new Response(JSON.stringify(calls.length === 1 ? {projectUrl,publishableKey:'sb_publishable_test'} : calls.length === 2 ? {refresh_token:'fresh-grant'} : {connected:true}));
+  };
+  const adapter = createCareAdapter({base,token:()=> 'staff',fetch:send});
+  await adapter.connect!(patient,'demo@example.test','demo-password');
+  assert.equal(calls[1].url,projectUrl+'/auth/v1/token?grant_type=password');
+  assert.equal(new Headers(calls[1].init?.headers).has('Authorization'),false);
+  assert.equal(calls[2].url.startsWith(base),true);
+  assert.deepEqual(JSON.parse(String(calls[2].init?.body)),{refreshToken:'fresh-grant'});
+  assert.equal(calls[2].init?.redirect,'error');
+});
+test('missing delegation is distinguishable from CARE authentication and original requests are scoped', async () => {
+  const calls: string[] = [];
+  const adapter = createCareAdapter({base,token:()=> 'staff',fetch:async (url) => {
+    calls.push(String(url));
+    return calls.length === 1 ? new Response(null,{status:428}) : new Response('%PDF-demo',{headers:{'Content-Type':'application/pdf','X-WholeCare-Report-Receipt':'12345.'+'a'.repeat(64)}});
+  }});
+  await assert.rejects(adapter.getWorkspace(patient),/Connect to WholeCare/);
+  const source = await adapter.openReport!(patient,patient,patient);
+  assert.equal(source.blob.type,'application/pdf');
+  assert.equal(calls[1],base+'/api/care_wholecare/v1/patients/'+patient+'/loops/'+patient+'/reports/'+patient);
 });

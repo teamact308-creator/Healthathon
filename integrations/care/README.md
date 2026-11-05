@@ -1,5 +1,7 @@
 # WholeCare inside CARE
 
+> **5 November 2026 update:** Renewable user-scoped account linking and verified original-file review are now implemented locally. See [account/report upgrade](ACCOUNT_AND_REPORTS.md). The dated 3 November record below describes the earlier fixture-only baseline; its absence-of-refresh/original-review statements are superseded by this upgrade. Final live acceptance evidence follows in VERIFICATION.md.
+
 Status: 3 November 2026. **A thin, actual local CARE integration is verified with the existing synthetic WholeCare database.** The separate standalone preview still uses page-local fixtures. This increment keeps Supabase/OpenAI and the current Vercel app; it is not a full platform migration.
 
 ## What works now

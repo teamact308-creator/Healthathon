@@ -1,5 +1,7 @@
 # CARE integration verification
 
+> **5 November 2026 update:** Renewable user-scoped account linking and verified original-file review are now implemented locally. See [account/report upgrade](ACCOUNT_AND_REPORTS.md). The dated 3 November record below describes the earlier fixture-only baseline; its absence-of-refresh/original-review statements are superseded by this upgrade. Final live acceptance evidence follows in VERIFICATION.md.
+
 3 November 2026. The connected experiment was exercised on the actual local CARE host, not only a standalone sharing harness. All records used were synthetic. One explicit fixture review was retained in the existing shared development database.
 
 ## End-to-end observed result
@@ -44,3 +46,19 @@ The local backend link contains a short-lived normal clinician access token in a
 Production CARE hosting/HTTPS, durable account-link lifecycle and administrative UI, multiple users/patients/facilities, private-file review inside CARE, non-review task mutations, patient OTP/caregiver/coordinator workflows, localization, full paginated history and complete browser/load/concurrency/security certification remain pending. The stale-view hash is a preflight check, not atomic cross-service/evidence concurrency control. Filly/Medispeak remain unintegrated. Existing messaging/provider work is outside this increment.
 
 Local screenshots record the mounted connected CARE page and matching hosted WholeCare audit. They remain ignored artifacts on the development machine; no authenticated screenshots or credential files were automatically added to GitHub/Drive. Runtime and renewal instructions are in runtime/README.md; protocol constraints are in CONNECTION_CONTRACT.md.
+
+## 5 November 2026 — renewable link and original reports
+
+The upgrade in ACCOUNT_AND_REPORTS.md is implemented locally. Seventeen backend tests, twelve frontend tests, strict TypeScript/build checks (20 browser assets) and all 107 current main-app regression tests passed. These replace the earlier increment's test counts for this working snapshot; unrelated main-app source is not part of this upgrade.
+
+Actual local CARE HTTP checks passed: anonymous connection-config requests denied; mapped fixture doctor can retrieve public sign-in configuration; a disconnected workspace returns 428; another patient mapping returns 404. Both official core checkouts remain unchanged.
+
+The owner explicitly approved a temporary demo-clinician account link for acceptance testing, with disconnection afterward. The actual browser sign-in succeeded. CARE displayed 40 bounded recent synthetic actions from the shared development database. After forcing only the encrypted session's expiry metadata, a CARE refresh exchanged the provider refresh token, persisted the rotated session and returned current data without another password prompt. No token values were printed.
+
+A previously uploaded fictional PDF was fetched through the staff-scoped original endpoint, passed MIME/signature/SHA-256 verification and became available as a temporary local blob link. A separate synthetic test occurrence was then added under the existing active investigation item without resetting existing demo occurrences: 8cb2d3fa-486a-46dc-9a20-282b76281fa4. The existing synthetic patient's normal private-upload/report-submit path uploaded and verified a new fictional PDF; evidence 02d0fd66-4972-424e-b570-fd7c0b1b8f1c became REVIEW_PENDING. The temporary patient sign-in was signed out and no token/password was saved.
+
+CARE showed the new pending task and kept Confirm review and close disabled before the original was prepared/opened. The new original also passed authenticated retrieval and hash verification. Browser automation's security policy rejected navigation to its blob link. The owner was asked to open the fictional PDF manually; no alternate browser or indirect navigation was used to bypass that rejection.
+
+**Live acceptance pending:** manual confirmation that the original was viewed, final CARE review/save/reload/shared-audit check, and removal of the approved temporary clinician link. Unit tests already cover those review receipt/replay conditions with synthetic transports, but they do not substitute for this final live action. Current shared state and the final cleanup outcome must be checked before claiming this acceptance complete.
+
+No public CARE deployment, WhatsApp/SMS send, clinical interpretation, schema change, password reset or role grant was performed.

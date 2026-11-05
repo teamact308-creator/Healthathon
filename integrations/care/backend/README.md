@@ -1,5 +1,7 @@
 # WholeCare delegated CARE backend plugin
 
+**5 November upgrade:** The optional renewable encrypted session store and original-report endpoints supersede the legacy-only restrictions below when configured. See [current account/report contract](../ACCOUNT_AND_REPORTS.md).
+
 Status: 3 November 2026. Tested in an isolated CARE instance. This package is plugin-owned code derived from the official care_scaffold backend template. It adds no CARE model, migration, role, or core change.
 
 The staff-only routes are mounted by CARE at `/api/care_wholecare/`:

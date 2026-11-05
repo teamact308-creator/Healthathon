@@ -1,5 +1,7 @@
 # CARE → WholeCare connection contract
 
+> **5 November 2026 update:** Renewable user-scoped account linking and verified original-file review are now implemented locally. See [account/report upgrade](ACCOUNT_AND_REPORTS.md). The dated 3 November record below describes the earlier fixture-only baseline; its absence-of-refresh/original-review statements are superseded by this upgrade. Final live acceptance evidence follows in VERIFICATION.md.
+
 Status: 3 November 2026. **Implemented and verified for one local synthetic clinician/patient/facility scope.** This replaces the earlier design-only contract. The fixture preview is retained separately and never substitutes for a failed connected request.
 
 ## Trust and identity boundaries

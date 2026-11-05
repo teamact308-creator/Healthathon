@@ -11,7 +11,7 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from care_wholecare.viewsets.config import ConfigView
-from care_wholecare.viewsets.workspace import WorkspaceView, ReviewView
+from care_wholecare.viewsets.workspace import ConnectionView, OriginalReportView, WorkspaceView, ReviewView
 
 router = DefaultRouter()
 # router.register("things", ThingViewSet, basename="wholecare-thing")
@@ -20,6 +20,8 @@ router = DefaultRouter()
 urlpatterns = [
     *router.urls,
     path("config/", ConfigView.as_view(), name="care_wholecare-config"),
+    path("v1/patients/<uuid:patient_id>/connection", ConnectionView.as_view(), name="wholecare-connection"),
+    path("v1/patients/<uuid:patient_id>/loops/<uuid:loop_id>/reports/<uuid:evidence_id>", OriginalReportView.as_view(), name="wholecare-original-report"),
     path("v1/patients/<uuid:patient_id>/workspace", WorkspaceView.as_view(), name="wholecare-workspace"),
     path("v1/patients/<uuid:patient_id>/loops/<uuid:loop_id>/review", ReviewView.as_view(), name="wholecare-review"),
 ]

@@ -10,6 +10,7 @@ export interface FollowUp {
   source: string;
   recordedAt: string;
   canReview?: boolean;
+  reports?: {id: string; label: string}[];
 }
 export interface TrailEntry {
   id: string; actor: string; action: 'report_reviewed' | 'follow_up_note';
@@ -24,12 +25,15 @@ export interface Workspace {
 }
 export interface Command {
   carePatientId: string; taskId: string; eventKey: string;
-  expectedVersion: number | string; note: string;
+  expectedVersion: number | string; note: string; reportReceipts?: Record<string, string>;
 }
 export interface WholeCareAdapter {
   getWorkspace(carePatientId: string): Promise<Workspace>;
   reviewEvidence(command: Command): Promise<Workspace>;
   recordFollowUp(command: Command): Promise<Workspace>;
+  connect?(patientId: string, email: string, password: string): Promise<void>;
+  disconnect?(patientId: string): Promise<boolean>;
+  openReport?(patientId: string, taskId: string, evidenceId: string): Promise<{blob: Blob; receipt: string}>;
 }
 export const stateLabel: Record<LoopState, string> = {
   DUE: 'Due', UNCONFIRMED: 'Awaiting patient', REVIEW_PENDING: 'Review needed', CLOSED: 'Completed',
