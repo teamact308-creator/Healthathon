@@ -1,0 +1,30 @@
+[
+  {
+    "fixture": "fictional-voice.wav",
+    "http_status": 200,
+    "result": {
+      "provider": "sarvam",
+      "model": "saaras:v3",
+      "mode": "transcribe",
+      "language": "en-IN",
+      "fixture_hash": "c7914bcd06765704f0f54a4b434519bca71039afb95f7e66f39e375604570b9a",
+      "transcript": "Fictional demonstration. I ate toast and vegetables for breakfast at A this morning.",
+      "elapsed_ms": 258,
+      "trial_only": true
+    }
+  },
+  {
+    "fixture": "fictional-hindi.wav",
+    "http_status": 200,
+    "result": {
+      "provider": "sarvam",
+      "model": "saaras:v3",
+      "mode": "transcribe",
+      "language": "hi-IN",
+      "fixture_hash": "a2767d6a58817b2bf0873448665145c6e2caf56cfed2e98de45b347395d9228b",
+      "transcript": "यह एक काल्पनिक परीक्षण है। मैंने सुबह 8 बजे नाश्ता किया।",
+      "elapsed_ms": 314,
+      "trial_only": true
+    }
+  }
+]

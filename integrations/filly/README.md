@@ -39,3 +39,7 @@ Proceed to a synthetic provider trial after credential and provider choices. Req
 ## Executed mock workflow, 5 November 2026
 
 The pinned official FastAPI app passed an in-process HTTP test with provider networking disabled. Checks covered unauthenticated session denial, sessions without patient details, invalid upload capability rejection, out-of-order audio chunk assembly, template output and denial of unauthenticated session reads. Run mock-smoke.py with --source pointing to the pinned checkout and --synthetic-only. The test requires the upstream standalone dependencies. This checks the protocol and auth behavior in mock mode; it does not measure transcription or extraction accuracy. The standalone shared-token limitation still requires a CARE permission bridge before deployment.
+
+## Sarvam connectivity verified
+
+The team key is stored in Supabase Edge Function secrets. An assigned-clinician-only connection checker verified two frozen synthetic WAV hashes, called saaras:v3 in transcribe mode, and returned English and Hindi transcripts. See sarvam-connectivity.json. Test uploads were removed. This checks connectivity and original-language output. A full Filly live workflow and independent accuracy benchmark are still pending.

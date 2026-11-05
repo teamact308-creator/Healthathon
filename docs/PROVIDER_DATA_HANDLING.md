@@ -18,7 +18,7 @@ Reference https://developers.openai.com/api/docs/guides/your-data
 
 ## Sarvam and the Filly candidate
 
-The owner selected the team Sarvam account for the synthetic speech trial. SARVAM_API_KEY is to be entered directly into Supabase Edge Function secrets, outside chat and source control. The key has not yet been confirmed saved.
+The owner selected the team Sarvam account for the synthetic speech trial. SARVAM_API_KEY is to be entered directly into Supabase Edge Function secrets, outside chat and source control. The owner confirmed the key was saved. A signed clinician check verified its presence without returning the value. Two immutable English/Hindi audio fixtures returned HTTP 200 with nonempty transcripts using saaras:v3 in transcribe mode. Temporary uploads were removed. See integrations/filly/sarvam-connectivity.json.
 
 Pin the trial to saaras:v3 to match the reviewed Filly revision. For original-language evaluation, explicitly use transcribe mode and compare it with the translated-output workflow separately. Record provider mode and model on every result. The current Sarvam documentation also lists newer models; that alone is not a reason to change the frozen comparison.
 
@@ -28,7 +28,7 @@ References
 https://docs.sarvam.ai/api-reference/speech-to-text/transcribe
 https://www.sarvam.ai/privacy-policy
 
-The official Filly mock workflow has passed local protocol checks. A live trial still needs a confirmed saved key and approved provider configuration. Keep source audio synthetic, independently transcribed, and free of identifiers. No medical accuracy or compliance certification is claimed.
+The official Filly mock workflow has passed local protocol checks. Sarvam connectivity is verified. The broader live accuracy comparison and approval of provider configuration remain pending. Keep source audio synthetic, independently transcribed, and free of identifiers. No medical accuracy or compliance certification is claimed.
 
 ## Remaining evidence to obtain
 
