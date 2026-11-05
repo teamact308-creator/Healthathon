@@ -1,3 +1,5 @@
+import {minimizeText} from '../_shared/ai-privacy.mjs';
+import {authorizeTransfer} from '../_shared/ai-transfer.mjs';
 import {interpretMedication,translateVoiceText,suggestLogActions} from './interpret.mjs';
 const origins = new Set(['https://healthathon.vercel.app','http://localhost:4173']);
 const model = 'gpt-4o-mini-transcribe';
@@ -18,13 +20,15 @@ Deno.serve(async(req: Request) => {
  const c=await fetch(`${url}/rest/v1/rpc/my_context`,{method:'POST',headers,body:'{}',signal:AbortSignal.timeout(10000)});const context=await c.json();
  if(!c.ok||!context.memberships?.some((m:{patient_id:string;role:string})=>m.patient_id===input.patient_id&&['patient','clinician'].includes(m.role)))return json({error:'Assigned patient or clinician required'},403);
  if(!key)return json({error:'Transcription is not configured'},503);
+ const operation=Object.hasOwn(input,'activity_note')?'activity_suggestions':Object.hasOwn(input,'typed_note')?'interpretation':'transcription';
+ const {names}=await authorizeTransfer({url,headers,input,operation,kind:operation==='transcription'?'audio':'text'});
  if(Object.hasOwn(input,'activity_note')){
-  const note=typeof input.activity_note==='string'?input.activity_note.trim():'';
+  const note=typeof input.activity_note==='string'?minimizeText(input.activity_note,names).text.trim():'';
   if(!note||note.length>2000)return json({error:'Enter a note of up to 2,000 characters.'},400);
   return json({actions:await suggestLogActions(note,key),requires_confirmation:true});
  }
  if(Object.hasOwn(input,'typed_note')){
-  const note=typeof input.typed_note==='string'?input.typed_note.trim():'';
+  const note=typeof input.typed_note==='string'?minimizeText(input.typed_note,names).text.trim():'';
   if(!note||note.length>2000)return json({error:'Enter a note of up to 2,000 characters.'},400);
   return json({interpretation:await interpretMedication(note,key),requires_confirmation:true});
  }
@@ -35,17 +39,19 @@ Deno.serve(async(req: Request) => {
  const file=await fetch(`${url}/storage/v1/object/authenticated/voice-notes/${path}`,{headers,signal:AbortSignal.timeout(15000)});
  if(!file.ok)return json({error:'Recording not accessible'},400);
  const bytes=await file.arrayBuffer();if(bytes.byteLength>8388608)return json({error:'Recording exceeds 8 MB'},413);
- const form=new FormData();form.append('file',new Blob([bytes],{type:file.headers.get('content-type')||'audio/webm'}),path.split('/').pop()!);form.append('model',model);form.append('language',input.language);if(input.language==='hi')form.append('prompt','हिंदी भाषण को देवनागरी में लिखें। अंग्रेज़ी शब्द मूल रूप में रखें।');form.append('response_format','json');
+ const form=new FormData();form.append('file',new Blob([bytes],{type:file.headers.get('content-type')||'audio/webm'}),'recording.'+(file.headers.get('content-type')?.includes('mp4')?'m4a':'webm'));form.append('model',model);form.append('language',input.language);if(input.language==='hi')form.append('prompt','हिंदी भाषण को देवनागरी में लिखें। अंग्रेज़ी शब्द मूल रूप में रखें।');form.append('response_format','json');
  const response=await fetch('https://api.openai.com/v1/audio/transcriptions',{method:'POST',headers:{Authorization:`Bearer ${key}`},body:form,signal:AbortSignal.timeout(90000)});
  if(!response.ok)return json({error:'Transcription unavailable. You can type the activity instead.',provider_status:response.status},502);
  const result=await response.json();
  const text=typeof result.text==='string'?result.text:'';
  const canAnalyze=!!text.trim()&&text.length<=2000&&Date.now()-started<83000;
  const scriptMismatch=input.language==='hi'&&/\p{Script=Arabic}/u.test(text);
+ const minimizedTranscript=minimizeText(text,names).text;
  const [interpretation,english]=await Promise.all([
-  canAnalyze&&input.interpret_medication===true&&!scriptMismatch?interpretMedication(text,key):null,
-  canAnalyze?translateVoiceText(text,key):null
+  canAnalyze&&input.interpret_medication===true&&!scriptMismatch?interpretMedication(minimizedTranscript,key):null,
+  canAnalyze?translateVoiceText(minimizedTranscript,key):null
  ]);
  return json({text,english,script_mismatch:scriptMismatch,language:input.language,source_path:path,requires_confirmation:true,interpretation});
  }catch{return json({error:'Transcription failed. Type the activity or try another audio file.'},503);}
 });
+

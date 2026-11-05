@@ -1,3 +1,5 @@
+import {minimizeText} from '../_shared/ai-privacy.mjs';
+import {authorizeTransfer} from '../_shared/ai-transfer.mjs';
 const origins = new Set(['https://healthathon.vercel.app','http://localhost:4173']);
 const model = 'gpt-4.1-mini-2025-04-14';
 Deno.serve(async(req: Request) => {
@@ -16,7 +18,8 @@ Deno.serve(async(req: Request) => {
  const c=await fetch(`${url}/rest/v1/rpc/my_context`,{method:'POST',headers,body:'{}',signal:AbortSignal.timeout(10000)});const context=await c.json();
  if(!c.ok||!context.memberships?.some((m:{patient_id:string;role:string})=>m.patient_id===input.patient_id&&m.role==='clinician'))return json({error:'Assigned clinician required'},403);
  if(!key)return json({error:'AI is not configured. You can still enter the plan manually.'},503);
- const path=input.source_path||null,text=String(input.text||'').trim();if(text.length>20000)return json({error:'Source note is too long'},400);
+ const {names}=await authorizeTransfer({url,headers,input,operation:'plan_extraction',kind:input.source_path?'document':'text'});
+ const path=input.source_path||null,text=minimizeText(String(input.text||''),names).text.trim();if(text.length>20000)return json({error:'Source note is too long'},400);
  const content:Record<string,unknown>[]=[{type:'input_text',text:`Extract only explicit care tasks from this fictional source. Source text:\n${text||'(uploaded file)'}`}];
  if(path){
  if(typeof path!=='string'||!path.startsWith(input.patient_id+'/')||path.includes('..'))return json({error:'Invalid source path'},400);
@@ -44,3 +47,4 @@ Deno.serve(async(req: Request) => {
  return json({id,model,proposal});
  }catch{return json({error:'Extraction timed out or failed. No plan was activated; manual entry remains available.'},503);}
 });
+

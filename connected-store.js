@@ -1,3 +1,4 @@
+import {reviewAITransfer} from './ai-privacy-ui.js';
 import {SUPABASE_URL,SUPABASE_KEY} from './db-config.js';
 import {normalizeWorkspace} from './connected-model.mjs';
 const sessionKey='wholecare-auth-session';let session=null,refreshing=null;
@@ -49,10 +50,10 @@ export async function uploadPrivate(bucket,file){
  if(!response.ok)throw Error('Private upload failed. Check your role, file type and size.');return path;
 }
 export async function privateFile(bucket,path){const result=await request(`/storage/v1/object/sign/${bucket}/${path}`,'POST',{expiresIn:120});return SUPABASE_URL+'/storage/v1'+result.signedURL;}
-export async function extractPlan(data){return request('/functions/v1/plan-extract','POST',{patient_id:membership.patient_id,...data});}
+export async function extractPlan(data){const input=await approveAITransfer({patient_id:membership.patient_id,...data},{file:!!data.source_path});return request('/functions/v1/plan-extract','POST',input);}
 export async function logActivity(loop,status,details,event){return rpc('log_care_activity',{p_loop:loop,p_status:status,p_details:details,p_event:event});}
 export async function submitReport(loop,path,label,event){return request('/functions/v1/report-submit','POST',{patient_id:membership.patient_id,loop_id:loop,source_path:path,label,event_key:event});}
-export async function transcribeVoice(path,language,interpretMedication=false){return request('/functions/v1/voice-transcribe','POST',{patient_id:membership.patient_id,source_path:path,language,interpret_medication:interpretMedication});}
+export async function transcribeVoice(path,language,interpretMedication=false){return request('/functions/v1/voice-transcribe','POST',await approveAITransfer({patient_id:membership.patient_id,source_path:path,language,interpret_medication:interpretMedication},{audio:true}));}
 export async function importGlucose(readings){return rpc('import_synthetic_glucose',{p_patient:membership.patient_id,p_rows:readings});}
 
 export async function manageLoop(loop,action,due,note,event){return rpc("manage_care_loop",{p_loop:loop,p_action:action,p_due:due,p_note:note,p_event:event});}
@@ -92,12 +93,33 @@ export async function checkPersonalTwilioConnection() {
 
 export const sendPersonalWhatsAppTest=(action,confirmed=false)=>request('/functions/v1/twilio-personal-freeform-test','POST',action==='send'?{action,confirmed}:{action});
 
-export async function interpretMedicationNote(note){return request('/functions/v1/voice-transcribe','POST',{patient_id:membership.patient_id,typed_note:note});}
+export async function interpretMedicationNote(note){return request('/functions/v1/voice-transcribe','POST',await approveAITransfer({patient_id:membership.patient_id,typed_note:note}));}
 
 export const requestActivityHelp=(loop,text,event)=>rpc('request_activity_help',{p_loop:loop,p_text:text,p_event:event});
 
-export const suggestActivityNote=note=>request('/functions/v1/voice-transcribe','POST',{patient_id:membership.patient_id,activity_note:note});
+export const suggestActivityNote=async note=>request('/functions/v1/voice-transcribe','POST',await approveAITransfer({patient_id:membership.patient_id,activity_note:note}));
 
 export const updateHelpThread=(id,action,message,event)=>rpc('update_help_thread',{p_request:id,p_action:action,p_text:message,p_event:event});
 
-export const suggestVisitNotes=ids=>request('/functions/v1/visit-note-picks','POST',{patient_id:membership.patient_id,ids});
+export async function suggestVisitNotes(ids){
+ const notes=await rows('care_events','&select=id,details&patient_id=eq.'+membership.patient_id+'&id=in.('+ids.join(',')+')');
+ const input=await approveAITransfer({patient_id:membership.patient_id,ids},{notes:notes.map(note=>({id:note.id,text:note.details?.note||''}))});
+ return request('/functions/v1/visit-note-picks','POST',input);
+}
+
+async function approveAITransfer(input,{audio=false,file=false,notes=null}={}){
+ const current=membership;
+ if(!current||!session)throw Error('Sign in before using AI.');
+ const [patients,profiles]=await Promise.all([rows('patients','&select=display_name&id=eq.'+current.patient_id),rows('profiles','&select=display_name')]);
+ const names=[patients[0]?.display_name,profiles[0]?.display_name].filter(Boolean);
+ const reviewed=await reviewAITransfer({text:input.text||input.typed_note||input.activity_note||'',audio,file,notes,names});
+ if(membership!==current||!session)throw Error('Your workspace changed. Review the AI transfer again.');
+ const approval={privacy_version:reviewed.privacy_version,privacy_request_id:reviewed.privacy_request_id};
+ if(audio)return {...input,...approval};
+ if(notes)return {...input,...approval,ids:reviewed.ids};
+ const field=Object.hasOwn(input,'text')?'text':Object.hasOwn(input,'typed_note')?'typed_note':'activity_note';
+ return {...input,...approval,[field]:reviewed.text,...(file?{source_path:reviewed.includeFile?input.source_path:null}:{})};
+}
+
+export const listVoiceRecordings=()=>rpc('unused_voice_recordings',{p_patient:membership.patient_id});
+export async function removeVoiceRecording(path){const patient=membership.patient_id;await rpc('prepare_voice_removal',{p_patient:patient,p_path:path});await request('/storage/v1/object/voice-notes','DELETE',{prefixes:[path]});}
