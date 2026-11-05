@@ -2,6 +2,8 @@
 
 Updated 5 November 2026. This is the local CARE upgrade following the 3 November fixture-only integration. It keeps the existing WholeCare database, identities, private Storage, report-submit function and authorized review RPC. No CARE core file, Supabase schema, role grant, provider setting or public deployment is changed by this upgrade.
 
+Delivery: [draft PR #2](https://github.com/teamact308-creator/Healthathon/pull/2), branch `codex/care-account-reports-20261105`. The implementation and automated checks are ready for review. Live sign-in, rotation, restart persistence, original retrieval/integrity and disconnection passed. Browser security blocked the original's temporary link navigation, so the new original-file review/save/reload acceptance remains pending manual viewing. The dedicated fictional occurrence is still pending and the approved temporary account link has been disconnected. See [verification evidence](VERIFICATION.md) before merging or demonstrating this as fully accepted.
+
 ## Account experience
 
 Sign into the local CARE staff workspace and open the dedicated synthetic patient. An unlinked workspace shows **Connect to WholeCare**. Enter the existing assigned WholeCare clinician email/password. The browser sends the password directly to the configured WholeCare Auth endpoint; CARE receives the fresh refresh token through its staff-authenticated connection endpoint. Neither the password nor Supabase session is placed in browser storage by this plugin.
