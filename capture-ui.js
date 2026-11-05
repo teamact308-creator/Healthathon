@@ -83,6 +83,7 @@ export function bindVoiceRecorder(dialog,onChange){
 export function openCapture(item,state,{run,toast,initialStatus,onSaved}){
  let dialog=document.querySelector('#capture-dialog');if(!dialog){dialog=document.createElement('dialog');dialog.id='capture-dialog';document.body.append(dialog);}
  const report=item.id==='test',meal=item.id==='meal';let audioPath=null,source='web',reportPath=null;const event=crypto.randomUUID();
+ dialog.classList.add('activity-capture');
  dialog.classList.toggle('medication-capture',item.id==='med');
  dialog.setAttribute('aria-labelledby','capture-title');
  const medication=item.id==='med',now=new Date(),today=medication&&dayKey(item.dueAt,item.timezone)===dayKey(now,item.timezone);
