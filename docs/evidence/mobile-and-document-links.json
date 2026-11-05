@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-06",
+  "commit": "f54beb4a1bfe8eb415d339ad8a16e529827a72b1",
+  "viewport_width": 390,
+  "page_scroll_width": 390,
+  "checked_views": [
+    "Today",
+    "Journey",
+    "Log",
+    "Messages",
+    "Documents"
+  ],
+  "meal_dialog": {
+    "client_width": 364,
+    "scroll_width": 364,
+    "header_bottom": 135.2890625,
+    "voice_top": 153.2890625,
+    "overlap": false
+  },
+  "monitoring_header_overlap": false,
+  "document_links": {
+    "valid_reviewed_original": true,
+    "malformed_source_link_count": 0
+  },
+  "viewport_override_reset": true,
+  "limits": [
+    "Responsive browser test, not physical device or screen-reader acceptance"
+  ]
+}

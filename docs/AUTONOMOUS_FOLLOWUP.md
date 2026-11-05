@@ -38,7 +38,7 @@ Tests cover hidden/offline/return, stopped in-flight requests, invalid credentia
 
 Hosted keyboard checks passed: skip link moves focus to the main heading; Enter opens the named task dialog; Escape closes it and restores focus to the opener. Existing focus styles, labels, minimum touch sizing and bounded dialogs remain.
 
-The browser's mobile viewport control again returned innerWidth/scrollWidth 1280 after a 390-pixel request, including a fresh tab. The override was reset. This is a concrete tool limitation, not evidence of mobile correctness. Real mobile and screen-reader acceptance remain unverified. No cropped desktop screenshot is presented as mobile proof.
+The viewport control initially appeared delayed: the first read returned 1280, but after the later page reload the actual viewport was 390. At that width Today, Journey, Log, Messages and Documents all reported scrollWidth 390. The check exposed overlapping meal-form headers caused by global page-header styling. Page header selectors are now scoped to the workspace and all activity dialogs use the same bounded, scrolling layout. The corrected meal and monitoring forms have no header/voice-section overlap and the meal dialog has no horizontal overflow. The final mobile form screenshot is retained privately as proof. The temporary override was reset. This is responsive browser acceptance, not physical phone/microphone or screen-reader certification.
 
 ## 5. Provider-independent document preparation
 
@@ -57,3 +57,8 @@ External dependencies remain: real mobile/assistive-technology acceptance, broad
 ## Reproduction
 
 Run npm test; npm run build; node scripts/check-build.mjs. No schema changed in this follow-up. For synthetic live checks use scripts/verify-attachments.py, scripts/verify-source-journey.py and scripts/evaluate-log-actions.py with a private rehearsal manifest and --synthetic-only. Source journey refuses to reset a plan; --resume is explicit and retains the prior scenario. Provider calls consume quota and are not part of normal CI. Private manifests, recordings, credentials and signed links must not be published.
+
+
+## Published verification
+
+The final application source is f54beb4a1bfe8eb415d339ad8a16e529827a72b1; production deployment dpl_2pfCeTDka4v4NydRuTGJFyv78pkx is READY. GitHub verify/database-rebuild checks are inspected separately at release completion. The local suite passes 161 tests and all 32 explicitly allowed browser assets pass output checks. Voice-transcribe version 26 uses action-evidence-v6; attachment-prepare version 2 preserves caller Storage access. Both WhatsApp and SMS database gates were rechecked false. The deployed document UI rejected a malformed source without producing a link and prepared a valid reviewed original.

@@ -1,5 +1,9 @@
 # WholeCare MVP increment - verification, 2 November 2026
 
+## Follow-up release — 6 November 2026
+
+Application commit f54beb4a1bfe8eb415d339ad8a16e529827a72b1, Vercel production dpl_2pfCeTDka4v4NydRuTGJFyv78pkx READY. Local checks: 161 tests and 32 explicitly allowed static assets. Real source PDF extraction/review/confirmation and actual WAV transcription/English output passed in a retained isolated scenario, followed by 35 four-role hosted API checks. Attachment preparation passed 12 live checks. Current 390-pixel responsive checks and the fixed meal/monitoring header overlap supersede the earlier viewport limitation below. Physical device and full human microphone/clinical acceptance remain unverified. Only WhatsApp/SMS transport is on hold. See AUTONOMOUS_FOLLOWUP for preserved first failures and exact evidence.
+
 **6 November follow-up:** see [the six-item delivery and remaining acceptance boundaries](AUTONOMOUS_FOLLOWUP.md). Only live WhatsApp/SMS is on hold; other remaining dependencies are explicitly identified.
 
 ## Current verified increment — 6 November 2026
